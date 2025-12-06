@@ -1,3 +1,9 @@
 <script lang="ts"></script>
-<main></main>
+<main>
+
+<div>
+<input type="text" placeholder="Search..."/>
+</div>
+
+</main>
 <style></style>
