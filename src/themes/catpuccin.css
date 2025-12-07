@@ -1,0 +1,9 @@
+[data-theme="catppuccin"] {
+    --bg-app: #1e1e2e;
+    --bg-input: #181825;
+    --bg-options: #a6adc8;
+    --options-text: #181825;
+    --text-main: #cdd6f4;
+    --text-muted: #a6adc8;
+    --border-subtle: rgba(255, 255, 255, 0.1);
+}

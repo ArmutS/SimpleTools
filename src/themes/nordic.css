@@ -1,0 +1,9 @@
+[data-theme="nordic"] {
+    --bg-app: #2e3440;
+    --bg-input: #3b4252;
+    --bg-options: #81a1c1; /* Nordic Blue */
+    --options-text: #2e3440; /* Nordic Blue */
+    --text-main: #eceff4;
+    --text-muted: #d8dee9;
+    --border-subtle: rgba(236, 239, 244, 0.1);
+}

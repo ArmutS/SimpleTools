@@ -9,7 +9,7 @@ fn set_window_position(window: &WebviewWindow) -> Result<(), Box<dyn std::error:
         let target_width = 800;
         let target_height = 600;
         let x = (monitor_size.width as i32 - target_width) / 2;
-        let y = (monitor_size.height as f64 * 0.15) as i32;
+        let y = ( monitor_size.height as f64 * 0.15) as i32;
         window.set_size(PhysicalSize::new(target_width as u32, target_height as u32))?;
         window.set_position(PhysicalPosition::new(x, y))?;
     }
