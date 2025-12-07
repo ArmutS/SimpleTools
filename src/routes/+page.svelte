@@ -2,6 +2,9 @@
     import { onMount } from "svelte";
     import "../themes/catpuccin.css";
     import "../themes/nordic.css";
+    import "../themes/dracula.css";
+    import "../themes/gruvbox.css";
+    import "../themes/carbonfox.css";
 
     let currentTheme = "";
     function setTheme(themeName: string) {
@@ -25,8 +28,16 @@
         <div class="options-box">
             <label for="themes">Themes:</label>
             <select name="themes" id="themes" bind:value={currentTheme}>
-                <option value="catppuccin">Catpuccin</option>
-                <option value="nordic">Nordic</option>
+                <option value="catppuccin-dark">Catpuccin Dark</option>
+                <option value="nordic-dark">Nordic Dark</option>
+                <option value="dracula-dark">Dracula Dark</option>
+                <option value="carbonfox-dark">Carbonfox Dark</option>
+                <option value="gruvbox-dark">Gruvbox Dark</option>
+                <option value="catppuccin-light">Catpuccin Light</option>
+                <option value="nordic-light">Nordic Light</option>
+                <option value="dracula-light">Dracula Light</option>
+                <option value="carbonfox-light">Carbonfox Light</option>
+                <option value="gruvbox-light">Gruvbox Light</option>
             </select>
         </div>
     </div>

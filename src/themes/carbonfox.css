@@ -1,0 +1,26 @@
+[data-theme="carbonfox-dark"] {
+    --bg-app: #161616;
+    --bg-input: #2a2a2a;
+    --bg-suggestion: #161616;
+    --bg-options: #78a9ff;    /* Parlak Mavi */
+    
+    --text-main: #f2f4f8;
+    --text-muted: #7b7c7e;
+    --options-text: #161616;  /* Mavi üstüne Siyah yazı */
+    
+    --border-color: rgba(120, 169, 255, 0.15);
+}
+
+/* --- Carbonfox Light --- */
+[data-theme="carbonfox-light"] {
+    --bg-app: #faf4ed;
+    --bg-input: #ebdfcf;
+    --bg-suggestion: #faf4ed;
+    --bg-options: #d7827e;    /* Soluk Kırmızı */
+    
+    --text-main: #575279;
+    --text-muted: #9893a5;
+    --options-text: #faf4ed;  /* Kırmızı üstüne Krem yazı */
+    
+    --border-color: rgba(87, 82, 121, 0.1);
+}

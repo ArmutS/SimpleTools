@@ -1,0 +1,26 @@
+[data-theme="dracula-dark"] {
+    --bg-app: #282a36;
+    --bg-input: #44475a;
+    --bg-suggestion: #282a36;
+    --bg-options: #bd93f9;    /* Parlak Mor */
+    
+    --text-main: #f8f8f2;
+    --text-muted: #6272a4;
+    --options-text: #282a36;  /* Mor üstüne Koyu Gri yazı */
+    
+    --border-color: rgba(189, 147, 249, 0.2);
+}
+
+/* --- Dracula Light --- */
+[data-theme="dracula-light"] {
+    --bg-app: #FFFFFF;
+    --bg-input: #e4e4e4;
+    --bg-suggestion: #FFFFFF;
+    --bg-options: #ff79c6;    /* Parlak Pembe */
+    
+    --text-main: #282a36;
+    --text-muted: #9eaec5;
+    --options-text: #FFFFFF;  /* Pembe üstüne Beyaz yazı */
+    
+    --border-color: rgba(40, 42, 54, 0.1);
+}

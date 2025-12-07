@@ -1,4 +1,4 @@
-[data-theme="nordic"] {
+[data-theme="nordic-dark"] {
     --bg-app: #2e3440;
     --bg-input: #3b4252;
     --bg-options: #81a1c1; /* Nordic Blue */
@@ -6,4 +6,17 @@
     --text-main: #eceff4;
     --text-muted: #d8dee9;
     --border-subtle: rgba(236, 239, 244, 0.1);
+}
+
+[data-theme="nordic-light"] {
+    --bg-app: #ECEFF4;       /* Snow Storm (En açık beyaz) */
+    --bg-input: #D8DEE9;     /* Biraz daha koyu gri/beyaz */
+    --bg-suggestion: #ECEFF4;
+    --bg-options: #88C0D0;   /* Nordic Blue (Değişmedi, light'ta da güzel durur) */
+    
+    --text-main: #2E3440;    /* Polar Night (Koyu Lacivert/Siyah) */
+    --text-muted: #4C566A;   /* Orta ton gri */
+    --options-text: #2E3440; /* Mavi üstüne Koyu yazı */
+    
+    --border-color: rgba(46, 52, 64, 0.1);
 }

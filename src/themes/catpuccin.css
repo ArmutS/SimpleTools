@@ -1,4 +1,4 @@
-[data-theme="catppuccin"] {
+[data-theme="catppuccin-dark"] {
     --bg-app: #1e1e2e;
     --bg-input: #181825;
     --bg-options: #a6adc8;
@@ -6,4 +6,17 @@
     --text-main: #cdd6f4;
     --text-muted: #a6adc8;
     --border-subtle: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="catppuccin-light"] {
+    --bg-app: #eff1f5;       /* Latte Base (Kırık Beyaz) */
+    --bg-input: #e6e9ef;     /* Latte Mantle (Açık Gri) */
+    --bg-suggestion: #eff1f5;
+    --bg-options: #df8e1d;   /* Latte Yellow (Koyu Sarı) */
+    
+    --text-main: #4c4f69;    /* Latte Text (Koyu Gri/Lacivert) */
+    --text-muted: #9ca0b0;   /* Soluk Gri */
+    --options-text: #eff1f5; /* Sarı üstüne Beyaz yazı */
+    
+    --border-color: rgba(76, 79, 105, 0.1); /* Koyu çerçevenin %10 şeffaf hali */
 }
