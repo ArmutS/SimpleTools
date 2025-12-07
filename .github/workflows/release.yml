@@ -2,7 +2,7 @@ name: Release
 on:
   push:
     tags:
-      - "v*" # v1.0.0, v0.1.0 gibi tag'ler atınca çalışır
+      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -14,6 +14,7 @@ jobs:
       matrix:
         platform: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,8 +23,9 @@ jobs:
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf      - name: Setup Node
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
 
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -32,14 +34,14 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install frontend dependencies
-        run: npm install # Veya pnpm/yarn install
+        run: npm install
 
       - name: Build the app
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ # tauri.conf.json'daki versiyonu alır
+          tagName: v__VERSION__ # tauri.conf.json dosyasındaki versiyonu otomatik alır
           releaseName: "SimpleTools v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
