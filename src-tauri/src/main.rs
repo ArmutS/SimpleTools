@@ -19,6 +19,7 @@ fn set_window_position(window: &WebviewWindow) -> Result<(), Box<dyn std::error:
     Ok(())
 }
 
+
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
