@@ -60,7 +60,7 @@
 <style>
     @font-face {
         font-family: "NerdFonts";
-        src: url("../assets/fonts/HurmitNerdFont-Regular.otf");
+        src: url("/fonts/HurmitNerdFont-Regular.otf");
         font-weight: normal;
         font-style: normal;
     }
@@ -126,7 +126,6 @@
         margin-bottom: 5px;
     }
 
-    /* Yazı Stili */
     .tool-name {
         font-family: "NerdFonts";
         font-size: 1.1rem;
