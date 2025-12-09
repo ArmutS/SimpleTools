@@ -6,6 +6,7 @@
     import "../themes/carbonfox.css";
     import "../themes/icons.css";
     import { onMount } from "svelte";
+    import { invoke } from "@tauri-apps/api/core";
 
     let tools = [
         { id: "text", name: "Text Tools", icon: "nf-seti-text" },
@@ -26,9 +27,9 @@
         { id: "12", name: "Coming Soon", icon: "nf-fae-comet" },
     ];
 
-    function clickButtons(button_id: string) {
-        
-        }
+    async function create_window(id: String, title: String) {
+        await invoke("create_new_window", { id: id, title: title});
+    }
 
     // let currentTheme = localStorage.getItem("selected-theme") || "nordic-dark";
     function setTheme(themeName: string) {
@@ -44,7 +45,10 @@
 <main class="main">
     <div class="tools-box">
         {#each tools as tool}
-            <button class="tools-buttons" on:click={() => clickButtons(tool.id)}>
+            <button
+                class="tools-buttons"
+                on:click={() => create_window(tool.id,tool.name)}
+            >
                 <i class="{tool.icon} tool-icon"></i>
 
                 <span class="tool-name">{tool.name}</span>

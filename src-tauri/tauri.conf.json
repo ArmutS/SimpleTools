@@ -21,8 +21,7 @@
                 "center": false,
                 "titleBarStyle": "Transparent",
                 "transparent": true,
-                "decorations": false,
-                "visibleOnAllWorkspaces": true
+                "decorations": false
             }
         ],
         "security": {
