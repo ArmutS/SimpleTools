@@ -15,7 +15,7 @@
 
 
     onMount(() => {
-        setTheme("carbonfox-dark");
+        setTheme("catppuccin-dark");
     });
 </script>
 

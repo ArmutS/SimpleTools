@@ -45,7 +45,7 @@
     ];
 
     async function create_window(id: String, title: String) {
-        await invoke("create_new_window", { id: id, e: title,});
+        await invoke("create_new_window", { id: id, title: title});
     }
 
 </script>
