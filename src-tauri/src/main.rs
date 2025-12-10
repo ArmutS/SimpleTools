@@ -6,17 +6,17 @@ mod utils;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
-    Manager
+    Manager,
 };
-use utils::set_window_position;
 use utils::create_new_window;
+use utils::set_window_position;
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
             let show_i = MenuItem::with_id(app, "show", "Göster", true, None::<&str>)?;
             let quit_i = MenuItem::with_id(app, "quit", "Çıkış", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&show_i,&quit_i])?;
+            let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
 
             let _tray = TrayIconBuilder::with_id("tray")
                 .icon(app.default_window_icon().unwrap().clone())
@@ -58,20 +58,31 @@ fn main() {
         .invoke_handler(tauri::generate_handler![create_new_window])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
-                api.prevent_close();
-                if let Err(e) = window.hide(){
-                    eprintln!("Tray'e alınırken hata: {}", e);
+                if window.label() == "main" {
+                    api.prevent_close();
+                    if let Err(e) = window.hide() {
+                        eprintln!("Tray'e alınırken hata: {}", e);
+                    }
                 }
             }
 
-
             tauri::WindowEvent::Destroyed => {
-                if window.label() != "main" {
-                    if let Some(main_window) = window.get_webview_window("main") {
-                        if let Err(e) = set_window_position(&main_window) {
-                            eprintln!("Pencere ayarlanırken hata oluştu: {}", e);
-                        }
-                    }
+                let app_handle = window.app_handle();
+                let parent_label = if let Some((prefix, _suffix)) = window.label().rsplit_once("/")
+                {
+                    prefix
+                } else {
+                    "main"
+                };
+
+                if let Some(parent) = app_handle.get_webview_window(parent_label) {
+                    let _ =  (|| -> Result<(), String> {
+                        set_window_position(&parent).map_err(|e| e.to_string())?;
+                        parent.set_focus().map_err(|e| e.to_string())?;
+                        Ok(())
+                    })().map_err(|e| {
+                        eprintln!("Ana pencere islem hatasi{}", e)
+                    });
                 }
             }
 

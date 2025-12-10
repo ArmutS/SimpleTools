@@ -1,5 +1,6 @@
 <script lang="ts">
-import { invoke } from "@tauri-apps/api/core";
+    import { invoke } from "@tauri-apps/api/core";
+
     let tools = [
         { id: "text", name: "Text Tools", icon: "nf-seti-text" },
         { id: "pdf", name: "PDF Tools", icon: "nf-seti-pdf" },
@@ -13,13 +14,13 @@ import { invoke } from "@tauri-apps/api/core";
         { id: "network", name: "Network", icon: "nf-md-console_network" },
         { id: "dev", name: "Dev Tools", icon: "nf-dev-devicon" },
         { id: "quickcmd", name: "Quick Cmds", icon: "nf-oct-command_palette" },
-        { id: "soon", name: "Coming Soon", icon: "nf-fae-comet" },
-        { id: "soon", name: "Coming Soon", icon: "nf-fae-comet" },
-        { id: "soon", name: "Coming Soon", icon: "nf-fae-comet" },
-        { id: "soon", name: "Coming Soon", icon: "nf-fae-comet" },
+        { id: "9", name: "Coming Soon", icon: "nf-fae-comet" },
+        { id: "10", name: "Coming Soon", icon: "nf-fae-comet" },
+        { id: "11", name: "Coming Soon", icon: "nf-fae-comet" },
+        { id: "12", name: "Coming Soon", icon: "nf-fae-comet" },
     ];
 
-        async function create_window(id: String, title: String) {
+    async function create_window(id: String, title: String) {
         await invoke("create_new_window", { id: id, title: title});
     }
 

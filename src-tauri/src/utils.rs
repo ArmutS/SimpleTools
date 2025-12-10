@@ -17,20 +17,26 @@ pub fn set_window_position(window: &WebviewWindow) -> Result<(), Box<dyn std::er
 }
 
 #[tauri::command]
-pub async fn create_new_window(app: tauri::AppHandle, id: String, title: String) -> Result<(), String> {
-    if let Some(main_window) = app.get_webview_window("main") {
-        main_window.hide().map_err(|e| e.to_string())?;
+pub async fn create_new_window(
+    app: tauri::AppHandle,
+    window: tauri::WebviewWindow,
+    id: String,
+    title: String,
+) -> Result<(), String> {
+    if let Err(e) = window.hide() {
+        eprintln!("parent window hidelanirken bir sorun olustu {}", e)
     }
 
     if let Some(exis_window) = app.get_webview_window(&id) {
-            if let Err(e) = set_window_position(&exis_window) {
-                eprintln!("Var olan window gosterilirken hata olustu {}", e);
-            }
-            return Ok(());
+        if let Err(e) = set_window_position(&exis_window) {
+            eprintln!("Var olan window gosterilirken hata olustu {}", e);
+        }
+        return Ok(());
     }
 
     let name = id.clone();
     let path = String::from("/") + &(id.clone());
+    println!("Creating new window: {} at path: {}", name, path);
 
     let _new_window =
         tauri::WebviewWindowBuilder::new(&app, id, tauri::WebviewUrl::App(path.into()))
@@ -50,4 +56,3 @@ pub async fn create_new_window(app: tauri::AppHandle, id: String, title: String)
 
     Ok(())
 }
-
