@@ -43,6 +43,7 @@
     i[class^="nf-"],
     i[class*=" nf-"] {
         font-style: normal !important;
+        font-family: "HurmitNerd";
     }
 
     .tools-buttons {
