@@ -1,26 +1,41 @@
 [data-theme="gruvbox-dark"] {
-    --bg-app: #282828;
-    --bg-input: #3c3836;
-    --bg-suggestion: #282828;
-    --bg-options: #d79921;    /* Koyu Sarı/Turuncu */
-    
-    --text-main: #ebdbb2;
-    --text-muted: #a89984;
-    --options-text: #282828;  /* Turuncu üstüne Koyu Kahve yazı */
-    
-    --border-color: rgba(235, 219, 178, 0.1);
+  --bg-app: #282828;
+  --bg-input: #3c3836;
+  --bg-suggestion: #32302f;
+  --bg-options: #d79921;
+  --bg-header: #1d2021;
+
+  --text-main: #ebdbb2;
+  --text-muted: #a89984;
+  --options-text: #282828;
+
+  --border-color: #504945;
+  --accent: #fe8019;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(204, 36, 29, 0.25);
+  --diff-del-text: #fb4934;
+  --diff-add-bg: rgba(152, 151, 26, 0.25);
+  --diff-add-text: #b8bb26;
 }
 
-/* --- Gruvbox Light --- */
 [data-theme="gruvbox-light"] {
-    --bg-app: #fbf1c7;
-    --bg-input: #ebdbb2;
-    --bg-suggestion: #fbf1c7;
-    --bg-options: #d79921;    /* Koyu Sarı */
-    
-    --text-main: #3c3836;
-    --text-muted: #928374;
-    --options-text: #fbf1c7;  /* Bu sefer Sarı üstüne Açık Krem yazı (Daha şık durur) */
-    
-    --border-color: rgba(60, 56, 54, 0.1);
+  --bg-app: #fbf1c7;
+  --bg-input: #ebdbb2;
+  --bg-suggestion: #f9f5d7;
+  --bg-options: #d79921;
+  --bg-header: #d5c4a1;
+
+  --text-main: #3c3836;
+  --text-muted: #928374;
+  --options-text: #fbf1c7;
+
+  --border-color: #bdae93;
+  --accent: #af3a03;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(157, 0, 6, 0.15);
+  --diff-del-text: #9d0006;
+  --diff-add-bg: rgba(121, 116, 14, 0.15);
+  --diff-add-text: #79740e;
 }

@@ -1,22 +1,41 @@
 [data-theme="nordic-dark"] {
-    --bg-app: #2e3440;
-    --bg-input: #3b4252;
-    --bg-options: #81a1c1; /* Nordic Blue */
-    --options-text: #2e3440; /* Nordic Blue */
-    --text-main: #eceff4;
-    --text-muted: #d8dee9;
-    --border-subtle: rgba(236, 239, 244, 0.1);
+  --bg-app: #2e3440;
+  --bg-input: #3b4252;
+  --bg-suggestion: #2e3440;
+  --bg-options: #88c0d0;
+  --bg-header: #242933;
+
+  --text-main: #d8dee9;
+  --text-muted: #4c566a;
+  --options-text: #2e3440;
+
+  --border-color: #434c5e;
+  --accent: #81a1c1;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(191, 97, 106, 0.25);
+  --diff-del-text: #bf616a;
+  --diff-add-bg: rgba(163, 190, 140, 0.25);
+  --diff-add-text: #a3be8c;
 }
 
 [data-theme="nordic-light"] {
-    --bg-app: #ECEFF4;       /* Snow Storm (En açık beyaz) */
-    --bg-input: #D8DEE9;     /* Biraz daha koyu gri/beyaz */
-    --bg-suggestion: #ECEFF4;
-    --bg-options: #88C0D0;   /* Nordic Blue (Değişmedi, light'ta da güzel durur) */
-    
-    --text-main: #2E3440;    /* Polar Night (Koyu Lacivert/Siyah) */
-    --text-muted: #4C566A;   /* Orta ton gri */
-    --options-text: #2E3440; /* Mavi üstüne Koyu yazı */
-    
-    --border-color: rgba(46, 52, 64, 0.1);
+  --bg-app: #eceff4;
+  --bg-input: #e5e9f0;
+  --bg-suggestion: #ffffff;
+  --bg-options: #5e81ac;
+  --bg-header: #d8dee9;
+
+  --text-main: #2e3440;
+  --text-muted: #4c566a;
+  --options-text: #eceff4;
+
+  --border-color: #d8dee9;
+  --accent: #5e81ac;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(191, 97, 106, 0.15);
+  --diff-del-text: #99324b;
+  --diff-add-bg: rgba(163, 190, 140, 0.15);
+  --diff-add-text: #6f8c5d;
 }

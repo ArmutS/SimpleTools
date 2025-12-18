@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod utils;
+mod textfunc;
 
 use tauri::{
     menu::{Menu, MenuItem},
@@ -14,8 +15,8 @@ use utils::set_window_position;
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
-            let show_i = MenuItem::with_id(app, "show", "Göster", true, None::<&str>)?;
-            let quit_i = MenuItem::with_id(app, "quit", "Çıkış", true, None::<&str>)?;
+            let show_i = MenuItem::with_id(app, "show", "Goster", true, None::<&str>)?;
+            let quit_i = MenuItem::with_id(app, "quit", "Cikis", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
 
             let _tray = TrayIconBuilder::with_id("tray")
@@ -55,13 +56,13 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![create_new_window])
+        .invoke_handler(tauri::generate_handler![create_new_window, textfunc::process_text_diff])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "main" {
                     api.prevent_close();
                     if let Err(e) = window.hide() {
-                        eprintln!("Tray'e alınırken hata: {}", e);
+                        eprintln!("Tray'e alinirken hata: {}", e);
                     }
                 }
             }

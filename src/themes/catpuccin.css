@@ -1,22 +1,36 @@
 [data-theme="catppuccin-dark"] {
-    --bg-app: #1e1e2e;
-    --bg-input: #181825;
-    --bg-options: #a6adc8;
-    --options-text: #181825;
-    --text-main: #cdd6f4;
-    --text-muted: #a6adc8;
-    --border-subtle: rgba(255, 255, 255, 0.1);
+  --bg-app: #1e1e2e;
+  --bg-input: #181825;
+  --bg-options: #a6adc8;
+  --options-text: #181825;
+  --text-main: #cdd6f4;
+  --text-muted: #a6adc8;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --bg-header: #11111b; /* Daha koyu header */
+  --border-color: #313244;
+  --accent: #89b4fa; /* Mavi */
+
+  --diff-del-bg: rgba(243, 139, 168, 0.5);
+  --diff-del-text: #f38ba8;
+  --diff-add-bg: rgba(166, 227, 161, 0.5);
+  --diff-add-text: #a6e3a1;
 }
 
 [data-theme="catppuccin-light"] {
-    --bg-app: #eff1f5;       /* Latte Base (Kırık Beyaz) */
-    --bg-input: #e6e9ef;     /* Latte Mantle (Açık Gri) */
-    --bg-suggestion: #eff1f5;
-    --bg-options: #df8e1d;   /* Latte Yellow (Koyu Sarı) */
-    
-    --text-main: #4c4f69;    /* Latte Text (Koyu Gri/Lacivert) */
-    --text-muted: #9ca0b0;   /* Soluk Gri */
-    --options-text: #eff1f5; /* Sarı üstüne Beyaz yazı */
-    
-    --border-color: rgba(76, 79, 105, 0.1); /* Koyu çerçevenin %10 şeffaf hali */
+  --bg-app: #eff1f5; /* Latte Base (Kırık Beyaz) */
+  --bg-input: #e6e9ef; /* Latte Mantle (Açık Gri) */
+  --bg-suggestion: #eff1f5;
+  --bg-options: #df8e1d; /* Latte Yellow (Koyu Sarı) */
+
+  --text-main: #4c4f69; /* Latte Text (Koyu Gri/Lacivert) */
+  --text-muted: #9ca0b0; /* Soluk Gri */
+  --options-text: #eff1f5; /* Sarı üstüne Beyaz yazı */
+  --bg-header: #dce0e8;
+  --border-color: #bcc0cc;
+  --accent: #1e66f5;
+
+  --diff-del-bg: rgba(210, 15, 57, 1);
+  --diff-del-text: #d20f39;
+  --diff-add-bg: rgba(64, 160, 43, 1);
+  --diff-add-text: #40a02b;
 }

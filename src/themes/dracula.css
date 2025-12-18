@@ -1,26 +1,41 @@
 [data-theme="dracula-dark"] {
-    --bg-app: #282a36;
-    --bg-input: #44475a;
-    --bg-suggestion: #282a36;
-    --bg-options: #bd93f9;    /* Parlak Mor */
-    
-    --text-main: #f8f8f2;
-    --text-muted: #6272a4;
-    --options-text: #282a36;  /* Mor üstüne Koyu Gri yazı */
-    
-    --border-color: rgba(189, 147, 249, 0.2);
+  --bg-app: #282a36;
+  --bg-input: #44475a;
+  --bg-suggestion: #282a36;
+  --bg-options: #bd93f9;
+  --bg-header: #191a21;
+
+  --text-main: #f8f8f2;
+  --text-muted: #6272a4;
+  --options-text: #282a36;
+
+  --border-color: #6272a4;
+  --accent: #ff79c6;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(255, 85, 85, 0.25);
+  --diff-del-text: #ff5555;
+  --diff-add-bg: rgba(80, 250, 123, 0.25);
+  --diff-add-text: #50fa7b;
 }
 
-/* --- Dracula Light --- */
 [data-theme="dracula-light"] {
-    --bg-app: #FFFFFF;
-    --bg-input: #e4e4e4;
-    --bg-suggestion: #FFFFFF;
-    --bg-options: #ff79c6;    /* Parlak Pembe */
-    
-    --text-main: #282a36;
-    --text-muted: #9eaec5;
-    --options-text: #FFFFFF;  /* Pembe üstüne Beyaz yazı */
-    
-    --border-color: rgba(40, 42, 54, 0.1);
+  --bg-app: #ffffff;
+  --bg-input: #f0f0f0;
+  --bg-suggestion: #ffffff;
+  --bg-options: #9580ff;
+  --bg-header: #e4e4e4;
+
+  --text-main: #282a36;
+  --text-muted: #a0a0a0;
+  --options-text: #ffffff;
+
+  --border-color: #dcdcdc;
+  --accent: #ff80bf;
+
+  /* Diff Renkleri */
+  --diff-del-bg: rgba(255, 85, 85, 0.15);
+  --diff-del-text: #d94444;
+  --diff-add-bg: rgba(80, 250, 123, 0.15);
+  --diff-add-text: #2f9e44;
 }
