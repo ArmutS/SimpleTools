@@ -13,6 +13,8 @@ use utils::create_new_window;
 use utils::set_window_position;
 
 fn main() {
+    //Linux WEBKIT_FIX
+    std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
     tauri::Builder::default()
         .setup(|app| {
             let show_i = MenuItem::with_id(app, "show", "Goster", true, None::<&str>)?;
