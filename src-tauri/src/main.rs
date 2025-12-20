@@ -58,7 +58,7 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![create_new_window, textfunc::process_text_diff])
+        .invoke_handler(tauri::generate_handler![create_new_window, textfunc::process_text_diff, textfunc::process_text_reg])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "main" {

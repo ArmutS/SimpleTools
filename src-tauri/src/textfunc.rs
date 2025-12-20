@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::RegexBuilder;
 use serde::Serialize;
 use similar::{ChangeTag, TextDiff};
 
@@ -41,12 +41,28 @@ pub struct MatchResults {
     end: usize,
 }
 
-#[tauri::command(rename_all= "snake_case")]
+#[tauri::command(rename_all = "snake_case")]
 pub fn process_text_reg(
     current_regex: &str,
     current_text: &str,
+    current_flags: &str,
 ) -> Result<Vec<MatchResults>, String> {
-    let process_regex = Regex::new(current_regex).map_err(|e| e.to_string())?;
+    let mut build_reg = RegexBuilder::new(current_regex);
+
+    if current_flags.contains("s") {
+        build_reg.dot_matches_new_line(true);
+    }
+
+    if current_flags.contains("i") {
+        build_reg.case_insensitive(true);
+    }
+
+    if current_flags.contains("m") {
+        build_reg.multi_line(true);
+    }
+
+    let process_regex = build_reg.build().map_err(|e| e.to_string())?;
+
     Ok(process_regex
         .find_iter(current_text)
         .map(|reg| MatchResults {
