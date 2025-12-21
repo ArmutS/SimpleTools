@@ -5,7 +5,7 @@
         { id: "text/diff", name: "Diff Viewer", icon: "nf-seti-text" },
         { id: "text/regex", name: "Regex Tester", icon: "nf-seti-pdf" },
         {
-            id: "extractor",
+            id: "text/extractor",
             name: "Extractor",
             icon: "nf-md-file_arrow_left_right_outline",
         },
@@ -45,9 +45,8 @@
     ];
 
     async function create_window(id: String, title: String) {
-        await invoke("create_new_window", { id: id, title: title});
+        await invoke("create_new_window", { id: id, title: title });
     }
-
 </script>
 
 <main class="main">

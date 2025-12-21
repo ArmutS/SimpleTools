@@ -1,8 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-mod utils;
 mod textfunc;
+mod utils;
 
 use tauri::{
     menu::{Menu, MenuItem},
@@ -58,7 +58,12 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![create_new_window, textfunc::process_text_diff, textfunc::process_text_reg])
+        .invoke_handler(tauri::generate_handler![
+            create_new_window,
+            textfunc::process_text_diff,
+            textfunc::process_text_reg,
+            textfunc::process_extractor
+        ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
                 if window.label() == "main" {
@@ -79,13 +84,12 @@ fn main() {
                 };
 
                 if let Some(parent) = app_handle.get_webview_window(parent_label) {
-                    let _ =  (|| -> Result<(), String> {
+                    let _ = (|| -> Result<(), String> {
                         set_window_position(&parent).map_err(|e| e.to_string())?;
                         parent.set_focus().map_err(|e| e.to_string())?;
                         Ok(())
-                    })().map_err(|e| {
-                        eprintln!("Ana pencere islem hatasi{}", e)
-                    });
+                    })()
+                    .map_err(|e| eprintln!("Ana pencere islem hatasi{}", e));
                 }
             }
 
