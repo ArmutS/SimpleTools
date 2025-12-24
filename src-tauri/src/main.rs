@@ -17,6 +17,31 @@ fn main() {
     std::env::set_var("WEBKIT_DISABLE_DMABUF_RENDERER", "1");
     tauri::Builder::default()
         .setup(|app| {
+            #[cfg(desktop)]
+            {
+                use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
+
+                let ctrl_n_shortcut = Shortcut::new(Some(Modifiers::CONTROL), Code::KeyG);
+                app.handle().plugin(
+                    tauri_plugin_global_shortcut::Builder::new().with_handler(move |_app, shortcut, event| {
+                        println!("{:?}", shortcut);
+                        if shortcut == &ctrl_n_shortcut {
+                            match event.state() {
+                              ShortcutState::Pressed => {
+                                println!("Ctrl-N Pressed!");
+                              }
+                              ShortcutState::Released => {
+                                println!("Ctrl-N Released!");
+                              }
+                            }
+                        }
+                    })
+                    .build(),
+                )?;
+
+                app.global_shortcut().register(ctrl_n_shortcut)?;
+            }
+
             let show_i = MenuItem::with_id(app, "show", "Goster", true, None::<&str>)?;
             let quit_i = MenuItem::with_id(app, "quit", "Cikis", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_i, &quit_i])?;

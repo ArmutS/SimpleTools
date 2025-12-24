@@ -16,8 +16,6 @@ pub fn set_window_position(window: &WebviewWindow) -> Result<(), Box<dyn std::er
     Ok(())
 }
 
-
-
 #[tauri::command]
 pub async fn create_new_window(
     app: tauri::AppHandle,
@@ -58,4 +56,3 @@ pub async fn create_new_window(
 
     Ok(())
 }
-
