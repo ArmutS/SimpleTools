@@ -1,52 +1,61 @@
-<script lang="ts"></script>
+<script lang="ts">
+    import { invoke } from "@tauri-apps/api/core";
+
+    let pure_text: boolean = true;
+    let current_text: string = "";
+    let result = "";
+
+    async function runStrip(text: string, is_pure: boolean) {
+        try {
+            result = await invoke("process_strip", {
+                current_text: text,
+                pure_text: is_pure,
+            });
+        } catch (error) {
+            console.error("Strip hatasi:", error);
+        }
+    }
+
+    $: runStrip(current_text, pure_text);
+</script>
+
 <main class="stripper-container">
-    
     <div class="pane input-pane">
         <div class="pane-header">HTML INPUT</div>
-        <textarea 
-            class="editor source-editor" 
-            placeholder="HTML kodunu buraya yapıştır..." 
+        <textarea
+            class="editor source-editor"
+            placeholder="HTML kodunu buraya yapıştır..."
             spellcheck="false"
-            
-            ><div class="content">
-    <h1>Merhaba Dünya &amp; Mars!</h1>
-    <p>Bu bir <b>HTML</b> temizleme testidir.</p>
-    <a href="#">Link</a> ve <span>Span</span> etiketleri silinecek.
-</div></textarea>
+            bind:value={current_text}
+        ></textarea>
     </div>
 
     <div class="divider"></div>
 
     <div class="pane output-pane">
-        
         <div class="controls">
             <div class="filter-label">OPTIONS:</div>
-            
-            <label class="toggle-chip active">
-                <input type="checkbox" checked /> 
+
+            <label class="toggle-chip" class:active={pure_text}>
+                <input type="checkbox" bind:checked={pure_text} />
                 Decode Entities (&amp; &rarr; &)
             </label>
         </div>
 
         <div class="pane-header result-header">
             <span>PLAIN TEXT</span>
-            
-            <button class="action-btn">
-                Copy Result
-            </button>
+            <button class="action-btn"> Copy Result </button>
         </div>
 
-        <textarea 
-            class="editor result-editor" 
-            placeholder="Temizlenen metin burada görünecek..." 
+        <textarea
+            class="editor result-editor"
+            placeholder="Temizlenen metin burada görünecek..."
             readonly
-            
-            >Merhaba Dünya & Mars!
-Bu bir HTML temizleme testidir.
-Link ve Span etiketleri silinecek.</textarea>
-
+            bind:value={result}
+        ></textarea>
     </div>
 </main>
+
 <style>
     /* --- GENEL LAYOUT --- */
     .stripper-container {
@@ -62,7 +71,7 @@ Link ve Span etiketleri silinecek.</textarea>
         flex: 1;
         display: flex;
         flex-direction: column;
-        min-width: 0; /* Flexbox taşma koruması */
+        min-width: 0;
     }
 
     .divider {
@@ -83,7 +92,7 @@ Link ve Span etiketleri silinecek.</textarea>
         justify-content: space-between;
         align-items: center;
         user-select: none;
-        flex-shrink: 0; /* Header asla büzüşmesin */
+        flex-shrink: 0;
     }
 
     .controls {
@@ -93,7 +102,7 @@ Link ve Span etiketleri silinecek.</textarea>
         display: flex;
         align-items: center;
         gap: 8px;
-        flex-wrap: wrap; /* Sığmazsa aşağı insin */
+        flex-wrap: wrap;
         flex-shrink: 0;
     }
 
@@ -111,14 +120,12 @@ Link ve Span etiketleri silinecek.</textarea>
         line-height: 1.6;
     }
 
-    /* Sol taraf biraz daha silik (Source Code Havası) */
     .source-editor {
-        background-color: rgba(0, 0, 0, 0.1); 
+        background-color: rgba(0, 0, 0, 0.1);
     }
 
-    /* Sağ taraf (Sonuç) daha net */
     .result-editor {
-        color: var(--accent); /* Vurgu rengi ile sonuç */
+        color: var(--accent);
     }
 
     /* --- CHIP BUTTONS --- */
@@ -152,6 +159,7 @@ Link ve Span etiketleri silinecek.</textarea>
         display: none;
     }
 
+    /* Svelte dinamik class:active kullanımı ile burası tetiklenir */
     .toggle-chip.active {
         background-color: var(--accent);
         border-color: var(--accent);
@@ -159,7 +167,6 @@ Link ve Span etiketleri silinecek.</textarea>
         font-weight: 600;
     }
 
-    /* --- ACTION BUTTON --- */
     .action-btn {
         background: transparent;
         border: 1px solid var(--border-color);

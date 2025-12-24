@@ -1,8 +1,8 @@
-use std::collections::HashSet;
-
+use html_escape;
 use regex::{Regex, RegexBuilder};
 use serde::{Deserialize, Serialize};
 use similar::{ChangeTag, TextDiff};
+use std::collections::HashSet;
 
 #[derive(Serialize)]
 pub struct DiffResult {
@@ -117,4 +117,15 @@ pub fn process_extractor(current_text: &str, options: Options) -> Result<Vec<Str
         }
     }
     Ok(result.into_iter().collect())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub fn process_strip(current_text: &str, pure_text: bool) -> Result<String, String> {
+    let regex = Regex::new(r"<[^>]*>").map_err(|e| e.to_string())?;
+
+    if pure_text {
+        Ok(html_escape::decode_html_entities(&regex.replace_all(current_text, "")).into_owned())
+    } else {
+        Ok(regex.replace_all(current_text, "").into_owned())
+    }
 }

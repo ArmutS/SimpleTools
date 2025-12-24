@@ -62,6 +62,7 @@ fn main() {
             create_new_window,
             textfunc::process_text_diff,
             textfunc::process_text_reg,
+            textfunc::process_strip,
             textfunc::process_extractor
         ])
         .on_window_event(|window, event| match event {
