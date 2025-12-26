@@ -1,4 +1,7 @@
-use tauri::{Manager, PhysicalPosition, PhysicalSize, WebviewWindow};
+use std::sync::Mutex;
+use tauri::{AppHandle, Manager, PhysicalPosition, PhysicalSize, WebviewWindow};
+
+static LAST_ACTIVE_WINDOW: Mutex<Option<String>> = Mutex::new(None);
 
 pub fn set_window_position(window: &WebviewWindow) -> Result<(), Box<dyn std::error::Error>> {
     if let Some(monitor) = window.current_monitor()? {
@@ -55,4 +58,68 @@ pub async fn create_new_window(
     }
 
     Ok(())
+}
+
+pub fn toggle_window(app: &AppHandle) {
+    let windows = app.webview_windows();
+
+    // -----------------------------------------------------------
+    // SENARYO 1: EKRANDA GÖRÜNEN BİR PENCERE VAR MI?
+    // -----------------------------------------------------------
+    for (label, window) in &windows {
+        if window.is_visible().unwrap_or(false) {
+            // Evet, görünür bir pencere bulduk (Örn: regex veya text)
+
+            // 1. Bu pencerenin adını hafızaya kaydet
+            if let Ok(mut last) = LAST_ACTIVE_WINDOW.lock() {
+                *last = Some(label.clone());
+                println!("Hafızaya alındı: {}", label); // Debug
+            }
+
+            // 2. Pencereyi gizle
+            let _ = window.hide();
+
+            // 3. İşlem tamam, çık (Diğer pencerelere bakma)
+            return;
+        }
+    }
+
+    // -----------------------------------------------------------
+    // SENARYO 2: HİÇBİR PENCERE GÖRÜNMÜYOR
+    // -----------------------------------------------------------
+
+    // 1. Önce hafızaya bakalım: En son kimi kapattık?
+    let target_label = if let Ok(last) = LAST_ACTIVE_WINDOW.lock() {
+        last.clone() // İsmi kopyala (örn: "regex")
+    } else {
+        None
+    };
+
+    // 2. Hafızadaki pencereyi bulup açmaya çalışalım
+    if let Some(label) = target_label {
+        if let Some(window) = app.get_webview_window(&label) {
+            println!("Hafızadan geri çağrılıyor: {}", label);
+
+            // Konumlandır ve Göster
+            let _ = set_window_position(&window);
+            if window.is_minimized().unwrap_or(false) {
+                let _ = window.unminimize();
+            }
+            let _ = window.show();
+            let _ = window.set_focus();
+            return; // Başarıyla açtık, çık.
+        }
+    }
+
+    // 3. Hafıza boşsa veya hafızadaki pencere artık yoksa (kapatılmışsa)
+    // Varsayılan olarak "main" penceresini aç.
+    if let Some(main_win) = app.get_webview_window("main") {
+        println!("Varsayılan (Main) açılıyor");
+        let _ = set_window_position(&main_win);
+        if main_win.is_minimized().unwrap_or(false) {
+            let _ = main_win.unminimize();
+        }
+        let _ = main_win.show();
+        let _ = main_win.set_focus();
+    }
 }
