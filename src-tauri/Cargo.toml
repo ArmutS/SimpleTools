@@ -26,6 +26,11 @@ similar = "2.7.0"
 regex = "1.12.2"
 html-escape = "0.2.13"
 rdev = "0.5.3"
+base64 = "0.22.1"
+pulldown-cmark = "0.13.0"
+slug = "0.1.6"
+lipsum = "0.9.1"
+unicode-segmentation = "1.12.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-global-shortcut = "2"

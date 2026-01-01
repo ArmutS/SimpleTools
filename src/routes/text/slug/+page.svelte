@@ -1,19 +1,22 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+
   let input = "";
   let output = "";
 
-  function toSlug(text: string) {
-    return text
-      .toString()
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "-") // Replace spaces with -
-      .replace(/&/g, "-and-") // Replace & with 'and'
-      .replace(/[^\w\-]+/g, "") // Remove all non-word chars
-      .replace(/\-\-+/g, "-"); // Replace multiple - with single -
+  async function toSlug() {
+    if (!input) {
+      output = "";
+      return;
+    }
+    try {
+      output = await invoke("process_slug_gen", { current_text: input });
+    } catch (e) {
+      output = "Error: " + e;
+    }
   }
 
-  $: output = toSlug(input);
+  $: toSlug(), input;
 </script>
 
 <main class="tool-container">

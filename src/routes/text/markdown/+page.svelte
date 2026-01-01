@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { marked } from "marked";
+  import { invoke } from "@tauri-apps/api/core";
 
   let input = "# Hello World\n\nStart typing markdown...";
   let output = "";
@@ -10,9 +10,11 @@
       return;
     }
     try {
-      output = await marked.parse(input);
+      output = await invoke("process_markdown_preview", {
+        current_text: input,
+      });
     } catch (e) {
-      output = "Error parsing markdown";
+      output = "Error parsing markdown: " + e;
     }
   }
 

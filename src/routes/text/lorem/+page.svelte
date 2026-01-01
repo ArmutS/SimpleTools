@@ -1,119 +1,22 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+
   let type: "paragraphs" | "sentences" | "words" = "paragraphs";
   let count = 5;
   let output = "";
 
-  const words = [
-    "lorem",
-    "ipsum",
-    "dolor",
-    "sit",
-    "amet",
-    "consectetur",
-    "adipiscing",
-    "elit",
-    "sed",
-    "do",
-    "eiusmod",
-    "tempor",
-    "incididunt",
-    "ut",
-    "labore",
-    "et",
-    "dolore",
-    "magna",
-    "aliqua",
-    "ut",
-    "enim",
-    "ad",
-    "minim",
-    "veniam",
-    "quis",
-    "nostrud",
-    "exercitation",
-    "ullamco",
-    "laboris",
-    "nisi",
-    "ut",
-    "aliquip",
-    "ex",
-    "ea",
-    "commodo",
-    "consequat",
-    "duis",
-    "aute",
-    "irure",
-    "dolor",
-    "in",
-    "reprehenderit",
-    "in",
-    "voluptate",
-    "velit",
-    "esse",
-    "cillum",
-    "dolore",
-    "eu",
-    "fugiat",
-    "nulla",
-    "pariatur",
-    "excepteur",
-    "sint",
-    "occaecat",
-    "cupidatat",
-    "non",
-    "proident",
-    "sunt",
-    "in",
-    "culpa",
-    "qui",
-    "officia",
-    "deserunt",
-    "mollit",
-    "anim",
-    "id",
-    "est",
-    "laborum",
-  ];
-
-  function generate() {
+  async function generate() {
     if (count < 1) count = 1;
     if (count > 1000) count = 1000;
 
-    if (type === "words") {
-      output = generateWords(count);
-    } else if (type === "sentences") {
-      output = generateSentences(count);
-    } else {
-      output = generateParagraphs(count);
+    try {
+      output = await invoke("process_lorem", {
+        count: count,
+        mode: type,
+      });
+    } catch (e) {
+      output = "Error: " + e;
     }
-  }
-
-  function generateWords(n: number) {
-    let res = [];
-    for (let i = 0; i < n; i++) {
-      res.push(words[Math.floor(Math.random() * words.length)]);
-    }
-    return res.join(" ");
-  }
-
-  function generateSentences(n: number) {
-    let res = [];
-    for (let i = 0; i < n; i++) {
-      let len = Math.floor(Math.random() * 10) + 5; // 5-15 words
-      let sentence = generateWords(len);
-      sentence = sentence.charAt(0).toUpperCase() + sentence.slice(1) + ".";
-      res.push(sentence);
-    }
-    return res.join(" ");
-  }
-
-  function generateParagraphs(n: number) {
-    let res = [];
-    for (let i = 0; i < n; i++) {
-      let len = Math.floor(Math.random() * 5) + 3; // 3-8 sentences
-      res.push(generateSentences(len));
-    }
-    return res.join("\n\n");
   }
 
   // Generate initial on load

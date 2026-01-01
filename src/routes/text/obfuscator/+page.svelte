@@ -1,28 +1,23 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+
   let input = "";
   let output = "";
   let mode: "rot13" | "reverse" | "base64" = "rot13";
 
-  function process() {
+  async function process() {
     if (!input) {
       output = "";
       return;
     }
 
-    if (mode === "rot13") {
-      output = input.replace(/[a-zA-Z]/g, function (c) {
-        const base = c <= "Z" ? 90 : 122;
-        const code = c.charCodeAt(0) + 13;
-        return String.fromCharCode(base >= code ? code : code - 26);
+    try {
+      output = await invoke("process_obfuscator", {
+        current_text: input,
+        mode: mode,
       });
-    } else if (mode === "reverse") {
-      output = input.split("").reverse().join("");
-    } else if (mode === "base64") {
-      try {
-        output = btoa(input);
-      } catch (e) {
-        output = "Error: Input contains characters not supported by Base64.";
-      }
+    } catch (e) {
+      output = "Error: " + e;
     }
   }
 

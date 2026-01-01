@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+
   let input = "";
   let chars: {
     char: string;
@@ -7,27 +9,18 @@
     entity: string;
   }[] = [];
 
-  function process() {
+  async function process() {
     if (!input) {
       chars = [];
       return;
     }
 
-    // Limit to 500 characters to prevent lag
-    const text = input.slice(0, 500);
-
-    // Use spread to split by glyphs correctly (handle emojis)
-    const charArray = [...text];
-
-    chars = charArray.map((c) => {
-      const code = c.codePointAt(0) || 0;
-      return {
-        char: c,
-        unicode: `U+${code.toString(16).toUpperCase().padStart(4, "0")}`,
-        decimal: code,
-        entity: `&#${code};`,
-      };
-    });
+    try {
+      // Need to cast or define type
+      chars = await invoke("process_char_inspector", { current_text: input });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   $: process(), input;

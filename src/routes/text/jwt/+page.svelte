@@ -1,46 +1,32 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
+
   let input = "";
   let output = "";
   let header = "";
 
-  function decodeConfirm(str: string) {
-    // Replace Base64Url characters
-    str = str.replace(/-/g, "+").replace(/_/g, "/");
-    // Pad with =
-    while (str.length % 4) {
-      str += "=";
-    }
-    return atob(str);
-  }
-
-  function decodeJWT() {
+  async function decodeJWT() {
     if (!input) {
       output = "";
       header = "";
       return;
     }
 
-    const parts = input.split(".");
-    if (parts.length !== 3) {
-      output = "Invalid JWT structure (must have 3 parts).";
-      header = "";
-      return;
-    }
-
     try {
-      const headerDecoded = decodeConfirm(parts[0]);
-      const payloadDecoded = decodeConfirm(parts[1]);
-
-      header = JSON.stringify(JSON.parse(headerDecoded), null, 2);
-      output = JSON.stringify(JSON.parse(payloadDecoded), null, 2);
+      // Need to type definition or use any
+      const res: any = await invoke("process_jwt_decode", { token: input });
+      header = res.header;
+      output = res.payload;
     } catch (e) {
-      output = "Error decoding Base64 or parsing JSON.";
+      output = "Error: " + e;
+      header = "";
     }
   }
 
   $: decodeJWT(), input;
 </script>
 
+```
 <main class="tool-container">
   <div class="pane input-pane">
     <div class="pane-header">ENCODED TOKEN</div>

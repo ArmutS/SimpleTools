@@ -120,7 +120,14 @@ fn main() {
             textfunc::process_text_diff,
             textfunc::process_text_reg,
             textfunc::process_strip,
-            textfunc::process_extractor
+            textfunc::process_extractor,
+            textfunc::process_string_escape,
+            textfunc::process_slug_gen,
+            textfunc::process_jwt_decode,
+            textfunc::process_markdown_preview,
+            textfunc::process_lorem,
+            textfunc::process_obfuscator,
+            textfunc::process_char_inspector
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
