@@ -111,7 +111,7 @@ fn main() {
                 .build(app);
 
             let mainwindow = app.get_webview_window("main").unwrap();
-            set_window_position(&mainwindow).ok();
+            set_window_position(&mainwindow, None, None).ok();
 
             Ok(())
         })
@@ -146,7 +146,7 @@ fn main() {
                 };
                 if let Some(parent) = app_handle.get_webview_window(parent_label) {
                     let _ = (|| -> Result<(), String> {
-                        set_window_position(&parent).map_err(|e| e.to_string())?;
+                        set_window_position(&parent, None, None).map_err(|e| e.to_string())?;
                         parent.set_focus().map_err(|e| e.to_string())?;
                         Ok(())
                     })();
