@@ -3,18 +3,105 @@ use tauri::{AppHandle, Manager, PhysicalPosition, PhysicalSize, WebviewWindow};
 
 static LAST_ACTIVE_WINDOW: Mutex<Option<String>> = Mutex::new(None);
 
+use mouse_position::mouse_position::Mouse;
+
 pub fn set_window_position(window: &WebviewWindow, width: Option<u32>, height: Option<u32>) -> Result<(), Box<dyn std::error::Error>> {
-    if let Some(monitor) = window.current_monitor()? {
-        let monitor_size = monitor.size();
-        let target_width = width.unwrap_or(800);
-        let target_height = height.unwrap_or(800);
-        
-        let x = (monitor_size.width as i32 - target_width as i32) / 2;
-        let y = (monitor_size.height as f64 * 0.10) as i32;
-        
-        window.set_size(PhysicalSize::new(target_width, target_height))?;
-        window.set_position(PhysicalPosition::new(x, y))?;
+    // 1. Layer Tespiti
+    // Label veya Path üzerinden katman tespiti.
+    // Main -> Layer 1
+    // /text -> Layer 2 (1 slash)
+    // /text/diff -> Layer 3 (2 slash)
+    
+    // Basitçe labela bakalım:
+    let label = window.label();
+    
+    // NOT: window.label() "text/diff" şeklinde geliyor oluştururken verdiğimiz id'ye göre.
+    // create_new_window'da id'yi label olarak kullanıyoruz.
+    // "text" -> Layer 2
+    // "text/diff" -> Layer 3
+    let slash_count = label.matches('/').count();
+    
+    let layer = if label == "main" { 
+        1 
+    } else if slash_count == 0 { 
+        2 // "text"
+    } else { 
+        3 // "text/diff"
+    };
+
+    println!("LAYER DEBUG: Window '{}' detected as Layer {}", label, layer);
+
+    // 2. Mouse ve Monitör Tespiti (Global)
+    let mut mouse_x = 0;
+    let mut mouse_y = 0;
+    
+    match Mouse::get_mouse_position() {
+        Mouse::Position { x, y } => {
+            mouse_x = x;
+            mouse_y = y;
+        },
+        Mouse::Error => eprintln!("Error getting mouse position"),
     }
+
+    let monitors = window.available_monitors()?;
+    let mut target_monitor = window.current_monitor()?.unwrap_or(
+        window.primary_monitor()?.unwrap()
+    );
+
+    for m in &monitors {
+        let pos = m.position();
+        let size = m.size();
+        
+        // Debug
+        println!("  - Monitor: Pos({},{}), Size({}x{})", pos.x, pos.y, size.width, size.height);
+
+        let m_min_x = pos.x;
+        let m_max_x = pos.x + size.width as i32;
+        let m_min_y = pos.y;
+        let m_max_y = pos.y + size.height as i32;
+
+        if mouse_x >= m_min_x && mouse_x < m_max_x && mouse_y >= m_min_y && mouse_y < m_max_y {
+            println!("  -> HIT! Mouse is on this monitor.");
+            target_monitor = m.clone();
+            // break; // Break'i kaldırdım, tüm monitörleri görelim. Son bulunan (en üst katman?) geçerli olsun.
+        }
+    }
+
+    // 3. Boyut ve Pozisyon Hesaplama
+    let m_pos = target_monitor.position();
+    let m_size = target_monitor.size();
+
+    let mut final_width = 0;
+    let mut final_height = 0;
+    let mut final_x = 0;
+    let mut final_y = 0;
+
+    if layer == 1 || layer == 2 {
+        // Katman 1 ve 2: %50 Genişlik, %45 Yükseklik, Tam Orta
+        final_width = (m_size.width as f64 * 0.60) as u32;
+        final_height = (m_size.height as f64 * 0.65) as u32;
+        
+        final_x = m_pos.x + (m_size.width as i32 - final_width as i32) / 2;
+        final_y = m_pos.y + (m_size.height as i32 - final_height as i32) / 2;
+    } else {
+        // Katman 3: Varsayılan (veya mevcut), Ortanın biraz üstü
+        // Önce mevcut boyuta bakalım, eğer 0 ise (yeni pencere) varsayılanı alalım
+        let current_size = window.inner_size()?;
+        // Eğer create_new_window'dan width/height geldiyse onu kullan, yoksa mevcudu, o da yoksa 1000x800
+        // (Burada parametre olarak gelen width/height'i önceliklendiriyoruz)
+        final_width = width.unwrap_or(if current_size.width > 0 { current_size.width } else { 1000 });
+        final_height = height.unwrap_or(if current_size.height > 0 { current_size.height } else { 800 });
+
+        final_x = m_pos.x + (m_size.width as i32 - final_width as i32) / 2;
+        // Y: Ortanın üstü (%35)
+        final_y = m_pos.y + ((m_size.height as f64 - final_height as f64) * 0.35) as i32;
+    }
+
+    println!("POS DEBUG: Layer {} -> {}x{} at {},{}", layer, final_width, final_height, final_x, final_y);
+
+    window.set_size(PhysicalSize::new(final_width, final_height))?;
+    window.set_position(PhysicalPosition::new(final_x, final_y))?;
+    
     window.show()?;
     window.set_focus()?;
 
