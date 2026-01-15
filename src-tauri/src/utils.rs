@@ -44,9 +44,17 @@ pub fn set_window_position(window: &WebviewWindow, width: Option<u32>, height: O
     }
 
     let monitors = window.available_monitors()?;
-    let mut target_monitor = window.current_monitor()?.unwrap_or(
-        window.primary_monitor()?.unwrap()
-    );
+    
+    // Güvenli bir şekilde monitör seç
+    let mut target_monitor = if let Some(current) = window.current_monitor()? {
+        current
+    } else if let Some(primary) = window.primary_monitor()? {
+        primary
+    } else if let Some(first) = monitors.first() {
+        first.clone()
+    } else {
+        return Err("No monitors available".into());
+    };
 
     for m in &monitors {
         let pos = m.position();
@@ -71,30 +79,31 @@ pub fn set_window_position(window: &WebviewWindow, width: Option<u32>, height: O
     let m_pos = target_monitor.position();
     let m_size = target_monitor.size();
 
-    let mut final_width = 0;
-    let mut final_height = 0;
-    let mut final_x = 0;
-    let mut final_y = 0;
+    let (final_width, final_height, final_x, final_y);
 
     if layer == 1 || layer == 2 {
         // Katman 1 ve 2: %50 Genişlik, %45 Yükseklik, Tam Orta
-        final_width = (m_size.width as f64 * 0.60) as u32;
-        final_height = (m_size.height as f64 * 0.65) as u32;
+        let width = (m_size.width as f64 * 0.60) as u32;
+        let height = (m_size.height as f64 * 0.65) as u32;
         
-        final_x = m_pos.x + (m_size.width as i32 - final_width as i32) / 2;
-        final_y = m_pos.y + (m_size.height as i32 - final_height as i32) / 2;
+        let x = m_pos.x + (m_size.width as i32 - width as i32) / 2;
+        let y = m_pos.y + (m_size.height as i32 - height as i32) / 2;
+        
+        (final_width, final_height, final_x, final_y) = (width, height, x, y);
     } else {
         // Katman 3: Varsayılan (veya mevcut), Ortanın biraz üstü
         // Önce mevcut boyuta bakalım, eğer 0 ise (yeni pencere) varsayılanı alalım
         let current_size = window.inner_size()?;
         // Eğer create_new_window'dan width/height geldiyse onu kullan, yoksa mevcudu, o da yoksa 1000x800
         // (Burada parametre olarak gelen width/height'i önceliklendiriyoruz)
-        final_width = width.unwrap_or(if current_size.width > 0 { current_size.width } else { 1000 });
-        final_height = height.unwrap_or(if current_size.height > 0 { current_size.height } else { 800 });
+        let width = width.unwrap_or(if current_size.width > 0 { current_size.width } else { 1000 });
+        let height = height.unwrap_or(if current_size.height > 0 { current_size.height } else { 800 });
 
-        final_x = m_pos.x + (m_size.width as i32 - final_width as i32) / 2;
+        let x = m_pos.x + (m_size.width as i32 - width as i32) / 2;
         // Y: Ortanın üstü (%35)
-        final_y = m_pos.y + ((m_size.height as f64 - final_height as f64) * 0.35) as i32;
+        let y = m_pos.y + ((m_size.height as f64 - height as f64) * 0.35) as i32;
+        
+        (final_width, final_height, final_x, final_y) = (width, height, x, y);
     }
 
     println!("POS DEBUG: Layer {} -> {}x{} at {},{}", layer, final_width, final_height, final_x, final_y);
