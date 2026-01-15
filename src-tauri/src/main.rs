@@ -36,6 +36,7 @@ fn main() {
     );
 
     builder
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             // ----------------------------------------------------------------
             // 3. LINUX İÇİN RAW INPUT LISTENER (RDEV)

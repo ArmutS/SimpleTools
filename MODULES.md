@@ -85,6 +85,8 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
 
    - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
+   - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
+   - **Opak Arayüz**: Daha iyi okunabilirlik için transparan olmayan tasarım
    - **Akıllı Varsayılanlar**: Otomatik çıktı yolu ve dosya adı oluşturma
    - **Dosya Metadata**: Sayfa sayısı, dosya boyutu gösterimi
    - **Sürükle-Bırak Sıralama**: Dosyaları sürükleyerek sıralama
@@ -150,6 +152,8 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 
 ### Gelişmiş Özellikler (PDF Merger)
 
+- ✅ **Split View UI**: Kontrol ve önizleme ayrımı
+- ✅ **Solid Background**: Transparan olmayan, odak odaklı tasarım
 - ✅ **Smart Defaults**: Otomatik çıktı yolu ve dosya adı oluşturma
 - ✅ **File Metadata**: Sayfa sayısı, dosya boyutu, şifreleme durumu
 - ✅ **Drag & Drop Sorting**: Dosyaları sürükleyerek sıralama

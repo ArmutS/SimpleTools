@@ -70,9 +70,20 @@ Bu komut dizisi Regex Tester'ı açar.
 
 ### 🚧 PDF Tools (Planlanıyor)
 
-**Kısayol**: `P` | **İlerleme**: 0/12
+**Kısayol**: `P` | **İlerleme**: 1/12
 
-PDF Merger, PDF Splitter, PDF to Images, PDF Compressor, Watermark, Metadata Editor, Password Protect, Rotate, PDF to Text, Page Organizer, Form Filler, PDF to Word
+- ✅ PDF Merger
+- 🚧 PDF Splitter
+- 🚧 PDF to Images
+- 🚧 PDF Compressor
+- 🚧 Watermark
+- 🚧 Metadata Editor
+- 🚧 Password Protect
+- 🚧 Rotate
+- 🚧 PDF to Text
+- 🚧 Page Organizer
+- 🚧 Form Filler
+- 🚧 PDF to Word
 
 ### 🚧 Converters (Planlanıyor)
 
@@ -143,12 +154,12 @@ Detaylı kısayol listesi için [SHORTCUTS.md](SHORTCUTS.md) dosyasına bakın.
 
 ## 🎯 Proje Durumu
 
-**Toplam İlerleme**: 6/144 (%4.17)
+**Toplam İlerleme**: 7/144 (%4.86)
 
 | Modül          | Durum | Tamamlanan |
 | -------------- | ----- | ---------- |
 | Text Tools     | ✅    | 6/12       |
-| PDF Tools      | 🚧    | 0/12       |
+| PDF Tools      | 🚧    | 1/12       |
 | Converters     | 🚧    | 0/12       |
 | File & System  | 🚧    | 0/12       |
 | Image Tools    | 🚧    | 0/12       |
