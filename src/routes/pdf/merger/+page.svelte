@@ -147,11 +147,21 @@
 
     if (e.dataTransfer?.files) {
       const files = Array.from(e.dataTransfer.files);
-      const pdfPaths = files
-        .filter((f) => f.name.toLowerCase().endsWith(".pdf"))
-        .map((f) => f.path);
 
-      await addFiles(pdfPaths);
+      // In Tauri, we need to get the actual file paths
+      // The File object has a path property in Tauri
+      const pdfFiles = files.filter((f) =>
+        f.name.toLowerCase().endsWith(".pdf")
+      );
+
+      // @ts-ignore - Tauri adds path property to File objects
+      const pdfPaths = pdfFiles.map((f) => f.path).filter(Boolean);
+
+      if (pdfPaths.length > 0) {
+        await addFiles(pdfPaths);
+      } else {
+        status = "Lütfen PDF dosyaları sürükleyin";
+      }
     }
   }
 
@@ -389,27 +399,28 @@
   }
 
   .description {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     margin-bottom: 2rem;
     font-size: 1rem;
   }
 
   .section {
-    background: var(--bg-secondary);
+    background: var(--bg-input);
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
   }
 
   .section h3 {
-    color: var(--text-primary);
+    color: var(--text-main);
     margin-bottom: 1rem;
     font-size: 1.1rem;
   }
 
   /* Drop Zone */
   .drop-zone {
-    border: 2px dashed var(--text-secondary);
+    border: 2px dashed var(--border-color);
     border-radius: 8px;
     min-height: 200px;
     transition: all 0.3s;
@@ -417,7 +428,7 @@
 
   .drop-zone.dragging {
     border-color: var(--accent);
-    background: var(--bg-tertiary);
+    background: var(--bg-app);
   }
 
   .drop-zone.has-files {
@@ -436,12 +447,12 @@
   }
 
   .empty-state p {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     margin: 0;
   }
 
   .empty-state span {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-size: 0.9rem;
   }
 
@@ -480,7 +491,7 @@
 
   .file-list h4,
   .file-list-header h4 {
-    color: var(--text-primary);
+    color: var(--text-main);
     margin: 0;
     font-size: 0.95rem;
   }
@@ -491,7 +502,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
-    background: var(--bg-tertiary);
+    background: var(--bg-app);
     border-radius: 8px;
     margin-bottom: 0.75rem;
     border: 2px solid transparent;
@@ -509,8 +520,8 @@
   }
 
   .file-card.encrypted {
-    border-color: #ff4444;
-    background: rgba(255, 68, 68, 0.1);
+    border-color: #f38ba8;
+    background: rgba(243, 139, 168, 0.1);
   }
 
   .file-card-left {
@@ -537,7 +548,7 @@
 
   .file-icon {
     font-size: 2rem;
-    color: #ff4444;
+    color: #f38ba8;
     flex-shrink: 0;
   }
 
@@ -550,7 +561,7 @@
   }
 
   .file-name {
-    color: var(--text-primary);
+    color: var(--text-main);
     font-size: 0.95rem;
     font-weight: 500;
     overflow: hidden;
@@ -562,24 +573,24 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-size: 0.85rem;
   }
 
   .encrypted-badge {
-    color: #ff4444;
+    color: #f38ba8;
     font-weight: 500;
   }
 
   .error-badge {
-    color: #ff8844;
+    color: #fab387;
     font-size: 0.8rem;
   }
 
   .icon-btn {
     background: transparent;
-    border: 1px solid var(--text-secondary);
-    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
     width: 36px;
     height: 36px;
     border-radius: 6px;
@@ -592,8 +603,8 @@
   }
 
   .icon-btn:hover {
-    border-color: #ff4444;
-    color: #ff4444;
+    border-color: #f38ba8;
+    color: #f38ba8;
   }
 
   /* Output Controls */
@@ -604,9 +615,9 @@
 
   .path-input {
     flex: 1;
-    background: var(--bg-tertiary);
-    border: 1px solid var(--text-secondary);
-    color: var(--text-primary);
+    background: var(--bg-app);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
     padding: 0.75rem;
     border-radius: 6px;
     font-size: 0.95rem;
@@ -627,36 +638,36 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 0.75rem;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-size: 0.9rem;
   }
 
   .progress-bar {
     width: 100%;
     height: 24px;
-    background: var(--bg-tertiary);
+    background: var(--bg-app);
     border-radius: 12px;
     overflow: hidden;
   }
 
   .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--accent), #00d4ff);
+    background: linear-gradient(90deg, var(--accent), #94e2d5);
     transition: width 0.3s ease;
   }
 
   /* Success */
   .success {
-    border: 2px solid #00ff88;
-    background: rgba(0, 255, 136, 0.05);
+    border: 2px solid #a6e3a1;
+    background: rgba(166, 227, 161, 0.05);
   }
 
   .success h3 {
-    color: #00ff88;
+    color: #a6e3a1;
   }
 
   .success p {
-    color: var(--text-secondary);
+    color: var(--text-muted);
     margin-bottom: 1rem;
   }
 
@@ -693,9 +704,9 @@
   }
 
   .action-button.secondary {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border: 1px solid var(--text-secondary);
+    background: var(--bg-app);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
     width: auto;
     flex: 1;
     font-size: 0.95rem;
@@ -704,12 +715,12 @@
 
   .status {
     margin-top: 1rem;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     text-align: center;
     font-size: 0.95rem;
   }
 
   .status.error {
-    color: #ff4444;
+    color: #f38ba8;
   }
 </style>
