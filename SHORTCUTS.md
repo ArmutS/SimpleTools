@@ -54,20 +54,20 @@ Text Tools modülü içinde fonksiyon seçimi:
 
 PDF Tools modülü içinde fonksiyon seçimi:
 
-| Tuş | Fonksiyon        | Durum          |
-| --- | ---------------- | -------------- |
-| `M` | PDF Merger       | 🚧 Planlanıyor |
-| `S` | PDF Splitter     | 🚧 Planlanıyor |
-| `I` | PDF to Images    | 🚧 Planlanıyor |
-| `C` | PDF Compressor   | 🚧 Planlanıyor |
-| `W` | PDF Watermark    | 🚧 Planlanıyor |
-| `E` | Metadata Editor  | 🚧 Planlanıyor |
-| `P` | Password Protect | 🚧 Planlanıyor |
-| `R` | PDF Rotate       | 🚧 Planlanıyor |
-| `T` | PDF to Text      | 🚧 Planlanıyor |
-| `O` | Page Organizer   | 🚧 Planlanıyor |
-| `F` | Form Filler      | 🚧 Planlanıyor |
-| `D` | PDF to Word      | 🚧 Planlanıyor |
+| Tuş | Fonksiyon       | Durum             |
+| --- | --------------- | ----------------- |
+| `M` | PDF Merger      | 🚧 Geliştiriliyor |
+| `S` | PDF Splitter    | 🚧 Geliştiriliyor |
+| `I` | Images to PDF   | 🚧 Geliştiriliyor |
+| `G` | PDF to Images   | 🚧 Geliştiriliyor |
+| `C` | Compress PDF    | 🚧 Geliştiriliyor |
+| `R` | Rotate Pages    | 🚧 Geliştiriliyor |
+| `D` | Delete Pages    | 🚧 Geliştiriliyor |
+| `T` | Extract Text    | 🚧 Geliştiriliyor |
+| `U` | Remove Password | 🚧 Geliştiriliyor |
+| `P` | Protect PDF     | 🚧 Geliştiriliyor |
+| `W` | Watermark       | 🚧 Geliştiriliyor |
+| `E` | Metadata Editor | 🚧 Geliştiriliyor |
 
 ---
 

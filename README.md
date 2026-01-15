@@ -1,91 +1,181 @@
-text tools ->
-Diff Viewer (Metin Karşılaştırıcı)
+# SimpleTools
 
-    İşlev: İki farklı metni (eski kod vs. yeni kod) yan yana koyar. Değişen, silinen yerleri renkli gösterir.
+> Vim-benzeri klavye kısayolları ile hızlı erişim sağlayan modüler araç koleksiyonu
 
-    Neden Burada: Editörsüz hızlıca fark görmek için.
+SimpleTools, geliştiriciler ve power user'lar için tasarlanmış, Alfred benzeri bir arayüze sahip masaüstü uygulamasıdır. `Alt+Space` ile hızlıca açılır ve vim-tarzı klavye kısayolları ile navigasyon sağlar.
 
-Regex Tester
+## ✨ Özellikler
 
-    İşlev: Bir metin ve bir Regex deseni girersin. Eşleşenleri anında highlight eder (vurgular).
+- 🚀 **Hızlı Erişim**: `Alt+Space` ile anında açılır
+- ⌨️ **Vim-like Navigasyon**: Tek tuş kısayolları ile hızlı gezinme
+- 🎯 **Modüler Yapı**: 12 farklı modül, her biri 12 fonksiyon (toplam 144 araç)
+- 🖥️ **Çoklu Monitör Desteği**: Mouse pozisyonuna göre doğru monitörde açılır
+- 🎨 **Tema Sistemi**: 5 farklı tema seçeneği
+- ⚡ **Performanslı**: Rust backend ile hızlı işlem
 
-    Neden Burada: Regex yazmak zordur, hızlı deneme alanı gerekir.
+## 🛠️ Teknoloji Stack
 
-Extractor (Veri Ayıklayıcı)
+- **Frontend**: Svelte + TypeScript
+- **Backend**: Rust (Tauri v2)
+- **Build Tool**: Vite
 
-    İşlev: Karışık bir log dosyasını veya web sayfa kaynağını yapıştırırsın. İçinden sadece E-Postaları, URL'leri veya IP Adreslerini çekip sana temiz liste verir.
+## 📦 Kurulum
 
-    Neden Burada: Manuel yapmak imkansızdır.
+```bash
+# Bağımlılıkları yükle
+npm install
 
-Strip HTML Tags (HTML Temizleyici)
+# Geliştirme modunda çalıştır
+npm run tauri dev
 
-    İşlev: Web sitesinden kopyalanmış, içi <div>, <span> dolu metni yapıştırırsın; sana sadece saf yazıyı verir.
+# Production build
+npm run tauri build
+```
 
-    Neden Burada: Webden içerik kopyalarken biçimlendirmeyi öldürmek için hayat kurtarır.
+## 🎮 Kullanım
 
-String Escaper / Unescaper
+### Temel Navigasyon
 
-    İşlev: Bir JSON verisini Java/C# stringi içine koymak için tırnakları kaçış karakterine (\") çevirir. Veya tam tersini yapar.
+1. **Uygulamayı Aç**: `Alt+Space`
+2. **Modül Seç**: Tek tuş (örn: `T` = Text Tools)
+3. **Fonksiyon Seç**: Tek tuş (örn: `R` = Regex Tester)
+4. **Geri Dön**: `Esc`
 
-    Neden Burada: Kod yazarken Ctrl+C / Ctrl+V yapmadan önce ara işlemdir.
+### Örnek Kullanım
 
-Slug Generator
+```
+Alt+Space → T → R
+```
 
-    İşlev: "Şu Çılgın Türkler & Yazılım" gibi bir başlığı su-cilgin-turkler-ve-yazilim formatına (URL dostu) çevirir.
+Bu komut dizisi Regex Tester'ı açar.
 
-    Neden Burada: Blog yazarları ve SEO işiyle uğraşanlar için standart bir ihtiyaçtır.
+## 📚 Modüller
 
-JWT Decoder
+### ✅ Text Tools (Hazır)
 
-    İşlev: Şifreli gibi görünen eyS... ile başlayan JWT token'ı yapıştırırsın. İçindeki veriyi (Payload) okunaklı JSON olarak gösterir.
+**Kısayol**: `T` | **İlerleme**: 6/12
 
-    Neden Burada: Token'ın süresi dolmuş mu diye bakmak için backendçilerin eli ayağıdır.
+- ✅ Regex Tester
+- ✅ Text Diff
+- ✅ String Tools
+- ✅ JWT Decoder
+- ✅ Slug Generator
+- ✅ Text Strip
+- 🚧 Lorem Ipsum Generator
+- 🚧 Base64 Encoder/Decoder
+- 🚧 URL Encoder/Decoder
+- 🚧 Markdown Preview
+- 🚧 Character Counter
+- 🚧 Text Sorter
 
-Cron Expression Explainer
+### 🚧 PDF Tools (Planlanıyor)
 
-    İşlev: */15 0 * * 1-5 gibi anlaşılmaz Cron zamanlamalarını "Hafta içi her gün, saat 00'dan itibaren her 15 dakikada bir" şeklinde insan diline çevirir.
+**Kısayol**: `P` | **İlerleme**: 0/12
 
-    Neden Burada: Ezberlemesi zordur, çevirici şarttır.
+PDF Merger, PDF Splitter, PDF to Images, PDF Compressor, Watermark, Metadata Editor, Password Protect, Rotate, PDF to Text, Page Organizer, Form Filler, PDF to Word
 
-Markdown Preview
+### 🚧 Converters (Planlanıyor)
 
-    İşlev: Sol tarafa Markdown (# Başlık, **kalın**) yazarsın, sağ tarafta nasıl göründüğünü (HTML Render) gösterir.
+**Kısayol**: `C` | **İlerleme**: 0/12
 
-    Neden Burada: Hızlıca bir Readme dosyasının nasıl görüneceğine bakmak için.
+JSON↔YAML, CSV↔JSON, XML↔JSON, Color Converter, Unit Converter, Timestamp Converter, Number Base, Image Format, Audio Converter, Video Converter, Font Converter, Markdown to HTML
 
-Character Inspector (Karakter Analizi)
+### 🚧 File & System (Planlanıyor)
 
-    İşlev: Bir karakteri veya emojiyi yapıştırırsın. Sana onun Unicode kodunu, ASCII değerini ve HTML Entity karşılığını verir.
+**Kısayol**: `F` | **İlerleme**: 0/12
 
-    Neden Burada: Görünmez karakterleri veya ikonları analiz etmek için.
+Hash Generator, File Renamer, Duplicate Finder, Disk Usage, File Splitter, Checksum Verifier, File Permissions, Directory Tree, File Watcher, Temp Cleaner, Metadata Viewer, Symlink Manager
 
-Lorem Ipsum Generator
+### 🚧 Image Tools (Planlanıyor)
 
-    İşlev: "5 Paragraf" veya "20 Kelime" seçersin, sana anlamsız Latince metin üretir.
+**Kısayol**: `I` | **İlerleme**: 0/12
 
-    Neden Burada: Tasarım yaparken boş alanları doldurmak için sıfırdan metin gerekir (Editör bunu üretmez).
+Image Resizer, Compressor, Cropper, Filters, Watermark, Background Remover, Image to Base64, QR Code Generator, Barcode Generator, Metadata Editor, Image Collage, Screenshot Tool
 
-Text Obfuscator / Rot13
+### 🚧 Network (Planlanıyor)
 
-    İşlev: Metni basitçe okunmaz hale getirir (Rot13 veya ters çevirme).
+**Kısayol**: `N` | **İlerleme**: 0/12
 
-    Neden Burada: Spoiler içeren bir metni gizlemek veya basit şifreleme oyunları için.
+IP Info, Port Scanner, DNS Lookup, Ping, Traceroute, WHOIS, SSL Checker, HTTP Headers, URL Shortener, Speed Test, MAC Lookup, Subnet Calculator
 
-pdf tools ->
-converter tools ->
-file & system tools ->
-image tools ->
-network tools ->
-dev tools ->
-quick commands tools ->
+### 🚧 Quick Commands (Planlanıyor)
 
-*Hızlı terminal komutları (ör: bir formülle npm run tauri dev komutunu hızlıca çalıştırsın)
+**Kısayol**: `Q` | **İlerleme**: 0/12
 
-text tools 0/12
-pdf tools 0/12
-converter tools 0/12
-file & system tools 0/12
-image tools 0/12
-network tools 0/12
-dev tools 0/12
-quick commands tools 0/12
+UUID Generator, Password Generator, Random Number, Lorem Ipsum, Cron Expression, Epoch Converter, JSON Formatter, SQL Formatter, Regex Tester, Color Picker, ASCII Art, Emoji Picker
+
+### 🚧 Dev Tools (Planlanıyor)
+
+**Kısayol**: `D` | **İlerleme**: 0/12
+
+JSON Validator, XML Validator, YAML Validator, HTML Formatter, CSS Formatter, JS Minifier, Git Diff Viewer, API Tester, GraphQL Playground, WebSocket Tester, Snippet Manager, Regex Builder
+
+## ⌨️ Klavye Kısayolları
+
+### Global Kısayollar
+
+| Kısayol     | Aksiyon             |
+| ----------- | ------------------- |
+| `Alt+Space` | Uygulamayı aç/kapat |
+| `Ctrl+G`    | Global listener     |
+| `Esc`       | Pencere kapat       |
+
+### Modül Kısayolları
+
+| Tuş | Modül          | Durum |
+| --- | -------------- | ----- |
+| `T` | Text Tools     | ✅    |
+| `P` | PDF Tools      | 🚧    |
+| `C` | Converters     | 🚧    |
+| `F` | File & System  | 🚧    |
+| `I` | Image Tools    | 🚧    |
+| `N` | Network        | 🚧    |
+| `Q` | Quick Commands | 🚧    |
+| `D` | Dev Tools      | 🚧    |
+
+Detaylı kısayol listesi için [SHORTCUTS.md](SHORTCUTS.md) dosyasına bakın.
+
+## 📖 Dokümantasyon
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Proje mimarisi ve teknik detaylar
+- **[MODULES.md](MODULES.md)** - Tüm modüller ve fonksiyonların detaylı planlaması
+- **[SHORTCUTS.md](SHORTCUTS.md)** - Klavye kısayolları referansı
+
+## 🎯 Proje Durumu
+
+**Toplam İlerleme**: 6/144 (%4.17)
+
+| Modül          | Durum | Tamamlanan |
+| -------------- | ----- | ---------- |
+| Text Tools     | ✅    | 6/12       |
+| PDF Tools      | 🚧    | 0/12       |
+| Converters     | 🚧    | 0/12       |
+| File & System  | 🚧    | 0/12       |
+| Image Tools    | 🚧    | 0/12       |
+| Network        | 🚧    | 0/12       |
+| Quick Commands | 🚧    | 0/12       |
+| Dev Tools      | 🚧    | 0/12       |
+| TBD 9-12       | 🚧    | 0/48       |
+
+## 🔮 Gelecek Özellikler
+
+- [ ] Kalan 11 modülün implementasyonu
+- [ ] Özelleştirilebilir klavye kısayolları
+- [ ] Favoriler sistemi
+- [ ] Geçmiş/son kullanılanlar
+- [ ] Clipboard entegrasyonu
+- [ ] Fuzzy search
+- [ ] Command palette
+- [ ] Makro kaydı
+
+## 🤝 Katkıda Bulunma
+
+Katkılarınızı bekliyoruz! Lütfen bir pull request göndermeden önce issue açın.
+
+## 📄 Lisans
+
+[Lisans bilgisi eklenecek]
+
+---
+
+**Not**: Bu proje aktif geliştirme aşamasındadır. Text Tools modülü hazır, diğer modüller planlanma/geliştirme aşamasındadır.

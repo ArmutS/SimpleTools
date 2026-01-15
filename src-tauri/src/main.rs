@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod textfunc;
+mod pdffunc;
 mod utils;
 
 use std::sync::{Arc, Mutex};
@@ -127,7 +128,22 @@ fn main() {
             textfunc::process_markdown_preview,
             textfunc::process_lorem,
             textfunc::process_obfuscator,
-            textfunc::process_char_inspector
+            textfunc::process_char_inspector,
+            pdffunc::get_pdf_info,
+            pdffunc::open_folder,
+            pdffunc::open_file,
+            pdffunc::pdf_merge,
+            pdffunc::pdf_split,
+            pdffunc::images_to_pdf,
+            pdffunc::pdf_to_images,
+            pdffunc::pdf_compress,
+            pdffunc::pdf_rotate,
+            pdffunc::pdf_delete_pages,
+            pdffunc::pdf_extract_text,
+            pdffunc::pdf_remove_password,
+            pdffunc::pdf_protect,
+            pdffunc::pdf_watermark,
+            pdffunc::pdf_metadata
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {

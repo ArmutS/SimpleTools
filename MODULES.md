@@ -77,69 +77,85 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ## Modül 2: PDF Tools 🚧
 
 **Kısayol**: P  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/pdffunc.rs` (oluşturulacak)
+**Durum**: Geliştiriliyor  
+**Backend**: `src-tauri/src/pdffunc.rs`
 
-### Fonksiyonlar (0/12)
+### Fonksiyonlar (1/12)
 
-1. **PDF Merger** (M)
+1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
 
-   - Birden fazla PDF birleştirme
-   - Sıralama seçeneği
+   - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
+   - **Akıllı Varsayılanlar**: Otomatik çıktı yolu ve dosya adı oluşturma
+   - **Dosya Metadata**: Sayfa sayısı, dosya boyutu gösterimi
+   - **Sürükle-Bırak Sıralama**: Dosyaları sürükleyerek sıralama
+   - **Şifreli Dosya Tespiti**: 🔒 ikonu ile uyarı
+   - **Başarı Geri Bildirimi**: "Klasörü Aç" ve "Dosyayı Aç" butonları
+   - Neden: Müşteriye 5 ayrı ek göndermek profesyonel durmaz, tek dosya istenir
 
-2. **PDF Splitter** (S)
+2. **PDF Splitter (Ayırıcı)** (S)
 
-   - PDF'i sayfalara ayırma
-   - Sayfa aralığı seçimi
+   - 100 sayfalık bir raporun sadece 5-10 arasındaki sayfalarını alıp yeni bir PDF yapar
+   - "Her sayfayı ayrı dosya yap" seçeneği
+   - Neden: "Bana sadece ilgili sayfayı gönder" dendiğinde koca dosyayı atmamak için
 
-3. **PDF to Images** (I)
+3. **Images to PDF (Resimden PDF'e)** (I)
 
-   - PDF sayfalarını resme çevirme
-   - Format seçimi (PNG, JPG)
+   - Telefondan çekilmiş veya taranmış JPG/PNG evrak fotoğraflarını seçip tek bir PDF haline getirir
+   - Neden: Vize başvurusu veya IK evrakları genelde fotoğraf değil, tek PDF olarak istenir
 
-4. **PDF Compressor** (C)
+4. **PDF to Images (PDF'ten Resme)** (G)
 
-   - PDF boyutu küçültme
-   - Kalite ayarı
+   - PDF'in her sayfasını yüksek kaliteli JPG veya PNG olarak dışarı aktarır
+   - Neden: Bir sunumun tek bir sayfasını alıp Instagram'a veya WhatsApp'a resim olarak atmak için
 
-5. **PDF Watermark** (W)
+5. **Compress PDF (Sıkıştırıcı)** (C)
 
-   - Filigran ekleme
-   - Pozisyon ve opacity ayarı
+   - 20 MB'lık dosyayı kaliteyi çok bozmadan 2-3 MB'a düşürür
+   - Neden: E-posta ekleri genelde 25MB sınırına takılır veya upload siteleri dosya boyutu sınırı koyar
 
-6. **PDF Metadata Editor** (E)
+6. **Rotate Pages (Sayfa Döndür)** (R)
 
-   - Metadata görüntüleme/düzenleme
-   - Title, author, keywords
+   - Yanlış taranmış sayfaları 90/180 derece döndürüp kaydeder
+   - Neden: Tarayıcıdan ters çıkmış bir belgeyi okumak için boyun fıtığı olmamak gerekir
 
-7. **PDF Password Protect** (P)
+7. **Delete Pages (Sayfa Sil)** (D)
 
-   - Şifre ekleme
-   - Şifre kaldırma
+   - PDF içinden seçilen sayfaları uçurur
+   - Neden: Yeniden tarama yapmadan aradaki çürük elmaları ayıklamak için
 
-8. **PDF Rotate** (R)
+8. **Extract Text (Metin Kazıyıcı)** (T)
 
-   - Sayfa döndürme
-   - Toplu döndürme
+   - PDF'in içindeki seçilebilir yazıları saf txt olarak dışarı alır (OCR değil, gömülü metin)
+   - Neden: Kopyala-yapıştır yapmanın yasak olduğu veya zor olduğu durumlarda içeriği almak için
 
-9. **PDF to Text** (T)
+9. **Remove Password (Şifre/Kilit Kaldır)** (U)
 
-   - OCR ile metin çıkarma
-   - Kopyalanabilir metin
+   - Şifresini bildiğin dosyanın şifresini kalıcı olarak siler
+   - Owner Password removal
+   - Neden: Kendi kredi kartı ekstreni arşivlerken her seferinde şifre girmek istemezsin
 
-10. **PDF Page Organizer** (O)
+10. **Protect PDF (Şifrele)** (P)
 
-    - Sayfa sırası değiştirme
-    - Sayfa silme
+    - Dosyaya açılış şifresi (User Password) veya yazdırma yasağı (Owner Password) koyar
+    - Neden: Maaş bordrosu veya gizli proje dosyası gönderirken güvenlik şarttır
 
-11. **PDF Form Filler** (F)
+11. **Watermark (Filigran Ekle)** (W)
 
-    - Form doldurma
-    - Form verisi export
+    - Sayfaların üzerine çapraz şekilde yarı saydam filigran yazar
+    - Neden: Belgenin statüsünü belirtmek veya izinsiz kullanımını engellemek için
 
-12. **PDF to Word** (D)
-    - DOCX formatına çevirme
-    - Formatting koruma
+12. **Metadata Editor (Künye Düzenleyici)** (E)
+    - Dosyanın Yazar, Başlık gibi arka plan bilgilerini değiştirir
+    - Neden: Başkasından aldığın bir ödevi teslim etmeden önce "Author" kısmında başkasının adının yazmasını istemezsin
+
+### Gelişmiş Özellikler (PDF Merger)
+
+- ✅ **Smart Defaults**: Otomatik çıktı yolu ve dosya adı oluşturma
+- ✅ **File Metadata**: Sayfa sayısı, dosya boyutu, şifreleme durumu
+- ✅ **Drag & Drop Sorting**: Dosyaları sürükleyerek sıralama
+- ✅ **Encrypted Detection**: Şifreli dosya tespiti ve uyarı
+- ✅ **Success Feedback**: Klasör/dosya açma butonları
+- ✅ **Error Handling**: Detaylı hata mesajları
 
 ---
 
