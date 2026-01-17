@@ -6,8 +6,8 @@
       id: "pdf/merger",
       name: "PDF Merger",
       icon: "nf-md-file_multiple",
-      width: 900,
-      height: 700,
+      width: 1200,
+      height: 800,
       key: "M",
     },
     {

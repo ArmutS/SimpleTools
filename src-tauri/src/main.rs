@@ -144,6 +144,7 @@ fn main() {
             pdffunc::pdf_remove_password,
             pdffunc::pdf_protect,
             pdffunc::pdf_watermark,
+            pdffunc::pdf_read_metadata,
             pdffunc::pdf_metadata
         ])
         .on_window_event(|window, event| match event {

@@ -1,6 +1,9 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
+  import { listen } from "@tauri-apps/api/event";
+  import { getCurrentWindow } from "@tauri-apps/api/window";
+  import { onMount, onDestroy } from "svelte";
 
   // Types
   interface PdfFileInfo {
@@ -47,37 +50,52 @@
   }
 
   // Dosya bilgilerini al ve listeye ekle
+  // Dosya bilgilerini al ve listeye ekle
   async function addFiles(paths: string[]) {
+    console.log("Adding files:", paths);
+    let newFiles: PdfFileInfo[] = [];
+
     for (const path of paths) {
       try {
+        console.log("Processing:", path);
+        // Check if file already exists
+        if (selectedFiles.some((f) => f.path === path)) {
+          console.log("File already exists:", path);
+          continue;
+        }
+
         const info = await invoke<{
           page_count: number;
           file_size_formatted: string;
           is_encrypted: boolean;
           error: string | null;
-        }>("get_pdf_info", { filePath: path });
+        }>("get_pdf_info", { file_path: path });
+
+        console.log("Info received:", info);
 
         const fileName = path.split("/").pop() || path;
 
-        selectedFiles = [
-          ...selectedFiles,
-          {
-            path,
-            name: fileName,
-            pageCount: info.page_count,
-            fileSize: info.file_size_formatted,
-            isEncrypted: info.is_encrypted,
-            error: info.error,
-          },
-        ];
-
-        // İlk dosya eklendiğinde otomatik output path oluştur
-        if (selectedFiles.length === 1 && !outputPath) {
-          const directory = path.substring(0, path.lastIndexOf("/"));
-          outputPath = `${directory}/merged_output.pdf`;
-        }
+        newFiles.push({
+          path,
+          name: fileName,
+          pageCount: info.page_count,
+          fileSize: info.file_size_formatted,
+          isEncrypted: info.is_encrypted,
+          error: info.error,
+        });
       } catch (error) {
-        console.error(`Error reading PDF info: ${error}`);
+        console.error(`Error reading PDF info for ${path}: ${error}`);
+        status = `Hata: ${error}`; // Show error to user
+      }
+    }
+
+    if (newFiles.length > 0) {
+      selectedFiles = [...selectedFiles, ...newFiles];
+      // İlk dosya eklendiğinde otomatik output path oluştur
+      if (selectedFiles.length === 1 && !outputPath) {
+        const firstPath = selectedFiles[0].path;
+        const directory = firstPath.substring(0, firstPath.lastIndexOf("/"));
+        outputPath = `${directory}/merged_output.pdf`;
       }
     }
   }
@@ -117,6 +135,7 @@
 
   function handleFileDragOver(e: DragEvent, index: number) {
     e.preventDefault();
+    e.stopPropagation(); // Prevent bubbling to main drop zone
     if (draggedIndex !== null && draggedIndex !== index) {
       const newFiles = [...selectedFiles];
       const draggedFile = newFiles[draggedIndex];
@@ -131,7 +150,38 @@
     draggedIndex = null;
   }
 
-  // Sürükle-bırak (dosya ekleme)
+  // ... (existing state variables)
+
+  let unlistenDrop: () => void;
+
+  onMount(async () => {
+    unlistenDrop = await getCurrentWindow().listen(
+      "tauri://drag-drop",
+      (event) => {
+        console.log("Tauri Drop Event:", event);
+        const payload = event.payload as { paths: string[] };
+        if (payload.paths) {
+          console.log("Dropped paths:", payload.paths);
+          const pdfPaths = payload.paths.filter((p) =>
+            p.toLowerCase().endsWith(".pdf")
+          );
+          if (pdfPaths.length > 0) {
+            addFiles(pdfPaths);
+          } else {
+            status = "Lütfen PDF dosyaları sürükleyin";
+          }
+        }
+      }
+    );
+  });
+
+  onDestroy(() => {
+    if (unlistenDrop) {
+      unlistenDrop();
+    }
+  });
+
+  // HTML5 DnD handlers (keep for visual feedback only, but prevent default behavior)
   function handleDragOver(e: DragEvent) {
     e.preventDefault();
     isDragging = true;
@@ -141,28 +191,10 @@
     isDragging = false;
   }
 
-  async function handleDrop(e: DragEvent) {
+  function handleDrop(e: DragEvent) {
     e.preventDefault();
     isDragging = false;
-
-    if (e.dataTransfer?.files) {
-      const files = Array.from(e.dataTransfer.files);
-
-      // In Tauri, we need to get the actual file paths
-      // The File object has a path property in Tauri
-      const pdfFiles = files.filter((f) =>
-        f.name.toLowerCase().endsWith(".pdf")
-      );
-
-      // @ts-ignore - Tauri adds path property to File objects
-      const pdfPaths = pdfFiles.map((f) => f.path).filter(Boolean);
-
-      if (pdfPaths.length > 0) {
-        await addFiles(pdfPaths);
-      } else {
-        status = "Lütfen PDF dosyaları sürükleyin";
-      }
-    }
+    // Actual file handling is done by tauri://drop listener
   }
 
   // PDF Birleştirme

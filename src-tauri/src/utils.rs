@@ -145,7 +145,7 @@ pub async fn create_new_window(
         tauri::WebviewWindowBuilder::new(&app, id, tauri::WebviewUrl::App(path.into()))
             .title(&title)
             .always_on_top(true)
-            .resizable(false)
+            .resizable(true)
             .visible(false)
             .transparent(true)
             .decorations(false)

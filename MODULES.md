@@ -79,8 +79,14 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 **Kısayol**: P  
 **Durum**: Geliştiriliyor  
 **Backend**: `src-tauri/src/pdffunc.rs`
+**Not**: `lopdf` 0.38 ile güçlendirilmiş, bozuk dosya korumalı robust altyapı.
 
-### Fonksiyonlar (1/12)
+### Fonksiyonlar (10/12)
+
+1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
+
+   - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
+   - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
 
 1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
 
@@ -93,62 +99,63 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
    - **Şifreli Dosya Tespiti**: 🔒 ikonu ile uyarı
    - **Başarı Geri Bildirimi**: "Klasörü Aç" ve "Dosyayı Aç" butonları
    - Neden: Müşteriye 5 ayrı ek göndermek profesyonel durmaz, tek dosya istenir
+   - **Durum**: ✅ Hazır
 
-2. **PDF Splitter (Ayırıcı)** (S)
+1. **PDF Splitter (Ayırıcı)** (S) ✅
 
    - 100 sayfalık bir raporun sadece 5-10 arasındaki sayfalarını alıp yeni bir PDF yapar
    - "Her sayfayı ayrı dosya yap" seçeneği
    - Neden: "Bana sadece ilgili sayfayı gönder" dendiğinde koca dosyayı atmamak için
 
-3. **Images to PDF (Resimden PDF'e)** (I)
+1. **Images to PDF (Resimden PDF'e)** (I) ✅
 
    - Telefondan çekilmiş veya taranmış JPG/PNG evrak fotoğraflarını seçip tek bir PDF haline getirir
    - Neden: Vize başvurusu veya IK evrakları genelde fotoğraf değil, tek PDF olarak istenir
 
-4. **PDF to Images (PDF'ten Resme)** (G)
+1. **PDF to Images (PDF'ten Resme)** (G) 🚧 (Harici kütüphane gerektiriyor)
 
    - PDF'in her sayfasını yüksek kaliteli JPG veya PNG olarak dışarı aktarır
    - Neden: Bir sunumun tek bir sayfasını alıp Instagram'a veya WhatsApp'a resim olarak atmak için
 
-5. **Compress PDF (Sıkıştırıcı)** (C)
+1. **Compress PDF (Sıkıştırıcı)** (C) ✅
 
    - 20 MB'lık dosyayı kaliteyi çok bozmadan 2-3 MB'a düşürür
    - Neden: E-posta ekleri genelde 25MB sınırına takılır veya upload siteleri dosya boyutu sınırı koyar
 
-6. **Rotate Pages (Sayfa Döndür)** (R)
+1. **Rotate Pages (Sayfa Döndür)** (R) ✅
 
    - Yanlış taranmış sayfaları 90/180 derece döndürüp kaydeder
    - Neden: Tarayıcıdan ters çıkmış bir belgeyi okumak için boyun fıtığı olmamak gerekir
 
-7. **Delete Pages (Sayfa Sil)** (D)
+1. **Delete Pages (Sayfa Sil)** (D) ✅
 
    - PDF içinden seçilen sayfaları uçurur
    - Neden: Yeniden tarama yapmadan aradaki çürük elmaları ayıklamak için
 
-8. **Extract Text (Metin Kazıyıcı)** (T)
+1. **Extract Text (Metin Kazıyıcı)** (T) ✅
 
    - PDF'in içindeki seçilebilir yazıları saf txt olarak dışarı alır (OCR değil, gömülü metin)
    - Neden: Kopyala-yapıştır yapmanın yasak olduğu veya zor olduğu durumlarda içeriği almak için
 
-9. **Remove Password (Şifre/Kilit Kaldır)** (U)
+1. **Remove Password (Şifre/Kilit Kaldır)** (U) ✅
 
    - Şifresini bildiğin dosyanın şifresini kalıcı olarak siler
    - Owner Password removal
    - Neden: Kendi kredi kartı ekstreni arşivlerken her seferinde şifre girmek istemezsin
 
-10. **Protect PDF (Şifrele)** (P)
+1. **Protect PDF (Şifrele)** (P) 🚧 (Şifreleme desteği bekleniyor)
 
-    - Dosyaya açılış şifresi (User Password) veya yazdırma yasağı (Owner Password) koyar
-    - Neden: Maaş bordrosu veya gizli proje dosyası gönderirken güvenlik şarttır
+   - Dosyaya açılış şifresi (User Password) veya yazdırma yasağı (Owner Password) koyar
+   - Neden: Maaş bordrosu veya gizli proje dosyası gönderirken güvenlik şarttır
 
-11. **Watermark (Filigran Ekle)** (W)
+1. **Watermark (Filigran Ekle)** (W) ✅
 
-    - Sayfaların üzerine çapraz şekilde yarı saydam filigran yazar
-    - Neden: Belgenin statüsünü belirtmek veya izinsiz kullanımını engellemek için
+   - Sayfaların üzerine çapraz şekilde yarı saydam filigran yazar
+   - Neden: Belgenin statüsünü belirtmek veya izinsiz kullanımını engellemek için
 
-12. **Metadata Editor (Künye Düzenleyici)** (E)
-    - Dosyanın Yazar, Başlık gibi arka plan bilgilerini değiştirir
-    - Neden: Başkasından aldığın bir ödevi teslim etmeden önce "Author" kısmında başkasının adının yazmasını istemezsin
+1. **Metadata Editor (Künye Düzenleyici)** (E) ✅
+   - Dosyanın Yazar, Başlık gibi arka plan bilgilerini değiştirir
+   - Neden: Başkasından aldığın bir ödevi teslim etmeden önce "Author" kısmında başkasının adının yazmasını istemezsin
 
 ### Gelişmiş Özellikler (PDF Merger)
 
@@ -599,7 +606,7 @@ Gelecekte eklenecek modüller için fikirler:
 | Modül          | Durum | Tamamlanan | Kalan   |
 | -------------- | ----- | ---------- | ------- |
 | Text Tools     | ✅    | 6/12       | 6       |
-| PDF Tools      | 🚧    | 0/12       | 12      |
+| PDF Tools      | 🚧    | 10/12      | 2       |
 | Converters     | 🚧    | 0/12       | 12      |
 | File & System  | 🚧    | 0/12       | 12      |
 | Image Tools    | 🚧    | 0/12       | 12      |
@@ -610,6 +617,6 @@ Gelecekte eklenecek modüller için fikirler:
 | TBD 10         | 🚧    | 0/12       | 12      |
 | TBD 11         | 🚧    | 0/12       | 12      |
 | TBD 12         | 🚧    | 0/12       | 12      |
-| **TOPLAM**     |       | **6/144**  | **138** |
+| **TOPLAM**     |       | **16/144** | **128** |
 
-**İlerleme**: %4.17
+**İlerleme**: %11.11

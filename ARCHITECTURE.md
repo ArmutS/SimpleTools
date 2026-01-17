@@ -44,7 +44,7 @@ SimpleTools/
 | #   | Modül ID | İsim          | Kısayol | Durum        | Fonksiyon Sayısı |
 | --- | -------- | ------------- | ------- | ------------ | ---------------- |
 | 1   | text     | Text Tools    | T       | ✅ Hazır     | 12               |
-| 2   | pdf      | PDF Tools     | P       | 🚧 Yapılacak | 12               |
+| 2   | pdf      | PDF Tools     | P       | 🚧 %83       | 12               |
 | 3   | convert  | Converters    | C       | 🚧 Yapılacak | 12               |
 | 4   | file     | File & System | F       | 🚧 Yapılacak | 12               |
 | 5   | image    | Image Tools   | I       | 🚧 Yapılacak | 12               |
@@ -127,7 +127,7 @@ Uygulama 3 katmanlı bir pencere sistemi kullanır:
 
 ### 🚧 Yapılacaklar
 
-- [ ] Kalan 11 modülün implementasyonu
+- [ ] Kalan 10 modülün implementasyonu
 - [ ] Her modül için 12 fonksiyon
 - [ ] Ayarlar sistemi
 - [ ] Klavye kısayolu özelleştirme
