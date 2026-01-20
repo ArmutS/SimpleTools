@@ -147,10 +147,51 @@ pub async fn create_new_window(
             .always_on_top(true)
             .resizable(true)
             .visible(false)
-            .transparent(true)
+            .visible(false)
+            // .transparent(true) // FIXME: transparent method not found in this version/config
             .decorations(false)
             .build()
-            .map_err(|e| e.to_string())?;
+            .map_err(|e: tauri::Error| e.to_string())?;
+
+    #[cfg(target_os = "macos")]
+    {
+        use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
+        use cocoa::appkit::{NSWindow, NSColor, NSView};
+        use cocoa::base::{id, nil};
+        use cocoa::foundation::{NSString, NSAutoreleasePool};
+        use raw_window_handle::{HasWindowHandle, RawWindowHandle};
+        use objc::{msg_send, sel, sel_impl};
+        
+        // Manual transparency hack for Tauri v2 dynamic windows
+        if let Ok(handle) = _new_window.window_handle() {
+            if let RawWindowHandle::AppKit(ptr) = handle.as_raw() {
+                unsafe {
+                    let ns_view = ptr.ns_view.as_ptr() as id;
+                    let ns_window: id = msg_send![ns_view, window];
+                    
+                    // Set View (WebView) transparency
+                    // 1. Basic opaque/color
+                    let _: () = msg_send![ns_view, setOpaque:cocoa::base::NO];
+                    let _: () = msg_send![ns_view, setBackgroundColor:NSColor::clearColor(nil)];
+                    
+                    // 2. WKWebView specific: setValue:forKey:@"drawsBackground" -> NO
+                    // This is often required for WKWebView to be transparent
+                    let pool = NSAutoreleasePool::new(nil);
+                    let key = NSString::alloc(nil).init_str("drawsBackground");
+                    let _: () = msg_send![ns_view, setValue:cocoa::base::NO forKey:key];
+                    pool.drain();
+
+                    // Set Window transparency
+                    if ns_window != nil {
+                        ns_window.setOpaque_(cocoa::base::NO);
+                        ns_window.setBackgroundColor_(NSColor::clearColor(nil));
+                    }
+                }
+            }
+        }
+
+        let _ = apply_vibrancy(&_new_window, NSVisualEffectMaterial::HudWindow, None, None);
+    }
 
     let current_window = app.get_webview_window(&name).unwrap();
     if let Err(e) = set_window_position(&current_window, width, height) {

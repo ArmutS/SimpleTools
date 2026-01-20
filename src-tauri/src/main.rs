@@ -5,8 +5,8 @@ mod textfunc;
 mod pdffunc;
 mod utils;
 
-use std::sync::{Arc, Mutex};
-use std::thread;
+// use std::sync::{Arc, Mutex};
+// use std::thread;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, TrayIconBuilder, TrayIconEvent},
@@ -26,6 +26,7 @@ fn main() {
     let builder = builder.plugin(
         tauri_plugin_global_shortcut::Builder::new()
             .with_shortcut("ctrl+g")
+            .expect("Shortcur Register Failed")
             .with_handler(|app, shortcut, event| {
                 if event.state() == ShortcutState::Pressed {
                     println!("Windows/Mac Kısayol: {:?}", shortcut);

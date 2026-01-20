@@ -434,7 +434,7 @@ pub struct PdfToImagesRequest {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn pdf_to_images(request: PdfToImagesRequest) -> Result<String, String> {
+pub fn pdf_to_images(_request: PdfToImagesRequest) -> Result<String, String> {
     // TODO: Implement PDF to images conversion using a renderer (e.g., pdfium)
     // For now, return a friendly message
     Err("PDF to Images conversion requires an external renderer and is not yet implemented in this version.".to_string())
