@@ -56,18 +56,18 @@ PDF Tools modülü içinde fonksiyon seçimi:
 
 | Tuş | Fonksiyon       | Durum             |
 | --- | --------------- | ----------------- |
-| `M` | PDF Merger      | 🚧 Geliştiriliyor |
-| `S` | PDF Splitter    | 🚧 Geliştiriliyor |
-| `I` | Images to PDF   | 🚧 Geliştiriliyor |
+| `M` | PDF Merger      | ✅ Aktif          |
+| `S` | PDF Splitter    | ✅ Aktif          |
+| `I` | Images to PDF   | ✅ Aktif          |
 | `G` | PDF to Images   | 🚧 Geliştiriliyor |
-| `C` | Compress PDF    | 🚧 Geliştiriliyor |
-| `R` | Rotate Pages    | 🚧 Geliştiriliyor |
-| `D` | Delete Pages    | 🚧 Geliştiriliyor |
-| `T` | Extract Text    | 🚧 Geliştiriliyor |
-| `U` | Remove Password | 🚧 Geliştiriliyor |
+| `C` | Compress PDF    | ✅ Aktif          |
+| `R` | Rotate Pages    | ✅ Aktif          |
+| `D` | Delete Pages    | ✅ Aktif          |
+| `T` | Extract Text    | ✅ Aktif          |
+| `U` | Remove Password | ✅ Aktif          |
 | `P` | Protect PDF     | 🚧 Geliştiriliyor |
-| `W` | Watermark       | 🚧 Geliştiriliyor |
-| `E` | Metadata Editor | 🚧 Geliştiriliyor |
+| `W` | Watermark       | ✅ Aktif          |
+| `E` | Metadata Editor | ✅ Aktif          |
 
 ---
 

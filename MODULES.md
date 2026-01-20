@@ -11,60 +11,49 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (12/12)
 
 1. **Regex Tester** (R) ✅
-
    - Regex pattern test etme
    - Match highlighting
    - Capture groups gösterimi
 
 2. **Text Diff** (D) ✅
-
    - İki metin karşılaştırma
    - Side-by-side görünüm
    - Fark vurgulama
 
 3. **String Tools** (S) ✅
-
    - Case dönüşümleri (upper, lower, title, camel, snake, kebab)
    - String manipülasyonları
 
 4. **JWT Decoder** (J) ✅
-
    - JWT token decode
    - Header, payload, signature gösterimi
    - Validation
 
 5. **Slug Generator** (L) ✅
-
    - URL-friendly slug oluşturma
    - Özel karakter temizleme
 
 6. **Text Strip** (T) ✅
-
    - Whitespace temizleme
    - Satır sonu normalizasyonu
 
 7. **Lorem Ipsum Generator** (I) - EKLENECEK
-
    - Placeholder metin oluşturma
    - Paragraf/kelime sayısı ayarı
 
 8. **Base64 Encoder/Decoder** (B) - EKLENECEK
-
    - Base64 encode/decode
    - Dosya desteği
 
 9. **URL Encoder/Decoder** (U) - EKLENECEK
-
    - URL encode/decode
    - Query string parser
 
 10. **Markdown Preview** (M) - EKLENECEK
-
     - Markdown to HTML
     - Live preview
 
 11. **Character Counter** (C) - EKLENECEK
-
     - Karakter, kelime, satır sayısı
     - Reading time hesaplama
 
@@ -84,12 +73,10 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (10/12)
 
 1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
-
    - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
    - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
 
 1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
-
    - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
    - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
    - **Opak Arayüz**: Daha iyi okunabilirlik için transparan olmayan tasarım
@@ -102,54 +89,44 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
    - **Durum**: ✅ Hazır
 
 1. **PDF Splitter (Ayırıcı)** (S) ✅
-
    - 100 sayfalık bir raporun sadece 5-10 arasındaki sayfalarını alıp yeni bir PDF yapar
    - "Her sayfayı ayrı dosya yap" seçeneği
    - Neden: "Bana sadece ilgili sayfayı gönder" dendiğinde koca dosyayı atmamak için
 
 1. **Images to PDF (Resimden PDF'e)** (I) ✅
-
    - Telefondan çekilmiş veya taranmış JPG/PNG evrak fotoğraflarını seçip tek bir PDF haline getirir
    - Neden: Vize başvurusu veya IK evrakları genelde fotoğraf değil, tek PDF olarak istenir
 
 1. **PDF to Images (PDF'ten Resme)** (G) 🚧 (Harici kütüphane gerektiriyor)
-
    - PDF'in her sayfasını yüksek kaliteli JPG veya PNG olarak dışarı aktarır
    - Neden: Bir sunumun tek bir sayfasını alıp Instagram'a veya WhatsApp'a resim olarak atmak için
 
 1. **Compress PDF (Sıkıştırıcı)** (C) ✅
-
    - 20 MB'lık dosyayı kaliteyi çok bozmadan 2-3 MB'a düşürür
    - Neden: E-posta ekleri genelde 25MB sınırına takılır veya upload siteleri dosya boyutu sınırı koyar
 
 1. **Rotate Pages (Sayfa Döndür)** (R) ✅
-
    - Yanlış taranmış sayfaları 90/180 derece döndürüp kaydeder
    - Neden: Tarayıcıdan ters çıkmış bir belgeyi okumak için boyun fıtığı olmamak gerekir
 
 1. **Delete Pages (Sayfa Sil)** (D) ✅
-
    - PDF içinden seçilen sayfaları uçurur
    - Neden: Yeniden tarama yapmadan aradaki çürük elmaları ayıklamak için
 
 1. **Extract Text (Metin Kazıyıcı)** (T) ✅
-
    - PDF'in içindeki seçilebilir yazıları saf txt olarak dışarı alır (OCR değil, gömülü metin)
    - Neden: Kopyala-yapıştır yapmanın yasak olduğu veya zor olduğu durumlarda içeriği almak için
 
 1. **Remove Password (Şifre/Kilit Kaldır)** (U) ✅
-
    - Şifresini bildiğin dosyanın şifresini kalıcı olarak siler
    - Owner Password removal
    - Neden: Kendi kredi kartı ekstreni arşivlerken her seferinde şifre girmek istemezsin
 
 1. **Protect PDF (Şifrele)** (P) 🚧 (Şifreleme desteği bekleniyor)
-
    - Dosyaya açılış şifresi (User Password) veya yazdırma yasağı (Owner Password) koyar
    - Neden: Maaş bordrosu veya gizli proje dosyası gönderirken güvenlik şarttır
 
 1. **Watermark (Filigran Ekle)** (W) ✅
-
    - Sayfaların üzerine çapraz şekilde yarı saydam filigran yazar
    - Neden: Belgenin statüsünü belirtmek veya izinsiz kullanımını engellemek için
 
@@ -179,57 +156,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **JSON to YAML** (J)
-
    - JSON ↔ YAML dönüşümü
    - Syntax highlighting
 
 2. **CSV to JSON** (C)
-
    - CSV ↔ JSON dönüşümü
    - Delimiter seçimi
 
 3. **XML to JSON** (X)
-
    - XML ↔ JSON dönüşümü
    - Pretty print
 
 4. **Color Converter** (O)
-
    - HEX, RGB, HSL dönüşümleri
    - Color picker
 
 5. **Unit Converter** (U)
-
    - Uzunluk, ağırlık, sıcaklık
    - Çoklu birim desteği
 
 6. **Timestamp Converter** (T)
-
    - Unix timestamp ↔ Date
    - Timezone desteği
 
 7. **Number Base Converter** (N)
-
    - Binary, Octal, Decimal, Hex
    - Çoklu base dönüşümü
 
 8. **Image Format Converter** (I)
-
    - PNG, JPG, WebP, SVG
    - Resize seçeneği
 
 9. **Audio Converter** (A)
-
    - MP3, WAV, OGG, FLAC
    - Bitrate ayarı
 
 10. **Video Converter** (V)
-
     - MP4, WebM, AVI, MKV
     - Codec seçimi
 
 11. **Font Converter** (F)
-
     - TTF, OTF, WOFF, WOFF2
     - Subset oluşturma
 
@@ -248,57 +214,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **Hash Generator** (H)
-
    - MD5, SHA1, SHA256, SHA512
    - Dosya hash'leme
 
 2. **File Renamer** (R)
-
    - Toplu dosya yeniden adlandırma
    - Regex pattern desteği
 
 3. **Duplicate Finder** (D)
-
    - Duplicate dosya bulma
    - Hash-based karşılaştırma
 
 4. **Disk Usage Analyzer** (U)
-
    - Klasör boyutu analizi
    - Görsel grafik
 
 5. **File Splitter** (S)
-
    - Büyük dosyaları parçalama
    - Birleştirme
 
 6. **Checksum Verifier** (C)
-
    - Checksum doğrulama
    - Çoklu algoritma
 
 7. **File Permissions** (P)
-
    - Dosya izinleri görüntüleme
    - Chmod calculator
 
 8. **Directory Tree** (T)
-
    - Klasör yapısı görselleştirme
    - Export to text
 
 9. **File Watcher** (W)
-
    - Dosya değişikliklerini izleme
    - Real-time monitoring
 
 10. **Temp File Cleaner** (L)
-
     - Geçici dosya temizleme
     - Safe delete
 
 11. **File Metadata Viewer** (M)
-
     - EXIF, ID3 tags
     - Metadata düzenleme
 
@@ -317,57 +272,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **Image Resizer** (R)
-
    - Boyutlandırma
    - Aspect ratio koruma
 
 2. **Image Compressor** (C)
-
    - Lossy/lossless sıkıştırma
    - Kalite ayarı
 
 3. **Image Cropper** (O)
-
    - Kırpma aracı
    - Preset boyutlar
 
 4. **Image Filters** (F)
-
    - Grayscale, blur, sharpen
    - Çoklu filter
 
 5. **Watermark Tool** (W)
-
    - Resim/metin filigran
    - Pozisyon ayarı
 
 6. **Background Remover** (B)
-
    - Arka plan silme
    - AI-powered
 
 7. **Image to Base64** (A)
-
    - Base64 encode
    - Data URI oluşturma
 
 8. **QR Code Generator** (Q)
-
    - QR kod oluşturma
    - Özelleştirme
 
 9. **Barcode Generator** (D)
-
    - Barkod oluşturma
    - Çoklu format
 
 10. **Image Metadata Editor** (M)
-
     - EXIF düzenleme
     - Metadata temizleme
 
 11. **Image Collage** (L)
-
     - Kolaj oluşturma
     - Layout seçenekleri
 
@@ -386,57 +330,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **IP Info** (I)
-
    - IP bilgisi görüntüleme
    - Geolocation
 
 2. **Port Scanner** (P)
-
    - Port tarama
    - Service detection
 
 3. **DNS Lookup** (D)
-
    - DNS sorguları
    - A, MX, TXT records
 
 4. **Ping Tool** (G)
-
    - Ping testi
    - Latency ölçümü
 
 5. **Traceroute** (T)
-
    - Route izleme
    - Hop analizi
 
 6. **WHOIS Lookup** (W)
-
    - Domain bilgisi
    - Registrar info
 
 7. **SSL Certificate Checker** (S)
-
    - SSL sertifika kontrolü
    - Expiry date
 
 8. **HTTP Headers** (H)
-
    - HTTP header görüntüleme
    - Request/response
 
 9. **URL Shortener** (U)
-
    - URL kısaltma
    - Custom alias
 
 10. **Network Speed Test** (E)
-
     - Download/upload hızı
     - Latency testi
 
 11. **MAC Address Lookup** (M)
-
     - MAC vendor lookup
     - OUI database
 
@@ -455,57 +388,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **UUID Generator** (U)
-
    - UUID v4 oluşturma
    - Toplu üretim
 
 2. **Password Generator** (P)
-
    - Güçlü şifre oluşturma
    - Özelleştirilebilir
 
 3. **Random Number** (N)
-
    - Random sayı üretimi
    - Range seçimi
 
 4. **Lorem Ipsum** (L)
-
    - Placeholder metin
    - Paragraf/kelime
 
 5. **Cron Expression** (C)
-
    - Cron ifadesi oluşturma
    - Human readable
 
 6. **Epoch Converter** (E)
-
    - Unix timestamp
    - Date conversion
 
 7. **JSON Formatter** (J)
-
    - JSON pretty print
    - Minify
 
 8. **SQL Formatter** (S)
-
    - SQL formatting
    - Syntax highlight
 
 9. **Regex Tester** (R)
-
    - Quick regex test
    - Common patterns
 
 10. **Color Picker** (O)
-
     - Color selection
     - Format export
 
 11. **ASCII Art** (A)
-
     - Text to ASCII art
     - Font selection
 
@@ -524,57 +446,46 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 ### Fonksiyonlar (0/12)
 
 1. **JSON Validator** (J)
-
    - JSON syntax check
    - Error highlighting
 
 2. **XML Validator** (X)
-
    - XML syntax check
    - Schema validation
 
 3. **YAML Validator** (Y)
-
    - YAML syntax check
    - Linting
 
 4. **HTML Formatter** (H)
-
    - HTML beautify
    - Minify
 
 5. **CSS Formatter** (C)
-
    - CSS beautify
    - Autoprefixer
 
 6. **JavaScript Minifier** (M)
-
    - JS minification
    - Uglify
 
 7. **Git Diff Viewer** (G)
-
    - Diff görüntüleme
    - Syntax highlight
 
 8. **API Tester** (A)
-
    - REST API test
    - Request builder
 
 9. **GraphQL Playground** (Q)
-
    - GraphQL query test
    - Schema explorer
 
 10. **WebSocket Tester** (W)
-
     - WebSocket bağlantı
     - Message testing
 
 11. **Code Snippet Manager** (S)
-
     - Snippet saklama
     - Syntax highlight
 

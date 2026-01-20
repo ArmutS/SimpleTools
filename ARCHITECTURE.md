@@ -122,6 +122,7 @@ Uygulama 3 katmanlı bir pencere sistemi kullanır:
 - [x] Mouse pozisyonuna göre pencere yerleştirme
 - [x] Katmanlı pencere yönetimi
 - [x] Text Tools modülü (12 fonksiyon)
+- [x] PDF Tools modülü (10/12 fonksiyon)
 - [x] Tema sistemi (5 tema)
 - [x] Vim-like navigasyon
 
