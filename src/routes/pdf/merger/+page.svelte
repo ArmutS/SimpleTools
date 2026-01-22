@@ -30,6 +30,7 @@
   // Dosya seçme
   async function selectFiles() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         multiple: true,
         filters: [
@@ -39,6 +40,8 @@
           },
         ],
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected) {
         const paths = Array.isArray(selected) ? selected : [selected];
@@ -103,9 +106,12 @@
   // Çıktı klasörü seçme
   async function selectOutputFolder() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         directory: true,
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected && !Array.isArray(selected)) {
         outputPath = selected + "/merged_output.pdf";

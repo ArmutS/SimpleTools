@@ -25,6 +25,7 @@
   // Dosya seçme
   async function selectFiles() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         multiple: true,
         filters: [
@@ -34,6 +35,8 @@
           },
         ],
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected) {
         const paths = Array.isArray(selected) ? selected : [selected];
@@ -75,9 +78,12 @@
   // Çıktı klasörü seçme (Save Dialog kullanmak daha mantıklı olabilir ama şimdilik folder select + filename)
   async function selectOutputFolder() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         directory: true,
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected && !Array.isArray(selected)) {
         outputPath = selected + "/images_output.pdf";
@@ -129,7 +135,7 @@
         const payload = event.payload as { paths: string[] };
         if (payload.paths) {
           const imgPaths = payload.paths.filter((p) =>
-            /\.(png|jpg|jpeg|bmp|webp)$/i.test(p)
+            /\.(png|jpg|jpeg|bmp|webp)$/i.test(p),
           );
           if (imgPaths.length > 0) {
             addFiles(imgPaths);
@@ -137,7 +143,7 @@
             status = "Lütfen resim dosyaları sürükleyin";
           }
         }
-      }
+      },
     );
   });
 
@@ -209,7 +215,7 @@
     try {
       const directory = successOutputPath.substring(
         0,
-        successOutputPath.lastIndexOf("/")
+        successOutputPath.lastIndexOf("/"),
       );
       await invoke("open_folder", { path: directory });
     } catch (error) {

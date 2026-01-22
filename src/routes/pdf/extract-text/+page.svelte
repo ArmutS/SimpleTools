@@ -14,10 +14,12 @@
   // Results
   let extractedText: string = "";
   let pageCount: number = 0;
+  let isCopied: boolean = false;
 
   // Dosya seçme
   async function selectFile() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         multiple: false,
         filters: [
@@ -27,6 +29,8 @@
           },
         ],
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected && !Array.isArray(selected)) {
         selectedFile = selected;
@@ -59,7 +63,7 @@
             file_path: selectedFile,
             pages: null, // All pages
           },
-        }
+        },
       );
 
       extractedText = result.text;
@@ -79,8 +83,10 @@
     if (extractedText) {
       try {
         await navigator.clipboard.writeText(extractedText);
+        isCopied = true;
         status = "Metin panoya kopyalandı!";
         setTimeout(() => {
+          isCopied = false;
           if (showSuccess) status = "Başarıyla tamamlandı!";
         }, 2000);
       } catch (e) {
@@ -99,7 +105,7 @@
         const payload = event.payload as { paths: string[] };
         if (payload.paths && payload.paths.length > 0) {
           const pdf = payload.paths.find((p) =>
-            p.toLowerCase().endsWith(".pdf")
+            p.toLowerCase().endsWith(".pdf"),
           );
           if (pdf) {
             selectedFile = pdf;
@@ -109,7 +115,7 @@
             status = "Lütfen bir PDF dosyası sürükleyin.";
           }
         }
-      }
+      },
     );
   });
 
@@ -205,11 +211,23 @@
       <div class="result-container">
         <div class="result-header">
           <span>{pageCount} sayfa tarandı</span>
-          <button class="copy-btn" on:click={copyToClipboard}>
-            <i class="nf-md-content_copy"></i> Kopyala
+          <button
+            class="copy-btn"
+            class:copied={isCopied}
+            on:click={copyToClipboard}
+          >
+            {#if isCopied}
+              <i class="nf-md-check"></i> Kopyalandı!
+            {:else}
+              <i class="nf-md-content_copy"></i> Kopyala
+            {/if}
           </button>
         </div>
-        <textarea readonly bind:value={extractedText}></textarea>
+        <textarea
+          readonly
+          bind:value={extractedText}
+          placeholder="Metin burada görünecektir..."
+        ></textarea>
       </div>
     {:else}
       <div class="preview-placeholder">
@@ -436,6 +454,11 @@
   }
   .copy-btn:hover {
     border-color: var(--accent);
+  }
+  .copy-btn.copied {
+    background: rgba(166, 227, 161, 0.1);
+    color: #a6e3a1;
+    border-color: #a6e3a1;
   }
 
   textarea {

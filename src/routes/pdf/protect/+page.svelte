@@ -19,6 +19,7 @@
   // Dosya seçme
   async function selectFile() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         multiple: false,
         filters: [
@@ -28,13 +29,15 @@
           },
         ],
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected && !Array.isArray(selected)) {
         selectedFile = selected;
         // Construct default output path
         const directory = selectedFile.substring(
           0,
-          selectedFile.lastIndexOf("/")
+          selectedFile.lastIndexOf("/"),
         );
         const filename = selectedFile.split("/").pop();
         if (filename && !outputPath) {
@@ -49,9 +52,12 @@
   // Çıktı kaydetme yeri seçme
   async function selectOutput() {
     try {
+      await getCurrentWindow().hide();
       const selected = await open({
         directory: true,
       });
+      await getCurrentWindow().show();
+      await getCurrentWindow().setFocus();
 
       if (selected && !Array.isArray(selected)) {
         const filename = selectedFile
@@ -121,7 +127,7 @@
         const payload = event.payload as { paths: string[] };
         if (payload.paths && payload.paths.length > 0) {
           const pdf = payload.paths.find((p) =>
-            p.toLowerCase().endsWith(".pdf")
+            p.toLowerCase().endsWith(".pdf"),
           );
           if (pdf) {
             selectedFile = pdf;
@@ -134,7 +140,7 @@
             status = "Lütfen bir PDF dosyası sürükleyin.";
           }
         }
-      }
+      },
     );
   });
 

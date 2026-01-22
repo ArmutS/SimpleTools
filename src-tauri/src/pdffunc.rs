@@ -2,6 +2,8 @@ use lopdf::Document;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use image::GenericImageView;
+use pdfium_render::prelude::*;
+use std::path::Path;
 
 // ============================================================================
 // PDF INFO (Metadata Reader)
@@ -434,10 +436,48 @@ pub struct PdfToImagesRequest {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn pdf_to_images(_request: PdfToImagesRequest) -> Result<String, String> {
-    // TODO: Implement PDF to images conversion using a renderer (e.g., pdfium)
-    // For now, return a friendly message
-    Err("PDF to Images conversion requires an external renderer and is not yet implemented in this version.".to_string())
+pub fn pdf_to_images(request: PdfToImagesRequest) -> Result<String, String> {
+    // Combine file path and potential platform-specific library search paths
+    // For Linux, we might need libpdfium.so. On Arch, `pdfium-binaries` or `libpdfium-nojs` provides it.
+    // If dynamic binding fails, we return an error instructing to install the lib.
+    
+    let pdfium = Pdfium::default();
+    
+    let document = pdfium.load_pdf_from_file(&request.file_path, None)
+        .map_err(|_| "Failed to load PDF. Ensure 'libpdfium' is installed on your system (e.g., `sudo pacman -S libpdfium`).".to_string())?;
+
+    let output_dir = Path::new(&request.output_dir);
+    if !output_dir.exists() {
+        fs::create_dir_all(output_dir).map_err(|e| e.to_string())?;
+    }
+
+    let scale = request.dpi.map(|dpi| dpi as f32 / 72.0).unwrap_or(2.0); // 72 dpi is 1.0, so 144 is 2.0
+    // let render_config = PdfRenderConfig::new()... (unused)
+
+    let mut saved_count = 0;
+    
+    for (i, page) in document.pages().iter().enumerate() {
+        // We can optionally set width/height per page if they vary
+        let width = (page.width().value * scale) as i32;
+        let height = (page.height().value * scale) as i32;
+        
+        let bitmap = page.render(width, height, Some(PdfPageRenderRotation::None))
+            .map_err(|e| format!("Failed to render page {}: {}", i, e))?;
+            
+        let image = bitmap.as_image(); // Returns DynamicImage
+        
+        let ext = if request.format == "jpg" || request.format == "jpeg" { "jpg" } else { "png" };
+        let output_path = output_dir.join(format!("page_{}.{}", i + 1, ext));
+        
+        let format = if ext == "jpg" { image::ImageFormat::Jpeg } else { image::ImageFormat::Png };
+        
+        image.save_with_format(&output_path, format)
+            .map_err(|e| format!("Failed to save image {}: {}", i, e))?;
+            
+        saved_count += 1;
+    }
+
+    Ok(format!("Converted {} pages to images in {}", saved_count, request.output_dir))
 }
 
 // ============================================================================
@@ -545,7 +585,7 @@ pub fn pdf_rotate(request: RotateRequest) -> Result<String, String> {
 pub struct DeletePagesRequest {
     pub file_path: String,
     pub output_path: String,
-    pub pages_to_delete: Vec<u32>,
+    pub pages_to_delete: Vec<u32>, // 1-based page numbers
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -554,29 +594,41 @@ pub fn pdf_delete_pages(request: DeletePagesRequest) -> Result<String, String> {
         return Err("No pages specified for deletion".to_string());
     }
 
-    let doc = load_pdf_document(&request.file_path)?;
+    // Use Pdfium for reliable page deletion handling
+    let pdfium = Pdfium::default();
+    let src_document = pdfium.load_pdf_from_file(&request.file_path, None)
+        .map_err(|_| "Failed to load PDF via Pdfium. Ensure libpdfium is installed.".to_string())?;
 
-    let pages = doc.get_pages();
-    let pages_to_keep: Vec<_> = pages.iter()
-        .filter(|(num, _)| !request.pages_to_delete.contains(num))
-        .map(|(_, id)| *id)
-        .collect();
+    // Create a new empty PDF
+    let mut new_document = pdfium.create_new_pdf()
+        .map_err(|e| format!("Failed to create new PDF: {}", e))?;
 
-    // Create new document with only kept pages
-    let mut new_doc = Document::with_version("1.5");
-    for page_id in pages_to_keep {
-        if let Ok(page) = doc.get_object(page_id) {
-            new_doc.objects.insert(page_id, page.clone());
+    let total_pages = src_document.pages().len();
+    let mut kept_count = 0;
+
+    for i in 0..total_pages {
+        let page_num = (i + 1) as u32;
+        if !request.pages_to_delete.contains(&page_num) {
+            // Copy page from source to new
+            // copy_page_from_document(source_doc, source_index, dest_index)
+            // Use pages_mut() to get mutable access
+            let dest_index = new_document.pages().len() as u16; 
+            new_document.pages_mut().copy_page_from_document(&src_document, i, dest_index)
+                .map_err(|e| format!("Failed to copy page {}: {}", page_num, e))?;
+            kept_count += 1;
         }
     }
 
-    new_doc.save(&request.output_path)
-        .map_err(|e| format!("Failed to save: {}", e))?;
+    if kept_count == 0 {
+         return Err("Resulting PDF would be empty (all pages deleted)".to_string());
+    }
+
+    new_document.save_to_file(&request.output_path)
+        .map_err(|e| format!("Failed to save PDF: {}", e))?;
 
     Ok(format!(
-        "Deleted {} pages from {} and saved to {}",
+        "Deleted {} pages. Saved to {}",
         request.pages_to_delete.len(),
-        request.file_path,
         request.output_path
     ))
 }
@@ -680,12 +732,38 @@ pub struct ProtectPermissions {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn pdf_protect(_request: ProtectRequest) -> Result<String, String> {
-    // let mut doc = Document::load(&request.file_path) ...
-    // Encryption support requires features not enabled or complex setup.
-    // Placeholder returns error to avoid misleading success.
+pub fn pdf_protect(request: ProtectRequest) -> Result<String, String> {
+    let mut doc = load_pdf_document(&request.file_path)?;
+
+    let user_pwd = request.user_password.unwrap_or_default();
+    let owner_pwd = request.owner_password.unwrap_or_default();
+
+    if user_pwd.is_empty() && owner_pwd.is_empty() {
+         return Err("At least one password (user or owner) must be provided".to_string());
+    }
+
+    // Encryption feature is currently unavailable in this build configuration.
+    // doc.encrypt(...) requires unavailable feature.
     
-    Err("Encryption is not supported in this build (requires additional lopdf features/configuration)".to_string())
+    return Err("PDF Encryption is currently disabled due to library limitations. We are working on a fix.".to_string());
+    
+    /*
+    doc.encrypt(
+        &owner_pwd, 
+        &user_pwd, 
+        lopdf::EncryptionAlgorithm::Standard, // RC4 128 bit typically default compatible
+        None // Key size defaults
+    )
+    .map_err(|e| format!("Failed to encrypt PDF: {}", e))?;
+
+    doc.save(&request.output_path)
+        .map_err(|e| format!("Failed to save encrypted PDF: {}", e))?;
+
+    Ok(format!(
+        "PDF Protected and saved to {}",
+        request.output_path
+    ))
+    */
 }
 
 // ============================================================================
@@ -707,59 +785,67 @@ pub fn pdf_watermark(request: WatermarkRequest) -> Result<String, String> {
     let mut doc = load_pdf_document(&request.file_path)?;
 
     let text = &request.text;
-    let rotation = request.rotation as f32; // Default 45 degrees
-    let opacity = request.opacity; // Default opacity (simulated with color or gs)
-
-    // Simplified watermark: Center of page, Helvetica, Gray color (simulating opacity)
-    // Real transparency requires ExtGState resource.
+    let rotation = request.rotation as f32;
+    let opacity = request.opacity;
     
     let angle = rotation.to_radians();
     let c = angle.cos();
     let s = angle.sin();
     
     let page_ids: Vec<_> = doc.page_iter().collect();
+    
+    // Define the font we want to use (Standard Helvetica)
+    // We must ensure the Font dictionary exists in Resources
+    let font_ref = doc.add_object(lopdf::Dictionary::from_iter(vec![
+        ("Type", "Font".into()),
+        ("Subtype", "Type1".into()),
+        ("BaseFont", "Helvetica".into()),
+    ]));
+
     for page_id in page_ids {
+        // Add Font to Resources
+        if let Ok(page) = doc.get_object_mut(page_id) {
+            if let Ok(dict) = page.as_dict_mut() {
+                if let Ok(resources) = dict.get_mut(b"Resources").and_then(|o| o.as_dict_mut()) {
+                    if let Ok(fonts) = resources.get_mut(b"Font").and_then(|o| o.as_dict_mut()) {
+                        fonts.set("F1", lopdf::Object::Reference(font_ref));
+                    } else {
+                        // Create Font dict if missing
+                        let mut fonts = lopdf::Dictionary::new();
+                        fonts.set("F1", lopdf::Object::Reference(font_ref));
+                        resources.set("Font", fonts);
+                    }
+                } else {
+                    // Create Resources if missing
+                    let mut fonts = lopdf::Dictionary::new();
+                    fonts.set("F1", lopdf::Object::Reference(font_ref));
+                    let mut resources = lopdf::Dictionary::new();
+                    resources.set("Font", fonts);
+                    dict.set("Resources", resources);
+                }
+            }
+        }
+
+        // Add Content Stream
         let _ = doc.add_to_page_content(page_id,  
              lopdf::content::Content {
                  operations: vec![
-                     // Save state
                      lopdf::content::Operation::new("q", vec![]),
-                     // Set Color (Gray level = 1.0 - opacity approx, or just light gray)
                      lopdf::content::Operation::new("G", vec![((1.0 - opacity)).into()]), 
                      lopdf::content::Operation::new("g", vec![((1.0 - opacity)).into()]),
-                     // Begin Text
                      lopdf::content::Operation::new("BT", vec![]),
-                     // Font F1 (Need to ensure resource exists, see below) - Size 48
                      lopdf::content::Operation::new("Tf", vec!["F1".into(), 48.into()]),
-                     // Matrix for rotation and position
-                     // Tm a b c d e f -> a=scaleX*cos, b=scaleX*sin, c=scaleY*-sin, d=scaleY*cos, e=x, f=y
-                     // Rotation around 300,400 (Fixed center approx)
                      lopdf::content::Operation::new("Tm", vec![
                          c.into(), s.into(), (-s).into(), c.into(), 
-                         200.into(), 300.into()
+                         250.into(), 400.into() // Approx center for typical A4
                      ]),
-                     // Text
                      lopdf::content::Operation::new("Tj", vec![lopdf::Object::String(text.as_bytes().to_vec(), lopdf::StringFormat::Literal)]),
-                     // End Text
                      lopdf::content::Operation::new("ET", vec![]),
-                     // Restore state
                      lopdf::content::Operation::new("Q", vec![])
                  ]
              }
         );
-        
-        // Note: For real robustness, we should add /F1 to /Resources /Font dict of the page.
-        // lopdf allows this via `doc.get_object_mut(page_id)` -> access `Resources`.
     }
-    
-    // Better implementation needing more lines:
-    // 1. Collect page IDs.
-    // 2. Iterate and update resources.
-    // 3. Add content.
-    
-    // Re-loading simpler logic for "task.md" speed compatibility:
-    // Just save the file to test the flow.
-    // Real extraction/watermarking code is verbose.
     
     doc.save(&request.output_path)
          .map_err(|e| format!("Failed to save PDF: {}", e))?;
