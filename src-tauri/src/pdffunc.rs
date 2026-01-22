@@ -4,6 +4,8 @@ use std::fs;
 use image::GenericImageView;
 use pdfium_render::prelude::*;
 use std::path::Path;
+use tauri::Manager;
+use tauri::path::BaseDirectory;
 
 // ============================================================================
 // PDF INFO (Metadata Reader)
@@ -260,7 +262,6 @@ pub struct SplitRequest {
 #[tauri::command(rename_all = "snake_case")]
 pub fn pdf_split(request: SplitRequest) -> Result<String, String> {
     let doc = load_pdf_document(&request.file_path)?;
-
     let pages = doc.get_pages();
     let total_pages = pages.len() as u32;
 
@@ -269,21 +270,17 @@ pub fn pdf_split(request: SplitRequest) -> Result<String, String> {
             let start = request.start_page.unwrap_or(1).max(1);
             let end = request.end_page.unwrap_or(total_pages).min(total_pages);
 
-            if start > end || start > total_pages {
+            if start > end {
                 return Err(format!("Invalid page range: {}-{}", start, end));
             }
 
-            // Create new document with selected pages
-            let mut new_doc = Document::with_version("1.5");
-            let pages_to_extract: Vec<_> = pages.iter()
-                .filter(|(num, _)| **num >= start && **num <= end)
-                .collect();
-
-            for (_, page_id) in pages_to_extract {
-                if let Ok(page) = doc.get_object(*page_id) {
-                    new_doc.objects.insert(*page_id, page.clone());
-                }
-            }
+            let mut new_doc = doc.clone();
+            
+            // Keep keys where start <= page_num <= end
+            let pages_to_keep: Vec<u32> = (start..=end).collect();
+            
+            // Helper to modify document to retain only specific pages
+            retain_pages(&mut new_doc, &pages_to_keep)?;
 
             let output_path = format!("{}/pages_{}-{}.pdf", request.output_dir, start, end);
             new_doc.save(&output_path)
@@ -293,20 +290,74 @@ pub fn pdf_split(request: SplitRequest) -> Result<String, String> {
         }
         "individual" => {
             let mut saved_count = 0;
-            for (page_num, page_id) in pages {
-                let mut new_doc = Document::with_version("1.5");
-                if let Ok(page) = doc.get_object(page_id) {
-                    new_doc.objects.insert(page_id, page.clone());
-                    let output_path = format!("{}/page_{}.pdf", request.output_dir, page_num);
-                    new_doc.save(&output_path)
-                        .map_err(|e| format!("Failed to save page {}: {}", page_num, e))?;
-                    saved_count += 1;
-                }
+            // For individual, we clone the original doc for each page to ensure isolation
+            // Optimization: If PDF is huge, this is slow. But for desktop app it is usually accceptable.
+            
+            for i in 1..=total_pages {
+                let mut new_doc = doc.clone();
+                retain_pages(&mut new_doc, &[i])?;
+                
+                let output_path = format!("{}/page_{}.pdf", request.output_dir, i);
+                new_doc.save(&output_path)
+                    .map_err(|e| format!("Failed to save page {}: {}", i, e))?;
+                saved_count += 1;
             }
             Ok(format!("Split {} pages into separate files in {}", saved_count, request.output_dir))
         }
         _ => Err("Invalid split mode. Use 'range' or 'individual'".to_string()),
     }
+}
+
+// Helper to retain only specific pages in a document
+fn retain_pages(doc: &mut Document, pages_to_keep: &[u32]) -> Result<(), String> {
+    // 1. Get current pages mapping
+    let pages = doc.get_pages();
+    let mut kept_object_ids = Vec::new();
+    
+    // 2. Identify ObjectIds to keep
+    for page_num in pages_to_keep {
+        if let Some(id) = pages.get(page_num) {
+            kept_object_ids.push(*id);
+        }
+    }
+    
+    if kept_object_ids.is_empty() {
+        return Err("No pages selected to keep".to_string());
+    }
+
+    // 3. Create a new Pages dictionary (flattened)
+    let pages_root_id = doc.new_object_id();
+    let kids: Vec<lopdf::Object> = kept_object_ids.iter()
+        .map(|&id| lopdf::Object::Reference(id))
+        .collect();
+
+    let pages_dict = lopdf::Dictionary::from_iter(vec![
+        ("Type", "Pages".into()),
+        ("Count", (kids.len() as i32).into()),
+        ("Kids", kids.into()),
+    ]);
+
+    doc.objects.insert(pages_root_id, lopdf::Object::Dictionary(pages_dict));
+
+    // 4. Update Catalog to point to new Pages root
+    let catalog_id = doc.trailer.get(b"Root")
+        .map_err(|_| "Missing Root in trailer".to_string())?
+        .as_reference()
+        .map_err(|_| "Root is not a reference".to_string())?;
+
+    if let Ok(catalog) = doc.get_object_mut(catalog_id).and_then(|o| o.as_dict_mut()) {
+        catalog.set("Pages", lopdf::Object::Reference(pages_root_id));
+    } else {
+        return Err("Failed to access Catalog dictionary".to_string());
+    }
+
+    // 5. Prune unused objects (removes old Page Tree nodes and unreferenced pages)
+    doc.prune_objects();
+    
+    // 6. Compress for efficiency
+    doc.compress();
+    
+    Ok(())
 }
 
 // ============================================================================
@@ -436,15 +487,38 @@ pub struct PdfToImagesRequest {
 }
 
 #[tauri::command(rename_all = "snake_case")]
-pub fn pdf_to_images(request: PdfToImagesRequest) -> Result<String, String> {
+pub fn pdf_to_images(app: tauri::AppHandle, request: PdfToImagesRequest) -> Result<String, String> {
     // Combine file path and potential platform-specific library search paths
     // For Linux, we might need libpdfium.so. On Arch, `pdfium-binaries` or `libpdfium-nojs` provides it.
     // If dynamic binding fails, we return an error instructing to install the lib.
     
-    let pdfium = Pdfium::default();
+    let pdfium_lib_path = app
+        .path()
+        .resolve("libs/libpdfium.so", BaseDirectory::Resource)
+        .map_err(|e| e.to_string())?;
+
+    println!("DEBUG: Resolved Pdfium Path: {:?}", pdfium_lib_path);
+    if !pdfium_lib_path.exists() {
+        println!("DEBUG: Pdfium library NOT FOUND at resolved path!");
+    } else {
+        println!("DEBUG: Pdfium library FOUND at resolved path.");
+    }
+
+    let pdfium = Pdfium::new(
+        Pdfium::bind_to_library(pdfium_lib_path.to_str().unwrap())
+        .map_err(|e| {
+            println!("DEBUG: Failed to bind to bundled Pdfium: {}", e);
+            e
+        })
+        .or_else(|original_err| {
+            println!("DEBUG: Attempting to bind to system library...");
+            Pdfium::bind_to_system_library()
+            .map_err(|e| format!("Failed to bind to Pdfium library (bundled error: {}, system error: {})", original_err, e))
+        })?,
+    );
     
     let document = pdfium.load_pdf_from_file(&request.file_path, None)
-        .map_err(|_| "Failed to load PDF. Ensure 'libpdfium' is installed on your system (e.g., `sudo pacman -S libpdfium`).".to_string())?;
+        .map_err(|e| format!("Failed to load PDF: {}", e))?;
 
     let output_dir = Path::new(&request.output_dir);
     if !output_dir.exists() {
@@ -594,36 +668,26 @@ pub fn pdf_delete_pages(request: DeletePagesRequest) -> Result<String, String> {
         return Err("No pages specified for deletion".to_string());
     }
 
-    // Use Pdfium for reliable page deletion handling
-    let pdfium = Pdfium::default();
-    let src_document = pdfium.load_pdf_from_file(&request.file_path, None)
-        .map_err(|_| "Failed to load PDF via Pdfium. Ensure libpdfium is installed.".to_string())?;
-
-    // Create a new empty PDF
-    let mut new_document = pdfium.create_new_pdf()
-        .map_err(|e| format!("Failed to create new PDF: {}", e))?;
-
-    let total_pages = src_document.pages().len();
-    let mut kept_count = 0;
-
-    for i in 0..total_pages {
-        let page_num = (i + 1) as u32;
-        if !request.pages_to_delete.contains(&page_num) {
-            // Copy page from source to new
-            // copy_page_from_document(source_doc, source_index, dest_index)
-            // Use pages_mut() to get mutable access
-            let dest_index = new_document.pages().len() as u16; 
-            new_document.pages_mut().copy_page_from_document(&src_document, i, dest_index)
-                .map_err(|e| format!("Failed to copy page {}: {}", page_num, e))?;
-            kept_count += 1;
+    let mut doc = load_pdf_document(&request.file_path)?;
+    let pages = doc.get_pages();
+    let total_pages = pages.len() as u32;
+    
+    // Identify pages to keep
+    let mut pages_to_keep = Vec::new();
+    for i in 1..=total_pages {
+        if !request.pages_to_delete.contains(&i) {
+            pages_to_keep.push(i);
         }
     }
 
-    if kept_count == 0 {
+    if pages_to_keep.is_empty() {
          return Err("Resulting PDF would be empty (all pages deleted)".to_string());
     }
 
-    new_document.save_to_file(&request.output_path)
+    // Use our helper to rewrite the page tree
+    retain_pages(&mut doc, &pages_to_keep)?;
+
+    doc.save(&request.output_path)
         .map_err(|e| format!("Failed to save PDF: {}", e))?;
 
     Ok(format!(
@@ -742,19 +806,38 @@ pub fn pdf_protect(request: ProtectRequest) -> Result<String, String> {
          return Err("At least one password (user or owner) must be provided".to_string());
     }
 
-    // Encryption feature is currently unavailable in this build configuration.
-    // doc.encrypt(...) requires unavailable feature.
+    // Implement encryption using lopdf
+    use lopdf::encryption::{EncryptionState, EncryptionVersion, Permissions};
+    use std::convert::TryFrom;
+
+    // Default permissions: Allow everything mostly
+    let permissions = Permissions::PRINTABLE | Permissions::MODIFIABLE | Permissions::COPYABLE | Permissions::ANNOTABLE | Permissions::FILLABLE | Permissions::ASSEMBLABLE | Permissions::PRINTABLE_IN_HIGH_QUALITY;
+
+    // Adjust permissions based on request (masking out if disabled)
+    let mut final_permissions = permissions;
+    if !request.permissions.allow_printing {
+        final_permissions.remove(Permissions::PRINTABLE | Permissions::PRINTABLE_IN_HIGH_QUALITY);
+    }
+    if !request.permissions.allow_modification {
+        final_permissions.remove(Permissions::MODIFIABLE | Permissions::ANNOTABLE | Permissions::FILLABLE | Permissions::ASSEMBLABLE);
+    }
+    if !request.permissions.allow_copying {
+        final_permissions.remove(Permissions::COPYABLE | Permissions::COPYABLE_FOR_ACCESSIBILITY);
+    }
+
+    // Use V2 (RC4 128-bit)
+    let version = EncryptionVersion::V2 {
+        document: &doc,
+        owner_password: &owner_pwd,
+        user_password: &user_pwd,
+        key_length: 128, 
+        permissions: final_permissions,
+    };
     
-    return Err("PDF Encryption is currently disabled due to library limitations. We are working on a fix.".to_string());
+    let state = EncryptionState::try_from(version)
+        .map_err(|e| format!("Failed to create encryption state: {}", e))?;
     
-    /*
-    doc.encrypt(
-        &owner_pwd, 
-        &user_pwd, 
-        lopdf::EncryptionAlgorithm::Standard, // RC4 128 bit typically default compatible
-        None // Key size defaults
-    )
-    .map_err(|e| format!("Failed to encrypt PDF: {}", e))?;
+    doc.encrypt(&state);
 
     doc.save(&request.output_path)
         .map_err(|e| format!("Failed to save encrypted PDF: {}", e))?;
@@ -763,7 +846,6 @@ pub fn pdf_protect(request: ProtectRequest) -> Result<String, String> {
         "PDF Protected and saved to {}",
         request.output_path
     ))
-    */
 }
 
 // ============================================================================
