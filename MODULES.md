@@ -1,410 +1,406 @@
-# SimpleTools - Modül Planlama
+# SimpleTools - Module Planning
 
-Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun detaylı planlamasını içerir.
+This file contains the detailed planning for the 12 modules and 12 functions within each module in the SimpleTools project.
 
-## Modül 1: Text Tools ✅ (TAMAMLANDI)
+## Module 1: Text Tools ✅ (COMPLETED)
 
-**Kısayol**: T  
-**Durum**: Hazır  
+**Shortcut**: T
+**Status**: Ready
 **Backend**: `src-tauri/src/textfunc.rs`
 
-### Fonksiyonlar (12/12)
+### Functions (12/12)
 
 1. **Regex Tester** (R) ✅
-   - Regex pattern test etme
+   - Test regex patterns
    - Match highlighting
-   - Capture groups gösterimi
+   - Show capture groups
 
 2. **Text Diff** (D) ✅
-   - İki metin karşılaştırma
-   - Side-by-side görünüm
-   - Fark vurgulama
+   - Compare two texts
+   - Side-by-side view
+   - Highlight differences
 
 3. **String Tools** (S) ✅
-   - Case dönüşümleri (upper, lower, title, camel, snake, kebab)
-   - String manipülasyonları
+   - Case conversions (upper, lower, title, camel, snake, kebab)
+   - String manipulations
 
 4. **JWT Decoder** (J) ✅
-   - JWT token decode
-   - Header, payload, signature gösterimi
+   - Decode JWT tokens
+   - Show header, payload, signature
    - Validation
 
 5. **Slug Generator** (L) ✅
-   - URL-friendly slug oluşturma
-   - Özel karakter temizleme
+   - Create URL-friendly slugs
+   - Clean special characters
 
 6. **Text Strip** (T) ✅
-   - Whitespace temizleme
-   - Satır sonu normalizasyonu
+   - Clean whitespace
+   - Normalize line endings
 
-7. **Lorem Ipsum Generator** (I) - EKLENECEK
-   - Placeholder metin oluşturma
-   - Paragraf/kelime sayısı ayarı
+7. **Lorem Ipsum Generator** (I) - TO BE ADDED
+   - Generate placeholder text
+   - Paragraph/word count settings
 
-8. **Base64 Encoder/Decoder** (B) - EKLENECEK
+8. **Base64 Encoder/Decoder** (B) - TO BE ADDED
    - Base64 encode/decode
-   - Dosya desteği
+   - File support
 
-9. **URL Encoder/Decoder** (U) - EKLENECEK
+9. **URL Encoder/Decoder** (U) - TO BE ADDED
    - URL encode/decode
    - Query string parser
 
-10. **Markdown Preview** (M) - EKLENECEK
+10. **Markdown Preview** (M) - TO BE ADDED
     - Markdown to HTML
     - Live preview
 
-11. **Character Counter** (C) - EKLENECEK
-    - Karakter, kelime, satır sayısı
-    - Reading time hesaplama
+11. **Character Counter** (C) - TO BE ADDED
+    - Character, word, line counts
+    - Reading time calculation
 
-12. **Text Sorter** (O) - EKLENECEK
-    - Alfabetik sıralama
+12. **Text Sorter** (O) - TO BE ADDED
+    - Sort alphabetically
     - Reverse, unique, shuffle
 
 ---
 
-## Modül 2: PDF Tools 🚧
+## Module 2: PDF Tools 🚧
 
-**Kısayol**: P  
-**Durum**: Geliştiriliyor  
+**Shortcut**: P
+**Status**: In Development
 **Backend**: `src-tauri/src/pdffunc.rs`
-**Not**: `lopdf` 0.38 ile güçlendirilmiş, bozuk dosya korumalı robust altyapı.
+**Note**: Robust infrastructure powered by `lopdf` 0.38, with corrupted file protection.
 
-### Fonksiyonlar (10/12)
+### Functions (10/12)
 
-1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
-   - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
-   - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
+1. **PDF Merger** (M) ✅ **With Advanced Features**
+   - Merges scattered PDF files into a single file
+   - **Split View UI**: Controls on left panel, preview on right (Planned)
+   - **Opaque Interface**: Solid (non-transparent) design for better readability
+   - **Smart Defaults**: Automatic output path and filename generation
+   - **File Metadata**: Display page count, file size
+   - **Drag & Drop Sorting**: Sort files by dragging
+   - **Encrypted File Detection**: Warning with 🔒 icon
+   - **Success Feedback**: "Open Folder" and "Open File" buttons
+   - Reason: Sending 5 separate attachments to a client looks unprofessional; a single file is requested
+   - **Status**: ✅ Ready
 
-1. **PDF Merger (Birleştirici)** (M) ✅ **Gelişmiş Özelliklerle**
-   - Dağınık PDF dosyalarını sıraya dizip tek dosya yapar
-   - **Split View UI**: Sol panelde kontroller, sağ panelde önizleme (Planlanan)
-   - **Opak Arayüz**: Daha iyi okunabilirlik için transparan olmayan tasarım
-   - **Akıllı Varsayılanlar**: Otomatik çıktı yolu ve dosya adı oluşturma
-   - **Dosya Metadata**: Sayfa sayısı, dosya boyutu gösterimi
-   - **Sürükle-Bırak Sıralama**: Dosyaları sürükleyerek sıralama
-   - **Şifreli Dosya Tespiti**: 🔒 ikonu ile uyarı
-   - **Başarı Geri Bildirimi**: "Klasörü Aç" ve "Dosyayı Aç" butonları
-   - Neden: Müşteriye 5 ayrı ek göndermek profesyonel durmaz, tek dosya istenir
-   - **Durum**: ✅ Hazır
+2. **PDF Splitter** (S) ✅
+   - Extracts only specific pages (e.g., 5-10) from a 100-page report into a new PDF
+   - "Make each page a separate file" option
+   - Reason: To avoid sending the entire file when "just send me the relevant page" is requested
 
-1. **PDF Splitter (Ayırıcı)** (S) ✅
-   - 100 sayfalık bir raporun sadece 5-10 arasındaki sayfalarını alıp yeni bir PDF yapar
-   - "Her sayfayı ayrı dosya yap" seçeneği
-   - Neden: "Bana sadece ilgili sayfayı gönder" dendiğinde koca dosyayı atmamak için
+3. **Images to PDF** (I) ✅
+   - Converts photos of documents (JPG/PNG) taken with a phone or scanned into a single PDF
+   - Reason: Visa applications or HR documents usually require a single PDF, not photos
 
-1. **Images to PDF (Resimden PDF'e)** (I) ✅
-   - Telefondan çekilmiş veya taranmış JPG/PNG evrak fotoğraflarını seçip tek bir PDF haline getirir
-   - Neden: Vize başvurusu veya IK evrakları genelde fotoğraf değil, tek PDF olarak istenir
+4. **PDF to Images** (G) 🚧 (Requires external library)
+   - Exports each page of a PDF as high-quality JPG or PNG
+   - Reason: To take a single slide from a presentation and post it as an image on Instagram or WhatsApp
 
-1. **PDF to Images (PDF'ten Resme)** (G) 🚧 (Harici kütüphane gerektiriyor)
-   - PDF'in her sayfasını yüksek kaliteli JPG veya PNG olarak dışarı aktarır
-   - Neden: Bir sunumun tek bir sayfasını alıp Instagram'a veya WhatsApp'a resim olarak atmak için
+5. **Compress PDF** (C) ✅
+   - Reduces a 20 MB file to 2-3 MB without significantly ruining quality
+   - Reason: Email attachments often have a 25MB limit, or upload sites have size limits
 
-1. **Compress PDF (Sıkıştırıcı)** (C) ✅
-   - 20 MB'lık dosyayı kaliteyi çok bozmadan 2-3 MB'a düşürür
-   - Neden: E-posta ekleri genelde 25MB sınırına takılır veya upload siteleri dosya boyutu sınırı koyar
+6. **Rotate Pages** (R) ✅
+   - Rotates incorrectly scanned pages 90/180 degrees and saves
+   - Reason: To avoid neck strain trying to read a document that came out of the scanner upside down
 
-1. **Rotate Pages (Sayfa Döndür)** (R) ✅
-   - Yanlış taranmış sayfaları 90/180 derece döndürüp kaydeder
-   - Neden: Tarayıcıdan ters çıkmış bir belgeyi okumak için boyun fıtığı olmamak gerekir
+7. **Delete Pages** (D) ✅
+   - Removes selected pages from inside a PDF
+   - Reason: To weed out bad pages without rescanning
 
-1. **Delete Pages (Sayfa Sil)** (D) ✅
-   - PDF içinden seçilen sayfaları uçurur
-   - Neden: Yeniden tarama yapmadan aradaki çürük elmaları ayıklamak için
+8. **Extract Text** (T) ✅
+   - Extracts selectable text inside a PDF as pure txt (not OCR, embedded text)
+   - Reason: To get content when copy-pasting is disabled or difficult
 
-1. **Extract Text (Metin Kazıyıcı)** (T) ✅
-   - PDF'in içindeki seçilebilir yazıları saf txt olarak dışarı alır (OCR değil, gömülü metin)
-   - Neden: Kopyala-yapıştır yapmanın yasak olduğu veya zor olduğu durumlarda içeriği almak için
-
-1. **Remove Password (Şifre/Kilit Kaldır)** (U) ✅
-   - Şifresini bildiğin dosyanın şifresini kalıcı olarak siler
+9. **Remove Password** (U) ✅
+   - Permanently removes the password from a file you know the password to
    - Owner Password removal
-   - Neden: Kendi kredi kartı ekstreni arşivlerken her seferinde şifre girmek istemezsin
+   - Reason: You don't want to enter a password every time you archive your own credit card statement
 
-1. **Protect PDF (Şifrele)** (P) 🚧 (Şifreleme desteği bekleniyor)
-   - Dosyaya açılış şifresi (User Password) veya yazdırma yasağı (Owner Password) koyar
-   - Neden: Maaş bordrosu veya gizli proje dosyası gönderirken güvenlik şarttır
+10. **Protect PDF** (P) 🚧 (Encryption support pending)
+    - Adds an open password (User Password) or print restriction (Owner Password)
+    - Reason: Security is mandatory when sending payroll or confidential project files
 
-1. **Watermark (Filigran Ekle)** (W) ✅
-   - Sayfaların üzerine çapraz şekilde yarı saydam filigran yazar
-   - Neden: Belgenin statüsünü belirtmek veya izinsiz kullanımını engellemek için
+11. **Watermark** (W) ✅
+    - Writes a semi-transparent watermark diagonally across pages
+    - Reason: To indicate document status or prevent unauthorized use
 
-1. **Metadata Editor (Künye Düzenleyici)** (E) ✅
-   - Dosyanın Yazar, Başlık gibi arka plan bilgilerini değiştirir
-   - Neden: Başkasından aldığın bir ödevi teslim etmeden önce "Author" kısmında başkasının adının yazmasını istemezsin
+12. **Metadata Editor** (E) ✅
+    - Changes background info like Author, Title
+    - Reason: You don't want someone else's name in the "Author" section when submitting homework/report you got from someone else
 
-### Gelişmiş Özellikler (PDF Merger)
+### Advanced Features (PDF Merger)
 
-- ✅ **Split View UI**: Kontrol ve önizleme ayrımı
-- ✅ **Solid Background**: Transparan olmayan, odak odaklı tasarım
-- ✅ **Smart Defaults**: Otomatik çıktı yolu ve dosya adı oluşturma
-- ✅ **File Metadata**: Sayfa sayısı, dosya boyutu, şifreleme durumu
-- ✅ **Drag & Drop Sorting**: Dosyaları sürükleyerek sıralama
-- ✅ **Encrypted Detection**: Şifreli dosya tespiti ve uyarı
-- ✅ **Success Feedback**: Klasör/dosya açma butonları
-- ✅ **Error Handling**: Detaylı hata mesajları
+- ✅ **Split View UI**: Separation of controls and preview
+- ✅ **Solid Background**: Non-transparent, focus-oriented design
+- ✅ **Smart Defaults**: Automatic output path and filename generation
+- ✅ **File Metadata**: Page count, file size, encryption status
+- ✅ **Drag & Drop Sorting**: Sort files by bringing
+- ✅ **Encrypted Detection**: Detect encrypted files and warn
+- ✅ **Success Feedback**: Buttons to open folder/file
+- ✅ **Error Handling**: Detailed error messages
 
 ---
 
-## Modül 3: Converters 🚧
+## Module 3: Converters 🚧
 
-**Kısayol**: C  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/convertfunc.rs` (oluşturulacak)
+**Shortcut**: C
+**Status**: Planned
+**Backend**: `src-tauri/src/convertfunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **JSON to YAML** (J)
-   - JSON ↔ YAML dönüşümü
+   - JSON ↔ YAML conversion
    - Syntax highlighting
 
 2. **CSV to JSON** (C)
-   - CSV ↔ JSON dönüşümü
-   - Delimiter seçimi
+   - CSV ↔ JSON conversion
+   - Delimiter selection
 
 3. **XML to JSON** (X)
-   - XML ↔ JSON dönüşümü
+   - XML ↔ JSON conversion
    - Pretty print
 
 4. **Color Converter** (O)
-   - HEX, RGB, HSL dönüşümleri
+   - HEX, RGB, HSL conversions
    - Color picker
 
 5. **Unit Converter** (U)
-   - Uzunluk, ağırlık, sıcaklık
-   - Çoklu birim desteği
+   - Length, weight, temperature
+   - Multi-unit support
 
 6. **Timestamp Converter** (T)
    - Unix timestamp ↔ Date
-   - Timezone desteği
+   - Timezone support
 
 7. **Number Base Converter** (N)
    - Binary, Octal, Decimal, Hex
-   - Çoklu base dönüşümü
+   - Multi-base conversion
 
 8. **Image Format Converter** (I)
    - PNG, JPG, WebP, SVG
-   - Resize seçeneği
+   - Resize option
 
 9. **Audio Converter** (A)
    - MP3, WAV, OGG, FLAC
-   - Bitrate ayarı
+   - Bitrate setting
 
 10. **Video Converter** (V)
     - MP4, WebM, AVI, MKV
-    - Codec seçimi
+    - Codec selection
 
 11. **Font Converter** (F)
     - TTF, OTF, WOFF, WOFF2
-    - Subset oluşturma
+    - Subset creation
 
 12. **Markdown to HTML** (M)
     - Markdown → HTML
-    - Template desteği
+    - Template support
 
 ---
 
-## Modül 4: File & System 🚧
+## Module 4: File & System 🚧
 
-**Kısayol**: F  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/filefunc.rs` (oluşturulacak)
+**Shortcut**: F
+**Status**: Planned
+**Backend**: `src-tauri/src/filefunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **Hash Generator** (H)
    - MD5, SHA1, SHA256, SHA512
-   - Dosya hash'leme
+   - File hashing
 
 2. **File Renamer** (R)
-   - Toplu dosya yeniden adlandırma
-   - Regex pattern desteği
+   - Batch file renaming
+   - Regex pattern support
 
 3. **Duplicate Finder** (D)
-   - Duplicate dosya bulma
-   - Hash-based karşılaştırma
+   - Find duplicate files
+   - Hash-based comparison
 
 4. **Disk Usage Analyzer** (U)
-   - Klasör boyutu analizi
-   - Görsel grafik
+   - Folder size analysis
+   - Visual graph
 
 5. **File Splitter** (S)
-   - Büyük dosyaları parçalama
-   - Birleştirme
+   - Split large files
+   - Merge
 
 6. **Checksum Verifier** (C)
-   - Checksum doğrulama
-   - Çoklu algoritma
+   - Verify checksum
+   - Multiple algorithms
 
 7. **File Permissions** (P)
-   - Dosya izinleri görüntüleme
+   - View file permissions
    - Chmod calculator
 
 8. **Directory Tree** (T)
-   - Klasör yapısı görselleştirme
+   - Visualize folder structure
    - Export to text
 
 9. **File Watcher** (W)
-   - Dosya değişikliklerini izleme
+   - Monitor file changes
    - Real-time monitoring
 
 10. **Temp File Cleaner** (L)
-    - Geçici dosya temizleme
+    - Clean temporary files
     - Safe delete
 
 11. **File Metadata Viewer** (M)
     - EXIF, ID3 tags
-    - Metadata düzenleme
+    - Edit metadata
 
 12. **Symbolic Link Manager** (Y)
-    - Symlink oluşturma
-    - Link yönetimi
+    - Create symlink
+    - Manage links
 
 ---
 
-## Modül 5: Image Tools 🚧
+## Module 5: Image Tools 🚧
 
-**Kısayol**: I  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/imagefunc.rs` (oluşturulacak)
+**Shortcut**: I
+**Status**: Planned
+**Backend**: `src-tauri/src/imagefunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **Image Resizer** (R)
-   - Boyutlandırma
-   - Aspect ratio koruma
+   - Resize
+   - Maintain aspect ratio
 
 2. **Image Compressor** (C)
-   - Lossy/lossless sıkıştırma
-   - Kalite ayarı
+   - Lossy/lossless compression
+   - Quality setting
 
 3. **Image Cropper** (O)
-   - Kırpma aracı
-   - Preset boyutlar
+   - Crop tool
+   - Preset dimensions
 
 4. **Image Filters** (F)
    - Grayscale, blur, sharpen
-   - Çoklu filter
+   - Multiple filters
 
 5. **Watermark Tool** (W)
-   - Resim/metin filigran
-   - Pozisyon ayarı
+   - Image/text watermark
+   - Position setting
 
 6. **Background Remover** (B)
-   - Arka plan silme
+   - Remove background
    - AI-powered
 
 7. **Image to Base64** (A)
    - Base64 encode
-   - Data URI oluşturma
+   - Create Data URI
 
 8. **QR Code Generator** (Q)
-   - QR kod oluşturma
-   - Özelleştirme
+   - Generate QR code
+   - Customization
 
 9. **Barcode Generator** (D)
-   - Barkod oluşturma
-   - Çoklu format
+   - Generate barcode
+   - Multiple formats
 
 10. **Image Metadata Editor** (M)
-    - EXIF düzenleme
-    - Metadata temizleme
+    - Edit EXIF
+    - Clean metadata
 
 11. **Image Collage** (L)
-    - Kolaj oluşturma
-    - Layout seçenekleri
+    - Create collage
+    - Layout options
 
 12. **Screenshot Tool** (S)
-    - Ekran görüntüsü
+    - Screenshot
     - Annotation
 
 ---
 
-## Modül 6: Network 🚧
+## Module 6: Network 🚧
 
-**Kısayol**: N  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/networkfunc.rs` (oluşturulacak)
+**Shortcut**: N
+**Status**: Planned
+**Backend**: `src-tauri/src/networkfunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **IP Info** (I)
-   - IP bilgisi görüntüleme
+   - View IP info
    - Geolocation
 
 2. **Port Scanner** (P)
-   - Port tarama
+   - Scan ports
    - Service detection
 
 3. **DNS Lookup** (D)
-   - DNS sorguları
+   - DNS queries
    - A, MX, TXT records
 
 4. **Ping Tool** (G)
-   - Ping testi
-   - Latency ölçümü
+   - Ping test
+   - Latency measurement
 
 5. **Traceroute** (T)
-   - Route izleme
-   - Hop analizi
+   - Trace route
+   - Hop analysis
 
 6. **WHOIS Lookup** (W)
-   - Domain bilgisi
+   - Domain info
    - Registrar info
 
 7. **SSL Certificate Checker** (S)
-   - SSL sertifika kontrolü
+   - Check SSL certificate
    - Expiry date
 
 8. **HTTP Headers** (H)
-   - HTTP header görüntüleme
+   - View HTTP headers
    - Request/response
 
 9. **URL Shortener** (U)
-   - URL kısaltma
+   - Shorten URL
    - Custom alias
 
 10. **Network Speed Test** (E)
-    - Download/upload hızı
-    - Latency testi
+    - Download/upload speed
+    - Latency test
 
 11. **MAC Address Lookup** (M)
     - MAC vendor lookup
     - OUI database
 
 12. **Subnet Calculator** (C)
-    - CIDR hesaplama
+    - Calculate CIDR
     - IP range
 
 ---
 
-## Modül 7: Quick Commands 🚧
+## Module 7: Quick Commands 🚧
 
-**Kısayol**: Q  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/quickfunc.rs` (oluşturulacak)
+**Shortcut**: Q
+**Status**: Planned
+**Backend**: `src-tauri/src/quickfunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **UUID Generator** (U)
-   - UUID v4 oluşturma
-   - Toplu üretim
+   - Create UUID v4
+   - Batch generation
 
 2. **Password Generator** (P)
-   - Güçlü şifre oluşturma
-   - Özelleştirilebilir
+   - Create strong password
+   - Customizable
 
 3. **Random Number** (N)
-   - Random sayı üretimi
-   - Range seçimi
+   - Generate random number
+   - Range selection
 
 4. **Lorem Ipsum** (L)
-   - Placeholder metin
-   - Paragraf/kelime
+   - Placeholder text
+   - Paragraph/word
 
 5. **Cron Expression** (C)
-   - Cron ifadesi oluşturma
+   - Create cron expression
    - Human readable
 
 6. **Epoch Converter** (E)
@@ -432,18 +428,18 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
     - Font selection
 
 12. **Emoji Picker** (M)
-    - Emoji arama
+    - Emoji search
     - Copy to clipboard
 
 ---
 
-## Modül 8: Dev Tools 🚧
+## Module 8: Dev Tools 🚧
 
-**Kısayol**: D  
-**Durum**: Planlanıyor  
-**Backend**: `src-tauri/src/devfunc.rs` (oluşturulacak)
+**Shortcut**: D
+**Status**: Planned
+**Backend**: `src-tauri/src/devfunc.rs` (to be created)
 
-### Fonksiyonlar (0/12)
+### Functions (0/12)
 
 1. **JSON Validator** (J)
    - JSON syntax check
@@ -470,23 +466,23 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
    - Uglify
 
 7. **Git Diff Viewer** (G)
-   - Diff görüntüleme
+   - View diff
    - Syntax highlight
 
 8. **API Tester** (A)
-   - REST API test
+   - Test REST API
    - Request builder
 
 9. **GraphQL Playground** (Q)
-   - GraphQL query test
+   - Test GraphQL query
    - Schema explorer
 
 10. **WebSocket Tester** (W)
-    - WebSocket bağlantı
+    - WebSocket connection
     - Message testing
 
 11. **Code Snippet Manager** (S)
-    - Snippet saklama
+    - Store snippets
     - Syntax highlight
 
 12. **Regex Builder** (R)
@@ -495,11 +491,11 @@ Bu dosya, SimpleTools projesindeki 12 modül ve her modüldeki 12 fonksiyonun de
 
 ---
 
-## Modül 9-12: TBD 🚧
+## Modules 9-12: TBD 🚧
 
-Gelecekte eklenecek modüller için fikirler:
+Ideas for future modules:
 
-### Potansiyel Modüller
+### Potential Modules
 
 - **Security Tools**: Encryption, hashing, password audit
 - **Database Tools**: Query builder, schema designer
@@ -512,22 +508,22 @@ Gelecekte eklenecek modüller için fikirler:
 
 ---
 
-## İlerleme Özeti
+## Progress Summary
 
-| Modül          | Durum | Tamamlanan | Kalan   |
-| -------------- | ----- | ---------- | ------- |
-| Text Tools     | ✅    | 6/12       | 6       |
-| PDF Tools      | 🚧    | 10/12      | 2       |
-| Converters     | 🚧    | 0/12       | 12      |
-| File & System  | 🚧    | 0/12       | 12      |
-| Image Tools    | 🚧    | 0/12       | 12      |
-| Network        | 🚧    | 0/12       | 12      |
-| Quick Commands | 🚧    | 0/12       | 12      |
-| Dev Tools      | 🚧    | 0/12       | 12      |
-| TBD 9          | 🚧    | 0/12       | 12      |
-| TBD 10         | 🚧    | 0/12       | 12      |
-| TBD 11         | 🚧    | 0/12       | 12      |
-| TBD 12         | 🚧    | 0/12       | 12      |
-| **TOPLAM**     |       | **16/144** | **128** |
+| Module         | Status | Completed  | Remaining |
+| -------------- | ------ | ---------- | --------- |
+| Text Tools     | ✅     | 6/12       | 6         |
+| PDF Tools      | 🚧     | 10/12      | 2         |
+| Converters     | 🚧     | 0/12       | 12        |
+| File & System  | 🚧     | 0/12       | 12        |
+| Image Tools    | 🚧     | 0/12       | 12        |
+| Network        | 🚧     | 0/12       | 12        |
+| Quick Commands | 🚧     | 0/12       | 12        |
+| Dev Tools      | 🚧     | 0/12       | 12        |
+| TBD 9          | 🚧     | 0/12       | 12        |
+| TBD 10         | 🚧     | 0/12       | 12        |
+| TBD 11         | 🚧     | 0/12       | 12        |
+| TBD 12         | 🚧     | 0/12       | 12        |
+| **TOTAL**      |        | **16/144** | **128**   |
 
-**İlerleme**: %11.11
+**Progress**: 11.11%

@@ -1,76 +1,76 @@
-# SimpleTools - Mimari Dokümantasyon
+# SimpleTools - Architecture Documentation
 
-## Proje Genel Bakış
+## Project Overview
 
-SimpleTools, vim-benzeri klavye kısayolları ile hızlı erişim sağlayan modüler bir araç koleksiyonudur. Alfred benzeri bir arayüz ile Alt+Space tuşu ile açılır ve her modüle özel tuş kombinasyonları ile hızlı navigasyon sağlar.
+SimpleTools is a modular collection of tools providing quick access via vim-like keyboard shortcuts. It features an Alfred-like interface that opens with `Alt+Space` and provides rapid navigation with specific key combinations for each module.
 
-## Teknoloji Stack
+## Technology Stack
 
 - **Frontend**: Svelte + TypeScript
 - **Backend**: Rust (Tauri)
 - **UI Framework**: Tauri v2
 - **Build Tool**: Vite
 
-## Proje Yapısı
+## Project Structure
 
 ```
 SimpleTools/
 ├── src/                          # Frontend (Svelte)
 │   ├── routes/                   # SvelteKit routes
-│   │   ├── +page.svelte         # Ana sayfa (modül seçici)
-│   │   ├── text/                # Text Tools modülü
-│   │   ├── pdf/                 # PDF Tools modülü (yapılacak)
-│   │   ├── convert/             # Converters modülü (yapılacak)
-│   │   ├── file/                # File & System modülü (yapılacak)
-│   │   ├── image/               # Image Tools modülü (yapılacak)
-│   │   ├── network/             # Network modülü (yapılacak)
-│   │   ├── quickcmd/            # Quick Commands modülü (yapılacak)
-│   │   └── dev/                 # Dev Tools modülü (yapılacak)
-│   ├── themes/                  # Tema dosyaları
-│   └── app.css                  # Global stiller
-├── src-tauri/                   # Backend (Rust)
+│   │   ├── +page.svelte          # Main page (module selector)
+│   │   ├── text/                 # Text Tools module
+│   │   ├── pdf/                  # PDF Tools module (in progress)
+│   │   ├── convert/              # Converters module (planned)
+│   │   ├── file/                 # File & System module (planned)
+│   │   ├── image/                # Image Tools module (planned)
+│   │   ├── network/              # Network module (planned)
+│   │   ├── quickcmd/             # Quick Commands module (planned)
+│   │   └── dev/                  # Dev Tools module (planned)
+│   ├── themes/                   # Theme files
+│   └── app.css                   # Global styles
+├── src-tauri/                    # Backend (Rust)
 │   ├── src/
-│   │   ├── main.rs             # Ana Tauri uygulaması
-│   │   ├── utils.rs            # Pencere yönetimi ve pozisyonlama
-│   │   └── textfunc.rs         # Text Tools fonksiyonları
+│   │   ├── main.rs               # Main Tauri application
+│   │   ├── utils.rs              # Window management and positioning
+│   │   └── textfunc.rs           # Text Tools functions
 │   └── Cargo.toml
-└── static/                      # Statik dosyalar
+└── static/                       # Static files
 ```
 
-## Modül Sistemi
+## Module System
 
-### Mevcut Modüller (12 Toplam)
+### Current Modules (12 Total)
 
-| #   | Modül ID | İsim          | Kısayol | Durum        | Fonksiyon Sayısı |
-| --- | -------- | ------------- | ------- | ------------ | ---------------- |
-| 1   | text     | Text Tools    | T       | ✅ Hazır     | 12               |
-| 2   | pdf      | PDF Tools     | P       | 🚧 %83       | 12               |
-| 3   | convert  | Converters    | C       | 🚧 Yapılacak | 12               |
-| 4   | file     | File & System | F       | 🚧 Yapılacak | 12               |
-| 5   | image    | Image Tools   | I       | 🚧 Yapılacak | 12               |
-| 6   | network  | Network       | N       | 🚧 Yapılacak | 12               |
-| 7   | quickcmd | Quick Cmds    | Q       | 🚧 Yapılacak | 12               |
-| 8   | dev      | Dev Tools     | D       | 🚧 Yapılacak | 12               |
-| 9   | TBD      | Coming Soon   | -       | 🚧 Yapılacak | 12               |
-| 10  | TBD      | Coming Soon   | -       | 🚧 Yapılacak | 12               |
-| 11  | TBD      | Coming Soon   | -       | 🚧 Yapılacak | 12               |
-| 12  | TBD      | Coming Soon   | -       | 🚧 Yapılacak | 12               |
+| #   | Module ID | Name          | Shortcut | Status     | Function Count |
+| --- | --------- | ------------- | -------- | ---------- | -------------- |
+| 1   | text      | Text Tools    | T        | ✅ Ready   | 12             |
+| 2   | pdf       | PDF Tools     | P        | 🚧 83%     | 12             |
+| 3   | convert   | Converters    | C        | 🚧 Planned | 12             |
+| 4   | file      | File & System | F        | 🚧 Planned | 12             |
+| 5   | image     | Image Tools   | I        | 🚧 Planned | 12             |
+| 6   | network   | Network       | N        | 🚧 Planned | 12             |
+| 7   | quickcmd  | Quick Cmds    | Q        | 🚧 Planned | 12             |
+| 8   | dev       | Dev Tools     | D        | 🚧 Planned | 12             |
+| 9   | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
+| 10  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
+| 11  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
+| 12  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
 
-**Toplam**: 144 fonksiyon (12 modül × 12 fonksiyon)
+**Total**: 144 functions (12 modules × 12 functions)
 
-## Klavye Kısayolları Sistemi
+## Keyboard Shortcuts System
 
-### Global Kısayollar
+### Global Shortcuts
 
-- **Alt+Space**: Uygulamayı aç/kapat (Hedeflenen)
-- **Ctrl+G**: Aktif Geliştirme Kısayolu (Tüm Platformlar)
-  - **Windows/macOS**: `tauri-plugin-global-shortcut` ile native yönetim.
-  - **Linux**: `rdev` kütüphanesi ile background thread listener (X11/Wayland uyumluluğu için raw input).
-- **Esc**: Mevcut pencereyi kapat
+- **Alt+Space**: Open/Toggle Application (Targeted)
+- **Ctrl+G**: Active Development Shortcut (All Platforms)
+  - **Windows/macOS**: Native management with `tauri-plugin-global-shortcut`.
+  - **Linux**: Background thread listener with `rdev` library (raw input for X11/Wayland compatibility).
+- **Esc**: Close current window
 
-### Modül Navigasyonu
+### Module Navigation
 
-Ana ekrandan modüllere erişim:
+Access modules from the main screen:
 
 - **T**: Text Tools
 - **P**: PDF Tools
@@ -81,9 +81,9 @@ Ana ekrandan modüllere erişim:
 - **Q**: Quick Commands
 - **D**: Dev Tools
 
-### Fonksiyon Navigasyonu (Örnek: Text Tools)
+### Function Navigation (Example: Text Tools)
 
-Text Tools içinde:
+Inside Text Tools:
 
 - **R**: Regex Tester
 - **D**: Text Diff
@@ -91,82 +91,82 @@ Text Tools içinde:
 - **J**: JWT Decoder
 - **L**: Slug Generator
 - **T**: Text Strip
-- _(6 fonksiyon daha eklenecek)_
+- _(6 more functions to be added)_
 
-## Pencere Katman Sistemi
+## Window Layer System
 
-Uygulama 3 katmanlı bir pencere sistemi kullanır:
+The application uses a 3-layer window system:
 
-### Layer 1: Ana Pencere (main)
+### Layer 1: Main Window (main)
 
-- Modül seçici ekranı
-- Boyut: Ekranın %60 genişlik, %65 yükseklik
-- Pozisyon: Tam ortada
+- Module selector screen
+- Size: 60% width, 65% height of screen
+- Position: Centered
 
-### Layer 2: Modül Pencereleri (text, pdf, vb.)
+### Layer 2: Module Windows (text, pdf, etc.)
 
-- Modül fonksiyon listesi
-- Boyut: Ekranın %60 genişlik, %65 yükseklik
-- Pozisyon: Tam ortada
+- Module function list
+- Size: 60% width, 65% height of screen
+- Position: Centered
 
-### Layer 3: Fonksiyon Pencereleri (text/diff, text/regex, vb.)
+### Layer 3: Function Windows (text/diff, text/regex, etc.)
 
-- Gerçek araç arayüzü
-- Boyut: Fonksiyona özel (varsayılan 1000×800)
-- Pozisyon: Ortanın %35 üstü
+- Actual tool interface
+- Size: Function specific (default 1000×800)
+- Position: 35% above center
 
-## Özellikler
+## Features
 
-### ✅ Tamamlanan Özellikler
+### ✅ Completed Features
 
-- [x] Global klavye kısayolu sistemi (Alt+Space)
-- [x] Çoklu monitör desteği
-- [x] Mouse pozisyonuna göre pencere yerleştirme
-- [x] Katmanlı pencere yönetimi
-- [x] Text Tools modülü (12 fonksiyon)
-- [x] PDF Tools modülü (10/12 fonksiyon)
-- [x] Tema sistemi (5 tema)
-- [x] Vim-like navigasyon
+- [x] Global keyboard shortcut system (Alt+Space)
+- [x] Multi-monitor support
+- [x] Window positioning based on mouse
+- [x] Layered window management
+- [x] Text Tools module (12 functions)
+- [x] PDF Tools module (10/12 functions)
+- [x] Theme system (5 themes)
+- [x] Vim-like navigation
 
-### 🚧 Yapılacaklar
+### 🚧 To Do
 
-- [ ] Kalan 10 modülün implementasyonu
-- [ ] Her modül için 12 fonksiyon
-- [ ] Ayarlar sistemi
-- [ ] Klavye kısayolu özelleştirme
-- [ ] Geçmiş/favoriler sistemi
-- [ ] Clipboard entegrasyonu
+- [ ] Implementation of remaining 10 modules
+- [ ] 12 functions for each module
+- [ ] Settings system
+- [ ] Keyboard shortcut customization
+- [ ] History/favorites system
+- [ ] Clipboard integration
 
-## Geliştirme Notları
+## Development Notes
 
-### Yeni Modül Ekleme
+### Adding a New Module
 
-1. `src/routes/+page.svelte` içinde `tools` dizisine ekle
-2. `src/routes/{module-id}/` klasörü oluştur
-3. `src-tauri/src/{module}func.rs` dosyası oluştur
-4. Rust fonksiyonlarını `main.rs`'e kaydet
+1. Add to `tools` array in `src/routes/+page.svelte`
+2. Create `src/routes/{module-id}/` folder
+3. Create `src-tauri/src/{module}func.rs` file
+4. Register Rust functions in `main.rs`
 
-### Yeni Fonksiyon Ekleme
+### Adding a New Function
 
-1. Modül klasöründe `{function-name}/+page.svelte` oluştur
-2. Rust backend fonksiyonunu ilgili `{module}func.rs`'e ekle
-3. `#[tauri::command]` ile işaretle
-4. `main.rs`'de `.invoke_handler()` içine ekle
+1. Create `{function-name}/+page.svelte` in the module folder
+2. Add Rust backend function to relevant `{module}func.rs`
+3. Mark with `#[tauri::command]`
+4. Add to `.invoke_handler()` in `main.rs`
 
-## Performans Optimizasyonları
+## Performance Optimizations
 
-- Pencere pozisyonları cache'leniyor
-- Son aktif pencere hafızada tutuluyor
-- Lazy loading ile modüller ihtiyaç anında yükleniyor
-- Rust backend ile hızlı işlem
+- Window positions are cached
+- Last active window is kept in memory
+- Modules are loaded lazily on demand
+- Fast processing with Rust backend
 
-## Güvenlik
+## Security
 
-- Tauri'nin built-in güvenlik özellikleri
-- CSP (Content Security Policy) aktif
-- IPC güvenli invoke sistemi
-- Dosya sistemi erişimi sınırlı
+- Tauri's built-in security features
+- CSP (Content Security Policy) active
+- Secure IPC invoke system
+- Restricted file system access
 
-## Lisans
+## License
 
-[Lisans bilgisi eklenecek]
+[License information to be added]

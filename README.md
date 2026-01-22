@@ -1,68 +1,75 @@
 # SimpleTools
 
-> Vim-benzeri klavye kısayolları ile hızlı erişim sağlayan modüler araç koleksiyonu
+> A modular tool collection providing quick access with Vim-like keyboard shortcuts.
 
-SimpleTools, geliştiriciler ve power user'lar için tasarlanmış, Alfred benzeri bir arayüze sahip masaüstü uygulamasıdır. `Alt+Space` ile hızlıca açılır ve vim-tarzı klavye kısayolları ile navigasyon sağlar.
+SimpleTools is a desktop application designed for developers and power users, featuring an Alfred-like interface. It opens instantly with `Alt+Space` and provides navigation via vim-style keyboard shortcuts.
 
-## ✨ Özellikler
+## ✨ Features
 
-- 🚀 **Hızlı Erişim**: `Alt+Space` ile anında açılır
-- ⌨️ **Vim-like Navigasyon**: Tek tuş kısayolları ile hızlı gezinme
-- 🎯 **Modüler Yapı**: 12 farklı modül, her biri 12 fonksiyon (toplam 144 araç)
-- 🖥️ **Çoklu Monitör Desteği**: Mouse pozisyonuna göre doğru monitörde açılır
-- 🎨 **Tema Sistemi**: 5 farklı tema seçeneği
-- ⚡ **Performanslı**: Rust backend ile hızlı işlem
+- 🚀 **Quick Access**: Instantly opens with `Alt+Space`
+- ⌨️ **Vim-like Navigation**: Fast navigation with single-key shortcuts
+- 🎯 **Modular Structure**: 12 different modules, each with 12 functions (144 tools in total)
+- 🖥️ **Multi-Monitor Support**: Opens on the correct monitor based on mouse position
+- 🎨 **Theme System**: 5 different theme options
+- ⚡ **High Performance**: Fast operations with Rust backend
 
-## 🛠️ Teknoloji Stack
+## 🛠️ Technology Stack
 
 - **Frontend**: Svelte + TypeScript
 - **Backend**: Rust (Tauri v2)
 - **Build Tool**: Vite
 
-## 🐧 Linux Gereksinimleri
+## 🐧 Linux Requirements
 
-Uygulamanın Linux üzerinde sorunsuz çalışabilmesi için aşağıdaki paketlerin yüklü olması gerekir:
+To run the application smoothly on Linux, the following packages must be installed:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxtst-dev libevdev-dev
+sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxtst-dev libevdev-dev
 ```
 
-## 📦 Kurulum
+### Arch Linux
 
 ```bash
-# Bağımlılıkları yükle
+sudo pacman -Syu
+sudo pacman -S webkit2gtk-4.1 base-devel curl wget file openssl gtk3 libayatana-appindicator librsvg libxtst libevdev
+```
+
+## 📦 Installation
+
+```bash
+# Install dependencies
 npm install
 
-# Geliştirme modunda çalıştır
+# Run in development mode
 npm run tauri dev
 
 # Production build
 npm run tauri build
 ```
 
-## 🎮 Kullanım
+## 🎮 Usage
 
-### Temel Navigasyon
+### Basic Navigation
 
-1. **Uygulamayı Aç**: `Alt+Space`
-2. **Modül Seç**: Tek tuş (örn: `T` = Text Tools)
-3. **Fonksiyon Seç**: Tek tuş (örn: `R` = Regex Tester)
-4. **Geri Dön**: `Esc`
+1. **Open Application**: `Alt+Space`
+2. **Select Module**: Single key (e.g., `T` = Text Tools)
+3. **Select Function**: Single key (e.g., `R` = Regex Tester)
+4. **Go Back**: `Esc`
 
-### Örnek Kullanım
+### Example Usage
 
 ```
 Alt+Space → T → R
 ```
 
-Bu komut dizisi Regex Tester'ı açar.
+This command sequence opens the Regex Tester.
 
-## 📚 Modüller
+## 📚 Modules
 
-### ✅ Text Tools (Hazır)
+### ✅ Text Tools (Ready)
 
-**Kısayol**: `T` | **İlerleme**: 6/12
+**Shortcut**: `T` | **Progress**: 6/12
 
 - ✅ Regex Tester
 - ✅ Text Diff
@@ -77,9 +84,9 @@ Bu komut dizisi Regex Tester'ı açar.
 - 🚧 Character Counter
 - 🚧 Text Sorter
 
-### 🚧 PDF Tools (Planlanıyor)
+### 🚧 PDF Tools (Planned)
 
-**Kısayol**: `P` | **İlerleme**: 10/12
+**Shortcut**: `P` | **Progress**: 10/12
 
 - ✅ PDF Merger
 - ✅ PDF Splitter
@@ -94,108 +101,108 @@ Bu komut dizisi Regex Tester'ı açar.
 - ✅ Watermark
 - ✅ Metadata Editor
 
-### 🚧 Converters (Planlanıyor)
+### 🚧 Converters (Planned)
 
-**Kısayol**: `C` | **İlerleme**: 0/12
+**Shortcut**: `C` | **Progress**: 0/12
 
 JSON↔YAML, CSV↔JSON, XML↔JSON, Color Converter, Unit Converter, Timestamp Converter, Number Base, Image Format, Audio Converter, Video Converter, Font Converter, Markdown to HTML
 
-### 🚧 File & System (Planlanıyor)
+### 🚧 File & System (Planned)
 
-**Kısayol**: `F` | **İlerleme**: 0/12
+**Shortcut**: `F` | **Progress**: 0/12
 
 Hash Generator, File Renamer, Duplicate Finder, Disk Usage, File Splitter, Checksum Verifier, File Permissions, Directory Tree, File Watcher, Temp Cleaner, Metadata Viewer, Symlink Manager
 
-### 🚧 Image Tools (Planlanıyor)
+### 🚧 Image Tools (Planned)
 
-**Kısayol**: `I` | **İlerleme**: 0/12
+**Shortcut**: `I` | **Progress**: 0/12
 
 Image Resizer, Compressor, Cropper, Filters, Watermark, Background Remover, Image to Base64, QR Code Generator, Barcode Generator, Metadata Editor, Image Collage, Screenshot Tool
 
-### 🚧 Network (Planlanıyor)
+### 🚧 Network (Planned)
 
-**Kısayol**: `N` | **İlerleme**: 0/12
+**Shortcut**: `N` | **Progress**: 0/12
 
 IP Info, Port Scanner, DNS Lookup, Ping, Traceroute, WHOIS, SSL Checker, HTTP Headers, URL Shortener, Speed Test, MAC Lookup, Subnet Calculator
 
-### 🚧 Quick Commands (Planlanıyor)
+### 🚧 Quick Commands (Planned)
 
-**Kısayol**: `Q` | **İlerleme**: 0/12
+**Shortcut**: `Q` | **Progress**: 0/12
 
 UUID Generator, Password Generator, Random Number, Lorem Ipsum, Cron Expression, Epoch Converter, JSON Formatter, SQL Formatter, Regex Tester, Color Picker, ASCII Art, Emoji Picker
 
-### 🚧 Dev Tools (Planlanıyor)
+### 🚧 Dev Tools (Planned)
 
-**Kısayol**: `D` | **İlerleme**: 0/12
+**Shortcut**: `D` | **Progress**: 0/12
 
 JSON Validator, XML Validator, YAML Validator, HTML Formatter, CSS Formatter, JS Minifier, Git Diff Viewer, API Tester, GraphQL Playground, WebSocket Tester, Snippet Manager, Regex Builder
 
-## ⌨️ Klavye Kısayolları
+## ⌨️ Keyboard Shortcuts
 
-### Global Kısayollar
+### Global Shortcuts
 
-| Kısayol     | Aksiyon             |
-| ----------- | ------------------- |
-| `Alt+Space` | Uygulamayı aç/kapat |
-| `Ctrl+G`    | Global listener     |
-| `Esc`       | Pencere kapat       |
+| Shortcut    | Action          |
+| ----------- | --------------- |
+| `Alt+Space` | Open/Close App  |
+| `Ctrl+G`    | Global listener |
+| `Esc`       | Close Window    |
 
-### Modül Kısayolları
+### Module Shortcuts
 
-| Tuş | Modül          | Durum |
-| --- | -------------- | ----- |
-| `T` | Text Tools     | ✅    |
-| `P` | PDF Tools      | 🚧    |
-| `C` | Converters     | 🚧    |
-| `F` | File & System  | 🚧    |
-| `I` | Image Tools    | 🚧    |
-| `N` | Network        | 🚧    |
-| `Q` | Quick Commands | 🚧    |
-| `D` | Dev Tools      | 🚧    |
+| Key | Module         | Status |
+| --- | -------------- | ------ |
+| `T` | Text Tools     | ✅     |
+| `P` | PDF Tools      | 🚧     |
+| `C` | Converters     | 🚧     |
+| `F` | File & System  | 🚧     |
+| `I` | Image Tools    | 🚧     |
+| `N` | Network        | 🚧     |
+| `Q` | Quick Commands | 🚧     |
+| `D` | Dev Tools      | 🚧     |
 
-Detaylı kısayol listesi için [SHORTCUTS.md](SHORTCUTS.md) dosyasına bakın.
+See [SHORTCUTS.md](SHORTCUTS.md) for a detailed list of shortcuts.
 
-## 📖 Dokümantasyon
+## 📖 Documentation
 
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Proje mimarisi ve teknik detaylar
-- **[MODULES.md](MODULES.md)** - Tüm modüller ve fonksiyonların detaylı planlaması
-- **[SHORTCUTS.md](SHORTCUTS.md)** - Klavye kısayolları referansı
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Project architecture and technical details
+- **[MODULES.md](MODULES.md)** - Detailed planning for all modules and functions
+- **[SHORTCUTS.md](SHORTCUTS.md)** - Keyboard shortcuts reference
 
-## 🎯 Proje Durumu
+## 🎯 Project Status
 
-**Toplam İlerleme**: 16/144 (%11.11)
+**Total Progress**: 16/144 (11.11%)
 
-| Modül          | Durum | Tamamlanan |
-| -------------- | ----- | ---------- |
-| Text Tools     | ✅    | 6/12       |
-| PDF Tools      | 🚧    | 10/12      |
-| Converters     | 🚧    | 0/12       |
-| File & System  | 🚧    | 0/12       |
-| Image Tools    | 🚧    | 0/12       |
-| Network        | 🚧    | 0/12       |
-| Quick Commands | 🚧    | 0/12       |
-| Dev Tools      | 🚧    | 0/12       |
-| TBD 9-12       | 🚧    | 0/48       |
+| Module         | Status | Completed |
+| -------------- | ------ | --------- |
+| Text Tools     | ✅     | 6/12      |
+| PDF Tools      | 🚧     | 10/12     |
+| Converters     | 🚧     | 0/12      |
+| File & System  | 🚧     | 0/12      |
+| Image Tools    | 🚧     | 0/12      |
+| Network        | 🚧     | 0/12      |
+| Quick Commands | 🚧     | 0/12      |
+| Dev Tools      | 🚧     | 0/12      |
+| TBD 9-12       | 🚧     | 0/48      |
 
-## 🔮 Gelecek Özellikler
+## 🔮 Future Features
 
-- [ ] Kalan 11 modülün implementasyonu
-- [ ] Özelleştirilebilir klavye kısayolları
-- [ ] Favoriler sistemi
-- [ ] Geçmiş/son kullanılanlar
-- [ ] Clipboard entegrasyonu
+- [ ] Implementation of remaining 11 modules
+- [ ] Customizable keyboard shortcuts
+- [ ] Favorites system
+- [ ] History/Recently used
+- [ ] Clipboard integration
 - [ ] Fuzzy search
 - [ ] Command palette
-- [ ] Makro kaydı
+- [ ] Macro recording
 
-## 🤝 Katkıda Bulunma
+## 🤝 Contributing
 
-Katkılarınızı bekliyoruz! Lütfen bir pull request göndermeden önce issue açın.
+Contributions are welcome! Please open an issue before submitting a pull request.
 
-## 📄 Lisans
+## 📄 License
 
-[Lisans bilgisi eklenecek]
+[License information to be added]
 
 ---
 
-**Not**: Bu proje aktif geliştirme aşamasındadır. Text Tools modülü hazır, diğer modüller planlanma/geliştirme aşamasındadır.
+**Note**: This project is under active development. The Text Tools module is ready; other modules are in the planning/development phase.

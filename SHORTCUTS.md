@@ -1,250 +1,250 @@
-# SimpleTools - Klavye Kısayolları Referansı
+# SimpleTools - Keyboard Shortcuts Reference
 
-Bu dosya, SimpleTools uygulamasındaki tüm klavye kısayollarını içerir.
+This file contains all keyboard shortcuts in the SimpleTools application.
 
-## 🌍 Global Kısayollar
+## 🌍 Global Shortcuts
 
-| Kısayol     | Aksiyon            | Açıklama                       |
-| ----------- | ------------------ | ------------------------------ |
-| `Alt+Space` | Toggle Ana Pencere | Uygulamayı aç/kapat            |
-| `Ctrl+G`    | Global Listener    | Linux klavye dinleyicisi aktif |
-| `Esc`       | Pencere Kapat      | Aktif pencereyi kapat          |
+| Shortcut    | Action             | Description                      |
+| ----------- | ------------------ | -------------------------------- |
+| `Alt+Space` | Toggle Main Window | Open/Close Application           |
+| `Ctrl+G`    | Global Listener    | Activate Linux keyboard listener |
+| `Esc`       | Close Window       | Close active window              |
 
 ---
 
-## 🏠 Ana Ekran (Layer 1)
+## 🏠 Main Screen (Layer 1)
 
-Ana ekrandan modül seçimi için tek tuş kısayolları:
+Single-key shortcuts for module selection from the main screen:
 
-| Tuş | Modül          | Durum               |
-| --- | -------------- | ------------------- |
-| `T` | Text Tools     | ✅ Aktif            |
-| `P` | PDF Tools      | 🚧 Yapım aşamasında |
-| `C` | Converters     | 🚧 Yapım aşamasında |
-| `F` | File & System  | 🚧 Yapım aşamasında |
-| `I` | Image Tools    | 🚧 Yapım aşamasında |
-| `N` | Network        | 🚧 Yapım aşamasında |
-| `Q` | Quick Commands | 🚧 Yapım aşamasında |
-| `D` | Dev Tools      | 🚧 Yapım aşamasında |
+| Key | Module         | Status                |
+| --- | -------------- | --------------------- |
+| `T` | Text Tools     | ✅ Active             |
+| `P` | PDF Tools      | 🚧 Under Construction |
+| `C` | Converters     | 🚧 Under Construction |
+| `F` | File & System  | 🚧 Under Construction |
+| `I` | Image Tools    | 🚧 Under Construction |
+| `N` | Network        | 🚧 Under Construction |
+| `Q` | Quick Commands | 🚧 Under Construction |
+| `D` | Dev Tools      | 🚧 Under Construction |
 
 ---
 
 ## 📝 Text Tools (Layer 2)
 
-Text Tools modülü içinde fonksiyon seçimi:
+Function selection within Text Tools module:
 
-| Tuş | Fonksiyon         | Durum        |
-| --- | ----------------- | ------------ |
-| `R` | Regex Tester      | ✅ Aktif     |
-| `D` | Text Diff         | ✅ Aktif     |
-| `S` | String Tools      | ✅ Aktif     |
-| `J` | JWT Decoder       | ✅ Aktif     |
-| `L` | Slug Generator    | ✅ Aktif     |
-| `T` | Text Strip        | ✅ Aktif     |
-| `I` | Lorem Ipsum       | 🚧 Eklenecek |
-| `B` | Base64 Encoder    | 🚧 Eklenecek |
-| `U` | URL Encoder       | 🚧 Eklenecek |
-| `M` | Markdown Preview  | 🚧 Eklenecek |
-| `C` | Character Counter | 🚧 Eklenecek |
-| `O` | Text Sorter       | 🚧 Eklenecek |
+| Key | Function          | Status         |
+| --- | ----------------- | -------------- |
+| `R` | Regex Tester      | ✅ Active      |
+| `D` | Text Diff         | ✅ Active      |
+| `S` | String Tools      | ✅ Active      |
+| `J` | JWT Decoder       | ✅ Active      |
+| `L` | Slug Generator    | ✅ Active      |
+| `T` | Text Strip        | ✅ Active      |
+| `I` | Lorem Ipsum       | 🚧 To be added |
+| `B` | Base64 Encoder    | 🚧 To be added |
+| `U` | URL Encoder       | 🚧 To be added |
+| `M` | Markdown Preview  | 🚧 To be added |
+| `C` | Character Counter | 🚧 To be added |
+| `O` | Text Sorter       | 🚧 To be added |
 
 ---
 
 ## 📄 PDF Tools (Layer 2)
 
-PDF Tools modülü içinde fonksiyon seçimi:
+Function selection within PDF Tools module:
 
-| Tuş | Fonksiyon       | Durum             |
+| Key | Function        | Status            |
 | --- | --------------- | ----------------- |
-| `M` | PDF Merger      | ✅ Aktif          |
-| `S` | PDF Splitter    | ✅ Aktif          |
-| `I` | Images to PDF   | ✅ Aktif          |
-| `G` | PDF to Images   | 🚧 Geliştiriliyor |
-| `C` | Compress PDF    | ✅ Aktif          |
-| `R` | Rotate Pages    | ✅ Aktif          |
-| `D` | Delete Pages    | ✅ Aktif          |
-| `T` | Extract Text    | ✅ Aktif          |
-| `U` | Remove Password | ✅ Aktif          |
-| `P` | Protect PDF     | 🚧 Geliştiriliyor |
-| `W` | Watermark       | ✅ Aktif          |
-| `E` | Metadata Editor | ✅ Aktif          |
+| `M` | PDF Merger      | ✅ Active         |
+| `S` | PDF Splitter    | ✅ Active         |
+| `I` | Images to PDF   | ✅ Active         |
+| `G` | PDF to Images   | 🚧 In Development |
+| `C` | Compress PDF    | ✅ Active         |
+| `R` | Rotate Pages    | ✅ Active         |
+| `D` | Delete Pages    | ✅ Active         |
+| `T` | Extract Text    | ✅ Active         |
+| `U` | Remove Password | ✅ Active         |
+| `P` | Protect PDF     | 🚧 In Development |
+| `W` | Watermark       | ✅ Active         |
+| `E` | Metadata Editor | ✅ Active         |
 
 ---
 
 ## 🔄 Converters (Layer 2)
 
-Converters modülü içinde fonksiyon seçimi:
+Function selection within Converters module:
 
-| Tuş | Fonksiyon           | Durum          |
-| --- | ------------------- | -------------- |
-| `J` | JSON to YAML        | 🚧 Planlanıyor |
-| `C` | CSV to JSON         | 🚧 Planlanıyor |
-| `X` | XML to JSON         | 🚧 Planlanıyor |
-| `O` | Color Converter     | 🚧 Planlanıyor |
-| `U` | Unit Converter      | 🚧 Planlanıyor |
-| `T` | Timestamp Converter | 🚧 Planlanıyor |
-| `N` | Number Base         | 🚧 Planlanıyor |
-| `I` | Image Format        | 🚧 Planlanıyor |
-| `A` | Audio Converter     | 🚧 Planlanıyor |
-| `V` | Video Converter     | 🚧 Planlanıyor |
-| `F` | Font Converter      | 🚧 Planlanıyor |
-| `M` | Markdown to HTML    | 🚧 Planlanıyor |
+| Key | Function            | Status     |
+| --- | ------------------- | ---------- |
+| `J` | JSON to YAML        | 🚧 Planned |
+| `C` | CSV to JSON         | 🚧 Planned |
+| `X` | XML to JSON         | 🚧 Planned |
+| `O` | Color Converter     | 🚧 Planned |
+| `U` | Unit Converter      | 🚧 Planned |
+| `T` | Timestamp Converter | 🚧 Planned |
+| `N` | Number Base         | 🚧 Planned |
+| `I` | Image Format        | 🚧 Planned |
+| `A` | Audio Converter     | 🚧 Planned |
+| `V` | Video Converter     | 🚧 Planned |
+| `F` | Font Converter      | 🚧 Planned |
+| `M` | Markdown to HTML    | 🚧 Planned |
 
 ---
 
 ## 📁 File & System (Layer 2)
 
-File & System modülü içinde fonksiyon seçimi:
+Function selection within File & System module:
 
-| Tuş | Fonksiyon         | Durum          |
-| --- | ----------------- | -------------- |
-| `H` | Hash Generator    | 🚧 Planlanıyor |
-| `R` | File Renamer      | 🚧 Planlanıyor |
-| `D` | Duplicate Finder  | 🚧 Planlanıyor |
-| `U` | Disk Usage        | 🚧 Planlanıyor |
-| `S` | File Splitter     | 🚧 Planlanıyor |
-| `C` | Checksum Verifier | 🚧 Planlanıyor |
-| `P` | File Permissions  | 🚧 Planlanıyor |
-| `T` | Directory Tree    | 🚧 Planlanıyor |
-| `W` | File Watcher      | 🚧 Planlanıyor |
-| `L` | Temp Cleaner      | 🚧 Planlanıyor |
-| `M` | Metadata Viewer   | 🚧 Planlanıyor |
-| `Y` | Symlink Manager   | 🚧 Planlanıyor |
+| Key | Function          | Status     |
+| --- | ----------------- | ---------- |
+| `H` | Hash Generator    | 🚧 Planned |
+| `R` | File Renamer      | 🚧 Planned |
+| `D` | Duplicate Finder  | 🚧 Planned |
+| `U` | Disk Usage        | 🚧 Planned |
+| `S` | File Splitter     | 🚧 Planned |
+| `C` | Checksum Verifier | 🚧 Planned |
+| `P` | File Permissions  | 🚧 Planned |
+| `T` | Directory Tree    | 🚧 Planned |
+| `W` | File Watcher      | 🚧 Planned |
+| `L` | Temp Cleaner      | 🚧 Planned |
+| `M` | Metadata Viewer   | 🚧 Planned |
+| `Y` | Symlink Manager   | 🚧 Planned |
 
 ---
 
 ## 🖼️ Image Tools (Layer 2)
 
-Image Tools modülü içinde fonksiyon seçimi:
+Function selection within Image Tools module:
 
-| Tuş | Fonksiyon          | Durum          |
-| --- | ------------------ | -------------- |
-| `R` | Image Resizer      | 🚧 Planlanıyor |
-| `C` | Image Compressor   | 🚧 Planlanıyor |
-| `O` | Image Cropper      | 🚧 Planlanıyor |
-| `F` | Image Filters      | 🚧 Planlanıyor |
-| `W` | Watermark Tool     | 🚧 Planlanıyor |
-| `B` | Background Remover | 🚧 Planlanıyor |
-| `A` | Image to Base64    | 🚧 Planlanıyor |
-| `Q` | QR Code Generator  | 🚧 Planlanıyor |
-| `D` | Barcode Generator  | 🚧 Planlanıyor |
-| `M` | Metadata Editor    | 🚧 Planlanıyor |
-| `L` | Image Collage      | 🚧 Planlanıyor |
-| `S` | Screenshot Tool    | 🚧 Planlanıyor |
+| Key | Function           | Status     |
+| --- | ------------------ | ---------- |
+| `R` | Image Resizer      | 🚧 Planned |
+| `C` | Image Compressor   | 🚧 Planned |
+| `O` | Image Cropper      | 🚧 Planned |
+| `F` | Image Filters      | 🚧 Planned |
+| `W` | Watermark Tool     | 🚧 Planned |
+| `B` | Background Remover | 🚧 Planned |
+| `A` | Image to Base64    | 🚧 Planned |
+| `Q` | QR Code Generator  | 🚧 Planned |
+| `D` | Barcode Generator  | 🚧 Planned |
+| `M` | Metadata Editor    | 🚧 Planned |
+| `L` | Image Collage      | 🚧 Planned |
+| `S` | Screenshot Tool    | 🚧 Planned |
 
 ---
 
 ## 🌐 Network (Layer 2)
 
-Network modülü içinde fonksiyon seçimi:
+Function selection within Network module:
 
-| Tuş | Fonksiyon         | Durum          |
-| --- | ----------------- | -------------- |
-| `I` | IP Info           | 🚧 Planlanıyor |
-| `P` | Port Scanner      | 🚧 Planlanıyor |
-| `D` | DNS Lookup        | 🚧 Planlanıyor |
-| `G` | Ping Tool         | 🚧 Planlanıyor |
-| `T` | Traceroute        | 🚧 Planlanıyor |
-| `W` | WHOIS Lookup      | 🚧 Planlanıyor |
-| `S` | SSL Checker       | 🚧 Planlanıyor |
-| `H` | HTTP Headers      | 🚧 Planlanıyor |
-| `U` | URL Shortener     | 🚧 Planlanıyor |
-| `E` | Speed Test        | 🚧 Planlanıyor |
-| `M` | MAC Lookup        | 🚧 Planlanıyor |
-| `C` | Subnet Calculator | 🚧 Planlanıyor |
+| Key | Function          | Status     |
+| --- | ----------------- | ---------- |
+| `I` | IP Info           | 🚧 Planned |
+| `P` | Port Scanner      | 🚧 Planned |
+| `D` | DNS Lookup        | 🚧 Planned |
+| `G` | Ping Tool         | 🚧 Planned |
+| `T` | Traceroute        | 🚧 Planned |
+| `W` | WHOIS Lookup      | 🚧 Planned |
+| `S` | SSL Checker       | 🚧 Planned |
+| `H` | HTTP Headers      | 🚧 Planned |
+| `U` | URL Shortener     | 🚧 Planned |
+| `E` | Speed Test        | 🚧 Planned |
+| `M` | MAC Lookup        | 🚧 Planned |
+| `C` | Subnet Calculator | 🚧 Planned |
 
 ---
 
 ## ⚡ Quick Commands (Layer 2)
 
-Quick Commands modülü içinde fonksiyon seçimi:
+Function selection within Quick Commands module:
 
-| Tuş | Fonksiyon          | Durum          |
-| --- | ------------------ | -------------- |
-| `U` | UUID Generator     | 🚧 Planlanıyor |
-| `P` | Password Generator | 🚧 Planlanıyor |
-| `N` | Random Number      | 🚧 Planlanıyor |
-| `L` | Lorem Ipsum        | 🚧 Planlanıyor |
-| `C` | Cron Expression    | 🚧 Planlanıyor |
-| `E` | Epoch Converter    | 🚧 Planlanıyor |
-| `J` | JSON Formatter     | 🚧 Planlanıyor |
-| `S` | SQL Formatter      | 🚧 Planlanıyor |
-| `R` | Regex Tester       | 🚧 Planlanıyor |
-| `O` | Color Picker       | 🚧 Planlanıyor |
-| `A` | ASCII Art          | 🚧 Planlanıyor |
-| `M` | Emoji Picker       | 🚧 Planlanıyor |
+| Key | Function           | Status     |
+| --- | ------------------ | ---------- |
+| `U` | UUID Generator     | 🚧 Planned |
+| `P` | Password Generator | 🚧 Planned |
+| `N` | Random Number      | 🚧 Planned |
+| `L` | Lorem Ipsum        | 🚧 Planned |
+| `C` | Cron Expression    | 🚧 Planned |
+| `E` | Epoch Converter    | 🚧 Planned |
+| `J` | JSON Formatter     | 🚧 Planned |
+| `S` | SQL Formatter      | 🚧 Planned |
+| `R` | Regex Tester       | 🚧 Planned |
+| `O` | Color Picker       | 🚧 Planned |
+| `A` | ASCII Art          | 🚧 Planned |
+| `M` | Emoji Picker       | 🚧 Planned |
 
 ---
 
 ## 🛠️ Dev Tools (Layer 2)
 
-Dev Tools modülü içinde fonksiyon seçimi:
+Function selection within Dev Tools module:
 
-| Tuş | Fonksiyon          | Durum          |
-| --- | ------------------ | -------------- |
-| `J` | JSON Validator     | 🚧 Planlanıyor |
-| `X` | XML Validator      | 🚧 Planlanıyor |
-| `Y` | YAML Validator     | 🚧 Planlanıyor |
-| `H` | HTML Formatter     | 🚧 Planlanıyor |
-| `C` | CSS Formatter      | 🚧 Planlanıyor |
-| `M` | JS Minifier        | 🚧 Planlanıyor |
-| `G` | Git Diff Viewer    | 🚧 Planlanıyor |
-| `A` | API Tester         | 🚧 Planlanıyor |
-| `Q` | GraphQL Playground | 🚧 Planlanıyor |
-| `W` | WebSocket Tester   | 🚧 Planlanıyor |
-| `S` | Snippet Manager    | 🚧 Planlanıyor |
-| `R` | Regex Builder      | 🚧 Planlanıyor |
+| Key | Function           | Status     |
+| --- | ------------------ | ---------- |
+| `J` | JSON Validator     | 🚧 Planned |
+| `X` | XML Validator      | 🚧 Planned |
+| `Y` | YAML Validator     | 🚧 Planned |
+| `H` | HTML Formatter     | 🚧 Planned |
+| `C` | CSS Formatter      | 🚧 Planned |
+| `M` | JS Minifier        | 🚧 Planned |
+| `G` | Git Diff Viewer    | 🚧 Planned |
+| `A` | API Tester         | 🚧 Planned |
+| `Q` | GraphQL Playground | 🚧 Planned |
+| `W` | WebSocket Tester   | 🚧 Planned |
+| `S` | Snippet Manager    | 🚧 Planned |
+| `R` | Regex Builder      | 🚧 Planned |
 
 ---
 
-## 🎯 Kullanım Örnekleri
+## 🎯 Usage Examples
 
-### Örnek 1: Regex Tester Açma
+### Example 1: Opening Regex Tester
 
 ```
 Alt+Space  →  T  →  R
 ```
 
-1. `Alt+Space`: Uygulamayı aç
-2. `T`: Text Tools modülünü seç
-3. `R`: Regex Tester'ı aç
+1. `Alt+Space`: Open app
+2. `T`: Select Text Tools module
+3. `R`: Open Regex Tester
 
-### Örnek 2: JWT Decoder Açma
+### Example 2: Opening JWT Decoder
 
 ```
 Alt+Space  →  T  →  J
 ```
 
-1. `Alt+Space`: Uygulamayı aç
-2. `T`: Text Tools modülünü seç
-3. `J`: JWT Decoder'ı aç
+1. `Alt+Space`: Open app
+2. `T`: Select Text Tools module
+3. `J`: Open JWT Decoder
 
-### Örnek 3: Ana Ekrana Dönme
+### Example 3: Returning to Main Screen
 
 ```
 Esc  →  Esc
 ```
 
-1. İlk `Esc`: Fonksiyon penceresini kapat (Layer 3 → Layer 2)
-2. İkinci `Esc`: Modül penceresini kapat (Layer 2 → Layer 1)
+1. First `Esc`: Close function window (Layer 3 → Layer 2)
+2. Second `Esc`: Close module window (Layer 2 → Layer 1)
 
 ---
 
-## 💡 İpuçları
+## 💡 Tips
 
-1. **Hızlı Erişim**: Tüm kısayollar tek tuştur, Shift/Ctrl/Alt kombinasyonu gerekmez
-2. **Vim Benzeri**: Vim kullanıcıları için tanıdık gelecek bir akış
-3. **Hafıza**: Son kullanılan pencere hatırlanır, tekrar açıldığında aynı yere döner
-4. **Çoklu Monitör**: Mouse pozisyonuna göre doğru monitörde açılır
-5. **Katmanlı Yapı**: 3 katman (Ana → Modül → Fonksiyon) mantıklı bir hiyerarşi sağlar
+1. **Quick Access**: All shortcuts are single keys, no Shift/Ctrl/Alt combinations needed
+2. **Vim-Like**: Flow that will feel familiar to Vim users
+3. **Memory**: Last used window is remembered, returns to same place when reopened
+4. **Multi-Monitor**: Opens on the correct monitor based on mouse position
+5. **Layered Structure**: 3 layers (Main → Module → Function) provide a logical hierarchy
 
 ---
 
-## 🔮 Gelecek Özellikler
+## 🔮 Future Features
 
-- [ ] Özelleştirilebilir kısayollar
-- [ ] Favoriler sistemi (sık kullanılan fonksiyonlar)
-- [ ] Son kullanılanlar geçmişi
-- [ ] Fuzzy search (metin arama ile fonksiyon bulma)
-- [ ] Command palette (Vim : komutu gibi)
-- [ ] Makro kaydı (tuş dizilimi kaydetme)
+- [ ] Customizable shortcuts
+- [ ] Favorites system (frequently used functions)
+- [ ] Recent history
+- [ ] Fuzzy search (find function by text search)
+- [ ] Command palette (like Vim : command)
+- [ ] Macro recording (record key sequence)
