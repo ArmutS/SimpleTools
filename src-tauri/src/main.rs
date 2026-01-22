@@ -5,8 +5,10 @@ mod textfunc;
 mod pdffunc;
 mod utils;
 
-// use std::sync::{Arc, Mutex};
-// use std::thread;
+#[cfg(target_os = "linux")]
+use std::sync::{Arc, Mutex};
+#[cfg(target_os = "linux")]
+use std::thread;
 use tauri::{
     menu::{Menu, MenuItem},
     tray::{MouseButton, TrayIconBuilder, TrayIconEvent},

@@ -62,8 +62,10 @@ SimpleTools/
 
 ### Global Kısayollar
 
-- **Alt+Space**: Uygulamayı aç/kapat (toggle)
-- **Ctrl+G**: Linux klavye dinleyicisi (global shortcut)
+- **Alt+Space**: Uygulamayı aç/kapat (Hedeflenen)
+- **Ctrl+G**: Aktif Geliştirme Kısayolu (Tüm Platformlar)
+  - **Windows/macOS**: `tauri-plugin-global-shortcut` ile native yönetim.
+  - **Linux**: `rdev` kütüphanesi ile background thread listener (X11/Wayland uyumluluğu için raw input).
 - **Esc**: Mevcut pencereyi kapat
 
 ### Modül Navigasyonu

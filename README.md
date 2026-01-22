@@ -19,6 +19,15 @@ SimpleTools, geliştiriciler ve power user'lar için tasarlanmış, Alfred benze
 - **Backend**: Rust (Tauri v2)
 - **Build Tool**: Vite
 
+## 🐧 Linux Gereksinimleri
+
+Uygulamanın Linux üzerinde sorunsuz çalışabilmesi için aşağıdaki paketlerin yüklü olması gerekir:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y libwebkit2gtk-4.0-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxtst-dev libevdev-dev
+```
+
 ## 📦 Kurulum
 
 ```bash

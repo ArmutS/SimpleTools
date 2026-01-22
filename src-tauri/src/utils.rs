@@ -148,7 +148,7 @@ pub async fn create_new_window(
             .resizable(true)
             .visible(false)
             .visible(false)
-            // .transparent(true) // FIXME: transparent method not found in this version/config
+            .transparent(true)
             .decorations(false)
             .build()
             .map_err(|e: tauri::Error| e.to_string())?;
