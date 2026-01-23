@@ -3,6 +3,7 @@
 
 mod textfunc;
 mod pdffunc;
+mod convertfunc;
 mod utils;
 
 #[cfg(target_os = "linux")]
@@ -91,8 +92,8 @@ fn main() {
                 });
             }
 
-            let show_i = MenuItem::with_id(app, "show", "Goster", true, None::<&str>)?;
-            let quit_i = MenuItem::with_id(app, "quit", "Cikis", true, None::<&str>)?;
+            let show_i = MenuItem::with_id(app, "show", "Show", true, None::<&str>)?;
+            let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_i, &quit_i])?;
 
             let _tray = TrayIconBuilder::with_id("tray")
@@ -148,7 +149,8 @@ fn main() {
             pdffunc::pdf_protect,
             pdffunc::pdf_watermark,
             pdffunc::pdf_read_metadata,
-            pdffunc::pdf_metadata
+            pdffunc::pdf_metadata,
+            convertfunc::convert_office
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {

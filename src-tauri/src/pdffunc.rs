@@ -367,7 +367,7 @@ fn retain_pages(doc: &mut Document, pages_to_keep: &[u32]) -> Result<(), String>
 pub struct ImagesToPdfRequest {
     pub image_paths: Vec<String>,
     pub output_path: String,
-    pub page_size: Option<String>, // "A4", "Letter", etc.
+    pub _page_size: Option<String>, // "A4", "Letter", etc.
 }
 
 #[tauri::command(rename_all = "snake_case")]
@@ -837,7 +837,8 @@ pub fn pdf_protect(request: ProtectRequest) -> Result<String, String> {
     let state = EncryptionState::try_from(version)
         .map_err(|e| format!("Failed to create encryption state: {}", e))?;
     
-    doc.encrypt(&state);
+    doc.encrypt(&state)
+        .map_err(|e| format!("Failed to encrypt PDF: {}", e))?;
 
     doc.save(&request.output_path)
         .map_err(|e| format!("Failed to save encrypted PDF: {}", e))?;
@@ -858,8 +859,8 @@ pub struct WatermarkRequest {
     pub text: String,
     pub opacity: f32,     // 0.0 to 1.0
     pub rotation: i32,    // degrees
-    pub font_size: u32,
-pub color: String,    // hex color like "#FF0000"
+    pub _font_size: u32,
+    pub _color: String,    // hex color like "#FF0000"
 }
 
 #[tauri::command(rename_all = "snake_case")]
