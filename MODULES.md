@@ -63,14 +63,14 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
 
 ---
 
-## Module 2: PDF Tools 🚧
+## Module 2: PDF Tools ✅ (COMPLETED)
 
 **Shortcut**: P
-**Status**: In Development
+**Status**: Ready
 **Backend**: `src-tauri/src/pdffunc.rs`
-**Note**: Robust infrastructure powered by `lopdf` 0.38, with corrupted file protection.
+**Note**: Hybrid architecture using `lopdf` (Native Rust) for structure/encryption and `pdfium-render` for rendering.
 
-### Functions (10/12)
+### Functions (12/12)
 
 1. **PDF Merger** (M) ✅ **With Advanced Features**
    - Merges scattered PDF files into a single file
@@ -88,13 +88,15 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
    - Extracts only specific pages (e.g., 5-10) from a 100-page report into a new PDF
    - "Make each page a separate file" option
    - Reason: To avoid sending the entire file when "just send me the relevant page" is requested
+   - **Tech**: Native Rust implementation (lightweight)
 
 3. **Images to PDF** (I) ✅
    - Converts photos of documents (JPG/PNG) taken with a phone or scanned into a single PDF
    - Reason: Visa applications or HR documents usually require a single PDF, not photos
 
-4. **PDF to Images** (G) 🚧 (Requires external library)
+4. **PDF to Images** (G) ✅
    - Exports each page of a PDF as high-quality JPG or PNG
+   - **Tech**: Uses `pdfium-render` for high-fidelity rendering
    - Reason: To take a single slide from a presentation and post it as an image on Instagram or WhatsApp
 
 5. **Compress PDF** (C) ✅
@@ -108,6 +110,7 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
 7. **Delete Pages** (D) ✅
    - Removes selected pages from inside a PDF
    - Reason: To weed out bad pages without rescanning
+   - **Tech**: Native Rust (preserves bookmarks/metadata)
 
 8. **Extract Text** (T) ✅
    - Extracts selectable text inside a PDF as pure txt (not OCR, embedded text)
@@ -118,8 +121,9 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
    - Owner Password removal
    - Reason: You don't want to enter a password every time you archive your own credit card statement
 
-10. **Protect PDF** (P) 🚧 (Encryption support pending)
-    - Adds an open password (User Password) or print restriction (Owner Password)
+10. **Protect PDF** (P) ✅
+    - Adds an open password (User Password) and permissions (Owner Password)
+    - **Tech**: Native Rust Encryption (RC4 128-bit)
     - Reason: Security is mandatory when sending payroll or confidential project files
 
 11. **Watermark** (W) ✅
@@ -146,58 +150,64 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
 ## Module 3: Converters 🚧
 
 **Shortcut**: C
-**Status**: Planned
-**Backend**: `src-tauri/src/convertfunc.rs` (to be created)
+**Status**: ✅ Frontend Ready / 🚧 Backend Partial
+**Backend**: `src-tauri/src/convertfunc.rs` (Stubbed)
+**Workflow**: All functions follow the same pattern:
 
-### Functions (0/12)
+1. **Upload**: Drag & drop or select file(s) (Auto-detect extension)
+2. **Select Target**: Checkbox list of available "Convert To" formats (Multi-select allowed)
+3. **Paths**: Select output directory
+4. **Action**: Convert
 
-1. **JSON to YAML** (J)
-   - JSON ↔ YAML conversion
-   - Syntax highlighting
+### Functions (12/12)
 
-2. **CSV to JSON** (C)
-   - CSV ↔ JSON conversion
-   - Delimiter selection
+1. **Office Converter** (O)
+   - Inputs: Word (DOCX/DOC), Excel (XLSX/XLS), PowerPoint (PPTX/PPT), PDF, ODT, ODS
+   - Targets: PDF, Word, Excel, PPT, Text, HTML
 
-3. **XML to JSON** (X)
-   - XML ↔ JSON conversion
-   - Pretty print
+2. **Image Converter** (I)
+   - Inputs: JPG, PNG, WebP, GIF, TIFF, BMP, HEIC, RAW
+   - Targets: JPG, PNG, WebP, GIF, ICO, PDF
 
-4. **Color Converter** (O)
-   - HEX, RGB, HSL conversions
-   - Color picker
+3. **Video Converter** (V)
+   - Inputs: MP4, MKV, AVI, MOV, WEBM, FLV, WMV
+   - Targets: MP4, MKV, AVI, GIF, MP3 (Audio only)
 
-5. **Unit Converter** (U)
-   - Length, weight, temperature
-   - Multi-unit support
+4. **Audio Converter** (A)
+   - Inputs: MP3, WAV, FLAC, AAC, OGG, M4A, WMA
+   - Targets: MP3, WAV, FLAC, OGG, AAC
 
-6. **Timestamp Converter** (T)
-   - Unix timestamp ↔ Date
-   - Timezone support
+5. **Archive Converter** (Z)
+   - Inputs: ZIP, RAR, 7Z, TAR, GZ, ISO
+   - Targets: ZIP, 7Z, TAR, Extract to Folder
 
-7. **Number Base Converter** (N)
-   - Binary, Octal, Decimal, Hex
-   - Multi-base conversion
+6. **E-Book Converter** (E)
+   - Inputs: EPUB, MOBI, AZW3, PDF, FB2, CBZ
+   - Targets: EPUB, MOBI, PDF, TXT
 
-8. **Image Format Converter** (I)
-   - PNG, JPG, WebP, SVG
-   - Resize option
+7. **Font Converter** (F)
+   - Inputs: TTF, OTF, WOFF, WOFF2, EOT
+   - Targets: TTF, OTF, WOFF, WOFF2
 
-9. **Audio Converter** (A)
-   - MP3, WAV, OGG, FLAC
-   - Bitrate setting
+8. **Data Converter** (D)
+   - Inputs: JSON, XML, YAML, CSV, SQL, Excel
+   - Targets: JSON, XML, YAML, CSV, SQL Table
 
-10. **Video Converter** (V)
-    - MP4, WebM, AVI, MKV
-    - Codec selection
+9. **Vector Converter** (S)
+   - Inputs: SVG, EPS, AI, CDR, PDF
+   - Targets: SVG, PNG, JPG, PDF, EPS
 
-11. **Font Converter** (F)
-    - TTF, OTF, WOFF, WOFF2
-    - Subset creation
+10. **3D/CAD Converter** (M)
+    - Inputs: STL, OBJ, FBX, GLB, DWG, DXF
+    - Targets: STL, OBJ, GLB, GLTF
 
-12. **Markdown to HTML** (M)
-    - Markdown → HTML
-    - Template support
+11. **Icon Converter** (C)
+    - Inputs: PNG, JPG, SVG, ICO, ICNS
+    - Targets: ICO, ICNS, PNG (Specific Sizes: 16x16, 32x32, etc.)
+
+12. **Subtitle Converter** (T)
+    - Inputs: SRT, VTT, SUB, SBV, SSA/ASS
+    - Targets: SRT, VTT, TXT
 
 ---
 
@@ -513,7 +523,7 @@ Ideas for future modules:
 | Module         | Status | Completed  | Remaining |
 | -------------- | ------ | ---------- | --------- |
 | Text Tools     | ✅     | 6/12       | 6         |
-| PDF Tools      | 🚧     | 10/12      | 2         |
+| PDF Tools      | ✅     | 12/12      | 0         |
 | Converters     | 🚧     | 0/12       | 12        |
 | File & System  | 🚧     | 0/12       | 12        |
 | Image Tools    | 🚧     | 0/12       | 12        |
@@ -524,6 +534,6 @@ Ideas for future modules:
 | TBD 10         | 🚧     | 0/12       | 12        |
 | TBD 11         | 🚧     | 0/12       | 12        |
 | TBD 12         | 🚧     | 0/12       | 12        |
-| **TOTAL**      |        | **16/144** | **128**   |
+| **TOTAL**      |        | **18/144** | **126**   |
 
-**Progress**: 11.11%
+**Progress**: 12.5%

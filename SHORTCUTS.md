@@ -19,7 +19,7 @@ Single-key shortcuts for module selection from the main screen:
 | Key | Module         | Status                |
 | --- | -------------- | --------------------- |
 | `T` | Text Tools     | ✅ Active             |
-| `P` | PDF Tools      | 🚧 Under Construction |
+| `P` | PDF Tools      | ✅ Active             |
 | `C` | Converters     | 🚧 Under Construction |
 | `F` | File & System  | 🚧 Under Construction |
 | `I` | Image Tools    | 🚧 Under Construction |
@@ -54,20 +54,20 @@ Function selection within Text Tools module:
 
 Function selection within PDF Tools module:
 
-| Key | Function        | Status            |
-| --- | --------------- | ----------------- |
-| `M` | PDF Merger      | ✅ Active         |
-| `S` | PDF Splitter    | ✅ Active         |
-| `I` | Images to PDF   | ✅ Active         |
-| `G` | PDF to Images   | 🚧 In Development |
-| `C` | Compress PDF    | ✅ Active         |
-| `R` | Rotate Pages    | ✅ Active         |
-| `D` | Delete Pages    | ✅ Active         |
-| `T` | Extract Text    | ✅ Active         |
-| `U` | Remove Password | ✅ Active         |
-| `P` | Protect PDF     | 🚧 In Development |
-| `W` | Watermark       | ✅ Active         |
-| `E` | Metadata Editor | ✅ Active         |
+| Key | Function        | Status    |
+| --- | --------------- | --------- |
+| `M` | PDF Merger      | ✅ Active |
+| `S` | PDF Splitter    | ✅ Active |
+| `I` | Images to PDF   | ✅ Active |
+| `G` | PDF to Images   | ✅ Active |
+| `C` | Compress PDF    | ✅ Active |
+| `R` | Rotate Pages    | ✅ Active |
+| `D` | Delete Pages    | ✅ Active |
+| `T` | Extract Text    | ✅ Active |
+| `U` | Remove Password | ✅ Active |
+| `P` | Protect PDF     | ✅ Active |
+| `W` | Watermark       | ✅ Active |
+| `E` | Metadata Editor | ✅ Active |
 
 ---
 
@@ -75,20 +75,22 @@ Function selection within PDF Tools module:
 
 Function selection within Converters module:
 
-| Key | Function            | Status     |
-| --- | ------------------- | ---------- |
-| `J` | JSON to YAML        | 🚧 Planned |
-| `C` | CSV to JSON         | 🚧 Planned |
-| `X` | XML to JSON         | 🚧 Planned |
-| `O` | Color Converter     | 🚧 Planned |
-| `U` | Unit Converter      | 🚧 Planned |
-| `T` | Timestamp Converter | 🚧 Planned |
-| `N` | Number Base         | 🚧 Planned |
-| `I` | Image Format        | 🚧 Planned |
-| `A` | Audio Converter     | 🚧 Planned |
-| `V` | Video Converter     | 🚧 Planned |
-| `F` | Font Converter      | 🚧 Planned |
-| `M` | Markdown to HTML    | 🚧 Planned |
+| Key | Function           | Status     |
+| --- | ------------------ | ---------- |
+| Key | Function           | Status     |
+| --- | ------------------ | ---------- |
+| `O` | Office Converter   | ✅ Active  |
+| `I` | Image Converter    | ✅ Active  |
+| `V` | Video Converter    | ✅ Active  |
+| `A` | Audio Converter    | ✅ Active  |
+| `Z` | Archive Converter  | ✅ Active  |
+| `E` | E-Book Converter   | ✅ Active  |
+| `F` | Font Converter     | ✅ Active  |
+| `D` | Data Converter     | ✅ Active  |
+| `S` | Vector Converter   | ✅ Active  |
+| `M` | 3D/CAD Converter   | ✅ Active  |
+| `C` | Icon Converter     | ✅ Active  |
+| `T` | Subtitle Converter | ✅ Active  |
 
 ---
 

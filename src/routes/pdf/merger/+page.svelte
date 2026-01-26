@@ -1,7 +1,6 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
-  import { listen } from "@tauri-apps/api/event";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
 
@@ -21,13 +20,13 @@
   let isProcessing: boolean = false;
   let currentFile: string = "";
   let progress: number = 0;
-  let status: string = "Hazır";
+  let status: string = "Ready";
   let isDragging: boolean = false;
   let draggedIndex: number | null = null;
   let showSuccess: boolean = false;
   let successOutputPath: string = "";
 
-  // Dosya seçme
+  // Select Files
   async function selectFiles() {
     try {
       await getCurrentWindow().hide();
@@ -48,12 +47,11 @@
         await addFiles(paths);
       }
     } catch (error) {
-      status = `Hata: ${error}`;
+      status = `Error: ${error}`;
     }
   }
 
-  // Dosya bilgilerini al ve listeye ekle
-  // Dosya bilgilerini al ve listeye ekle
+  // Add Files
   async function addFiles(paths: string[]) {
     console.log("Adding files:", paths);
     let newFiles: PdfFileInfo[] = [];
@@ -88,22 +86,27 @@
         });
       } catch (error) {
         console.error(`Error reading PDF info for ${path}: ${error}`);
-        status = `Hata: ${error}`; // Show error to user
+        status = `Error: ${error}`; // Show error to user
       }
     }
 
     if (newFiles.length > 0) {
       selectedFiles = [...selectedFiles, ...newFiles];
-      // İlk dosya eklendiğinde otomatik output path oluştur
-      if (selectedFiles.length === 1 && !outputPath) {
+      // Auto set output path on first file if empty
+      if (selectedFiles.length > 0 && !outputPath) {
         const firstPath = selectedFiles[0].path;
         const directory = firstPath.substring(0, firstPath.lastIndexOf("/"));
-        outputPath = `${directory}/merged_output.pdf`;
+        const originalName = selectedFiles[0].name;
+        // Strip extension
+        const baseName =
+          originalName.substring(0, originalName.lastIndexOf(".")) ||
+          originalName;
+        outputPath = `${directory}/${baseName}_merged.pdf`;
       }
     }
   }
 
-  // Çıktı klasörü seçme
+  // Select Output
   async function selectOutputFolder() {
     try {
       await getCurrentWindow().hide();
@@ -117,21 +120,21 @@
         outputPath = selected + "/merged_output.pdf";
       }
     } catch (error) {
-      status = `Hata: ${error}`;
+      status = `Error: ${error}`;
     }
   }
 
-  // Dosya silme
+  // Remove File
   function removeFile(index: number) {
     selectedFiles = selectedFiles.filter((_, i) => i !== index);
 
-    // Son dosya silindiyse output path'i temizle
+    // Clear output path if empty
     if (selectedFiles.length === 0) {
       outputPath = "";
     }
   }
 
-  // Drag & Drop Sıralama
+  // Drag & Drop Sorting
   function handleFileDragStart(e: DragEvent, index: number) {
     draggedIndex = index;
     if (e.dataTransfer) {
@@ -156,8 +159,6 @@
     draggedIndex = null;
   }
 
-  // ... (existing state variables)
-
   let unlistenDrop: () => void;
 
   onMount(async () => {
@@ -169,15 +170,15 @@
         if (payload.paths) {
           console.log("Dropped paths:", payload.paths);
           const pdfPaths = payload.paths.filter((p) =>
-            p.toLowerCase().endsWith(".pdf")
+            p.toLowerCase().endsWith(".pdf"),
           );
           if (pdfPaths.length > 0) {
             addFiles(pdfPaths);
           } else {
-            status = "Lütfen PDF dosyaları sürükleyin";
+            status = "Please drag PDF files";
           }
         }
-      }
+      },
     );
   });
 
@@ -187,7 +188,7 @@
     }
   });
 
-  // HTML5 DnD handlers (keep for visual feedback only, but prevent default behavior)
+  // HTML5 DnD handlers
   function handleDragOver(e: DragEvent) {
     e.preventDefault();
     isDragging = true;
@@ -203,32 +204,32 @@
     // Actual file handling is done by tauri://drop listener
   }
 
-  // PDF Birleştirme
+  // PDF Merge
   async function mergePDFs() {
     if (selectedFiles.length < 2) {
-      status = "En az 2 PDF dosyası seçmelisiniz!";
+      status = "You must select at least 2 PDF files!";
       return;
     }
 
     if (!outputPath) {
-      status = "Çıktı dosyası yolunu belirleyin!";
+      status = "Please specify output file path!";
       return;
     }
 
-    // Şifreli dosya kontrolü
+    // Encrypted check
     const encryptedFiles = selectedFiles.filter((f) => f.isEncrypted);
     if (encryptedFiles.length > 0) {
-      status = `Hata: ${encryptedFiles.length} şifreli dosya var. Şifreli dosyalar işlenemez!`;
+      status = `Error: ${encryptedFiles.length} encrypted files found. Cannot process encrypted files!`;
       return;
     }
 
     isProcessing = true;
-    status = "İşleniyor...";
+    status = "Processing...";
     progress = 0;
     showSuccess = false;
 
     try {
-      // Simüle edilmiş ilerleme
+      // Simulated progress
       for (let i = 0; i < selectedFiles.length; i++) {
         currentFile = selectedFiles[i].name;
         progress = Math.round(((i + 1) / selectedFiles.length) * 100);
@@ -242,12 +243,12 @@
         },
       });
 
-      status = "Başarıyla tamamlandı!";
+      status = "Successfully completed!";
       progress = 100;
       showSuccess = true;
       successOutputPath = outputPath;
     } catch (error) {
-      status = `Hata: ${error}`;
+      status = `Error: ${error}`;
       showSuccess = false;
     } finally {
       isProcessing = false;
@@ -255,12 +256,12 @@
     }
   }
 
-  // Klasör/Dosya aç
+  // Open Folder/File
   async function openOutputFolder() {
     try {
       const directory = successOutputPath.substring(
         0,
-        successOutputPath.lastIndexOf("/")
+        successOutputPath.lastIndexOf("/"),
       );
       await invoke("open_folder", { path: directory });
     } catch (error) {
@@ -283,7 +284,7 @@
     <!-- Header -->
     <div class="header">
       <h2>PDF Merger</h2>
-      <p>PDF dosyalarını birleştirin</p>
+      <p>Merge multiple PDF files into one</p>
     </div>
 
     <!-- File List & Drop Zone (Top Block) -->
@@ -297,8 +298,12 @@
       aria-label="File drop zone"
     >
       <div class="file-list-header">
-        <span>Eklenen Dosyalar ({selectedFiles.length})</span>
-        <button class="add-btn-small" on:click={selectFiles}>
+        <span>Added Files ({selectedFiles.length})</span>
+        <button
+          class="add-btn-small"
+          on:click={selectFiles}
+          aria-label="Add Files"
+        >
           <i class="nf-md-plus"></i>
         </button>
       </div>
@@ -307,7 +312,7 @@
         {#if selectedFiles.length === 0}
           <div class="empty-state">
             <i class="nf-md-file_upload"></i>
-            <p>PDF dosyalarını buraya sürükleyin</p>
+            <p>Drag PDF files here</p>
           </div>
         {:else}
           {#each selectedFiles as file, index (file.path)}
@@ -328,7 +333,8 @@
               <button
                 class="remove-btn"
                 on:click={() => removeFile(index)}
-                title="Listeden Çıkar"
+                title="Remove from list"
+                aria-label="Remove File"
               >
                 <i class="nf-md-close"></i>
               </button>
@@ -342,15 +348,15 @@
     <div class="controls-block">
       <div class="control-row">
         <button class="primary-btn" on:click={selectFiles}>
-          <i class="nf-md-file_plus"></i> Dosya Ekle
+          <i class="nf-md-file_plus"></i> Add Files
         </button>
         <button class="secondary-btn" on:click={selectOutputFolder}>
-          <i class="nf-md-folder_open"></i> Çıktı Seç
+          <i class="nf-md-folder_open"></i> Output Path
         </button>
       </div>
 
       <div class="input-group">
-        <label for="output-path">Çıktı Yolu:</label>
+        <label for="output-path">Output Path:</label>
         <input
           id="output-path"
           type="text"
@@ -378,26 +384,26 @@
           on:click={mergePDFs}
           disabled={selectedFiles.length < 2 || !outputPath}
         >
-          <i class="nf-md-merge"></i> BİRLEŞTİR
+          <i class="nf-md-merge"></i> MERGE
         </button>
       {/if}
 
       {#if showSuccess}
         <div class="success-message">
           <i class="nf-md-check_circle"></i>
-          <span>İşlem Başarılı!</span>
+          <span>Operation Successful!</span>
         </div>
         <div class="success-buttons">
           <button class="success-btn" on:click={openOutputFolder}
-            >Klasörü Aç</button
+            >Open Folder</button
           >
           <button class="success-btn" on:click={openOutputFile}
-            >Dosyayı Aç</button
+            >Open File</button
           >
         </div>
       {/if}
 
-      {#if status && !status.includes("Başarılı") && !status.includes("Hazır") && !status.includes("İşleniyor")}
+      {#if status && !status.includes("Successful") && !status.includes("Ready") && !status.includes("Processing")}
         <div class="error-message">
           {status}
         </div>
@@ -409,8 +415,8 @@
   <div class="panel right-panel">
     <div class="preview-placeholder">
       <i class="nf-md-eye_off"></i>
-      <h3>Önizleme</h3>
-      <p>Dosyaları seçtiğinizde önizleme burada görünecek (Yakında)</p>
+      <h3>Preview</h3>
+      <p>Preview will appear here when files are selected (Soon)</p>
     </div>
   </div>
 </div>

@@ -135,7 +135,6 @@ fn main() {
             textfunc::process_obfuscator,
             textfunc::process_char_inspector,
             pdffunc::get_pdf_info,
-            pdffunc::open_folder,
             pdffunc::open_file,
             pdffunc::pdf_merge,
             pdffunc::pdf_split,
