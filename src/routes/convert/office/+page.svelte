@@ -3,6 +3,7 @@
   import { open } from "@tauri-apps/plugin-dialog";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
+  import mammoth from "@bagiit/mammoth";
 
   // Configuration
   const ACCEPTED_EXTENSIONS = [

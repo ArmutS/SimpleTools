@@ -1,4 +1,5 @@
 use std::sync::Mutex;
+use std::fs;
 use tauri::{AppHandle, Manager, PhysicalPosition, PhysicalSize, WebviewWindow};
 
 static LAST_ACTIVE_WINDOW: Mutex<Option<String>> = Mutex::new(None);
@@ -308,4 +309,15 @@ pub fn open_folder(path: String) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+#[tauri::command(rename_all = "snake_case")]
+pub fn read_doc_binary(path: String) -> Result<Vec<u8>,String> {
+
+    match fs::read(path) {
+    
+        Ok(data) => Ok(data),
+        Err(e) => Err(e.to_string())
+
+    }
 }

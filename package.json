@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@bagiit/mammoth": "^1.4.22",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2.6.0",
     "@tauri-apps/plugin-global-shortcut": "^2.3.1",
