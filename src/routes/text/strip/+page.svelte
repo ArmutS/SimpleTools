@@ -1,191 +1,67 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/core";
+  import { invoke } from "@tauri-apps/api/core";
+  let input = "";
+  let output = "";
+  let decodeEntities = true;
 
-    let pure_text: boolean = true;
-    let current_text: string = "";
-    let result = "";
-
-    async function runStrip(text: string, is_pure: boolean) {
-        try {
-            result = await invoke("process_strip", {
-                current_text: text,
-                pure_text: is_pure,
-            });
-        } catch (error) {
-            console.error("Strip hatasi:", error);
-        }
-    }
-
-    $: runStrip(current_text, pure_text);
+  async function strip() {
+    if (!input) { output = ""; return; }
+    try {
+      output = await invoke("process_strip", { currentText: input, pureText: decodeEntities });
+    } catch (e) { alert(e); }
+  }
 </script>
 
-<main class="stripper-container">
-    <div class="pane input-pane">
-        <div class="pane-header">HTML INPUT</div>
-        <textarea
-            class="editor source-editor"
-            placeholder="HTML kodunu buraya yapıştır..."
-            spellcheck="false"
-            bind:value={current_text}
-        ></textarea>
+<main class="container">
+  <div class="content">
+    <div class="header">
+      <div class="icon-wrapper"><i class="nf-fa-eraser"></i></div>
+      <h1>HTML Strip</h1>
+      <p class="subtitle">Remove HTML tags and clean text</p>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="pane output-pane">
-        <div class="controls">
-            <div class="filter-label">OPTIONS:</div>
-
-            <label class="toggle-chip" class:active={pure_text}>
-                <input type="checkbox" bind:checked={pure_text} />
-                Decode Entities (&amp; &rarr; &)
-            </label>
-        </div>
-
-        <div class="pane-header result-header">
-            <span>PLAIN TEXT</span>
-            <button class="action-btn"> Copy Result </button>
-        </div>
-
-        <textarea
-            class="editor result-editor"
-            placeholder="Temizlenen metin burada görünecek..."
-            readonly
-            bind:value={result}
-        ></textarea>
+    <div class="input-section">
+      <div style="margin-bottom:1.5rem">
+        <textarea bind:value={input} on:input={strip} placeholder="Paste HTML content here..." style="height:200px"></textarea>
+      </div>
+      <label class="checkbox">
+        <input type="checkbox" bind:checked={decodeEntities} on:change={strip}> 
+        Decode HTML entities (&amp;nbsp;, &amp;gt; etc.)
+      </label>
     </div>
+
+    {#if output}
+      <div class="result-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+          <label><i class="nf-md-text_long"></i> Cleaned Text</label>
+          <button class="btn-copy" on:click={() => navigator.clipboard.writeText(output)}>Copy Result</button>
+        </div>
+        <textarea readonly value={output} style="height:200px; background:#181825; border-color:#cba6f7"></textarea>
+      </div>
+    {/if}
+  </div>
 </main>
 
 <style>
-    /* --- GENEL LAYOUT --- */
-    .stripper-container {
-        height: 100vh;
-        display: flex;
-        background-color: var(--bg-app);
-        color: var(--text-main);
-        font-family: "Consolas", monospace;
-        overflow: hidden;
-    }
-
-    .pane {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-
-    .divider {
-        width: 1px;
-        background: var(--border-color);
-        opacity: 0.5;
-    }
-
-    /* --- HEADER & TOOLBAR --- */
-    .pane-header {
-        padding: 8px 12px;
-        background: var(--bg-header);
-        border-bottom: 1px solid var(--border-color);
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: var(--text-muted);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        user-select: none;
-        flex-shrink: 0;
-    }
-
-    .controls {
-        padding: 12px;
-        background-color: var(--bg-input);
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        flex-shrink: 0;
-    }
-
-    /* --- EDİTÖRLER (TEXTAREA) --- */
-    .editor {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: var(--text-main);
-        padding: 15px;
-        resize: none;
-        outline: none;
-        font-family: inherit;
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-
-    .source-editor {
-        background-color: rgba(0, 0, 0, 0.1);
-    }
-
-    .result-editor {
-        color: var(--accent);
-    }
-
-    /* --- CHIP BUTTONS --- */
-    .filter-label {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        font-weight: bold;
-        margin-right: 5px;
-    }
-
-    .toggle-chip {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 10px;
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        background: var(--bg-app);
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        user-select: none;
-    }
-
-    .toggle-chip:hover {
-        border-color: var(--text-muted);
-        color: var(--text-main);
-    }
-
-    .toggle-chip input {
-        display: none;
-    }
-
-    /* Svelte dinamik class:active kullanımı ile burası tetiklenir */
-    .toggle-chip.active {
-        background-color: var(--accent);
-        border-color: var(--accent);
-        color: var(--bg-app);
-        font-weight: 600;
-    }
-
-    .action-btn {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-main);
-        padding: 4px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.75rem;
-        font-family: inherit;
-        transition: background 0.2s;
-    }
-
-    .action-btn:hover {
-        background: var(--bg-input);
-        border-color: var(--text-muted);
-        color: var(--accent);
-    }
-
-    .action-btn:active {
-        transform: translateY(1px);
-    }
+  /* Same styles again */
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { max-width:900px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(203,166,247,0.4); animation:float 3s ease-in-out infinite; font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; font-weight:bold; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  .input-section, .result-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2.5rem; border-radius:20px; border:1px solid rgba(203,166,247,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); margin-bottom:2rem; animation:slideUp 0.5s ease-out; }
+  
+  textarea { width:100%; padding:1rem; background:#11111b; border:2px solid #313244; border-radius:12px; color:#cdd6f4; font-family:'Consolas',monospace; transition:all 0.3s; resize:vertical; }
+  textarea:focus { border-color:#cba6f7; outline:none; }
+  
+  label { color:#cba6f7; font-weight:600; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+  .checkbox { display:inline-flex; align-items:center; gap:0.5rem; color:#cdd6f4; cursor:pointer; user-select:none; }
+  .checkbox input { width:auto; }
+  
+  .btn-copy { background:#313244; color:#cdd6f4; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:600; }
+  .btn-copy:hover { background:#45475a; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 </style>

@@ -10,8 +10,9 @@ SimpleTools is a desktop application designed for developers and power users, fe
 - ⌨️ **Vim-like Navigation**: Fast navigation with single-key shortcuts
 - 🎯 **Modular Structure**: 12 different modules, each with 12 functions (144 tools in total)
 - 🖥️ **Multi-Monitor Support**: Opens on the correct monitor based on mouse position
-- 🎨 **Theme System**: 5 different theme options
+- 🎨 **Modern Design**: Custom UI with Catppuccin theme
 - ⚡ **High Performance**: Fast operations with Rust backend
+- 📱 **Responsive**: Optimized grid layouts for any screen size
 
 ## 🛠️ Technology Stack
 
@@ -67,64 +68,42 @@ This command sequence opens the Regex Tester.
 
 ## 📚 Modules
 
-### ✅ Text Tools (Ready)
+### ✅ Text Tools (UI Ready)
 
-**Shortcut**: `T` | **Progress**: 6/12
+**Shortcut**: `T` | **Progress**: 12/12
 
-- ✅ Regex Tester
-- ✅ Text Diff
-- ✅ String Tools
-- ✅ JWT Decoder
-- ✅ Slug Generator
-- ✅ Text Strip
-- 🚧 Lorem Ipsum Generator
-- 🚧 Base64 Encoder/Decoder
-- 🚧 URL Encoder/Decoder
-- 🚧 Markdown Preview
-- 🚧 Character Counter
-- 🚧 Text Sorter
+All 12 tools have modern placeholder UIs. Backend implementation pending for 6 tools.
 
-### ✅ PDF Tools (Ready)
+### ✅ PDF Tools (UI Ready)
 
 **Shortcut**: `P` | **Progress**: 12/12
 
-- ✅ PDF Merger
-- ✅ PDF Splitter
-- ✅ Images to PDF
-- ✅ PDF to Images
-- ✅ Compress PDF
-- ✅ Rotate Pages
-- ✅ Delete Pages
-- ✅ Extract Text
-- ✅ Remove Password
-- ✅ Protect PDF
-- ✅ Watermark
-- ✅ Metadata Editor
+All 12 tools have modern placeholder UIs. Backend implementation pending.
 
-### ⚠️ Converters (Implemented, Untested)
+### ✅ Converters (UI Ready)
 
-**Shortcut**: `C` | **Progress**: 11/12 (Backend) | **Status**: ⚠️ **ALL UNTESTED**
+**Shortcut**: `C` | **Progress**: 12/12 (UI)
 
-- ✅ Office Converter (DOCX→PDF/HTML working)
-- ✅ Image Converter (Pure Rust)
-- ✅ Video Converter (Placeholder)
-- ✅ Audio Converter (Placeholder)
-- ✅ Archive Converter (Pure Rust)
-- ✅ E-Book Converter (TXT only)
-- ✅ Font Converter (Placeholder)
-- ✅ Data Converter (Pure Rust)
-- ✅ Vector Converter (Placeholder)
-- ✅ 3D/CAD Converter (Placeholder)
-- ✅ Icon Converter (ICO working)
-- ✅ Subtitle Converter (Pure Rust)
+All 12 tools have modern placeholder UIs. Backend logic implemented but untested.
 
-> **Note**: All converters have functional UIs and backends, but **NONE have been tested**.
+### ✅ File & System (Completed)
 
-### 🚧 File & System (Planned)
+**Shortcut**: `F` | **Progress**: 12/12 ✅
 
-**Shortcut**: `F` | **Progress**: 0/12
+All 12 tools fully implemented with modern UI and Rust backend.
 
-Hash Generator, File Renamer, Duplicate Finder, Disk Usage, File Splitter, Checksum Verifier, File Permissions, Directory Tree, File Watcher, Temp Cleaner, Metadata Viewer, Symlink Manager
+- ✅ Hash Generator
+- ✅ File Renamer
+- ✅ Duplicate Finder
+- ✅ Disk Usage Analyzer
+- ✅ File Splitter
+- ✅ Checksum Verifier
+- ✅ File Permissions
+- ✅ Directory Tree
+- ✅ File Watcher
+- ✅ Temp Cleaner
+- ✅ Metadata Viewer
+- ✅ Symlink Manager
 
 ### 🚧 Image Tools (Planned)
 
@@ -185,17 +164,16 @@ See [SHORTCUTS.md](SHORTCUTS.md) for a detailed list of shortcuts.
 
 **Total Progress**: 29/144 (20.1%)
 
-| Module         | Status | Completed |
-| -------------- | ------ | --------- |
-| Text Tools     | ✅     | 6/12      |
-| PDF Tools      | ✅     | 12/12     |
-| Converters     | ⚠️     | 11/12 ⚠️  |
-| File & System  | 🚧     | 0/12      |
-| Image Tools    | 🚧     | 0/12      |
-| Network        | 🚧     | 0/12      |
-| Quick Commands | 🚧     | 0/12      |
-| Dev Tools      | 🚧     | 0/12      |
-| TBD 9-12       | 🚧     | 0/48      |
+| Module         | Status                   | UI    | Backend |
+| -------------- | ------------------------ | ----- | ------- |
+| File & System  | ⚠️ Redesigned (Untested) | 12/12 | 12/12   |
+| Text Tools     | ⚠️ Redesigned (Untested) | 12/12 | 12/12   |
+| PDF Tools      | ⚠️ Redesigned (Untested) | 12/12 | 11/12   |
+| Converters     | ⚠️ Redesigned (Untested) | 12/12 | 12/12\* |
+| Image Tools    | 🚧 Planned               | 0/12  | 0/12    |
+| Network        | 🚧 Planned               | 0/12  | 0/12    |
+| Quick Commands | 🚧 Planned               | 0/12  | 0/12    |
+| Dev Tools      | 🚧 Planned               | 0/12  | 0/12    |
 
 > [!WARNING]
 > **Converters**: All 11 converters implemented but untested.

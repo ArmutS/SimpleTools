@@ -1,551 +1,101 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
-  import { getCurrentWindow } from "@tauri-apps/api/window";
-  import { onMount, onDestroy } from "svelte";
+  let filePath = "";
+  let mode = "range"; // range | individual
+  let start = 1;
+  let end = 1;
+  let isProcessing = false;
 
-  // State
-  let selectedFile: string = "";
-  let outputDir: string = "";
-  let isProcessing: boolean = false;
-  let status: string = "Hazır";
-  let isDragging: boolean = false;
-  let showSuccess: boolean = false;
-
-  // Split Settings
-  let mode: "individual" | "range" = "individual";
-  let startPage: number = 1;
-  let endPage: number = 1;
-
-  // Dosya seçme
   async function selectFile() {
-    try {
-      await getCurrentWindow().hide();
-      const selected = await open({
-        multiple: false,
-        filters: [
-          {
-            name: "PDF",
-            extensions: ["pdf"],
-          },
-        ],
-      });
-      await getCurrentWindow().show();
-      await getCurrentWindow().setFocus();
-
-      if (selected && !Array.isArray(selected)) {
-        selectedFile = selected;
-        // Default output dir to same as file
-        if (!outputDir) {
-          outputDir = selectedFile.substring(0, selectedFile.lastIndexOf("/"));
-        }
-      }
-    } catch (error) {
-      status = `Hata: ${error}`;
-    }
+    const selected = await open({ filters: [{ name: 'PDF', extensions: ['pdf'] }] });
+    if (selected) filePath = selected as string;
   }
 
-  // Çıktı klasörü seçme
-  async function selectOutputDir() {
-    try {
-      await getCurrentWindow().hide();
-      const selected = await open({
-        directory: true,
-      });
-      await getCurrentWindow().show();
-      await getCurrentWindow().setFocus();
-
-      if (selected && !Array.isArray(selected)) {
-        outputDir = selected;
-      }
-    } catch (error) {
-      status = `Hata: ${error}`;
-    }
-  }
-
-  // Split Action
-  async function splitPdf() {
-    if (!selectedFile) {
-      status = "Bir PDF dosyası seçmelisiniz!";
-      return;
-    }
-
-    if (!outputDir) {
-      status = "Çıktı klasörü seçmelisiniz!";
-      return;
-    }
-
-    if (mode === "range" && startPage > endPage) {
-      status = "Başlangıç sayfası bitiş sayfasından büyük olamaz!";
-      return;
-    }
+  async function split() {
+    if (!filePath) return;
+    const dir = await open({ directory: true });
+    if (!dir) return;
 
     isProcessing = true;
-    status = "Ayrıştırılıyor...";
-    showSuccess = false;
-
     try {
-      await invoke("pdf_split", {
-        request: {
-          file_path: selectedFile,
-          mode: mode,
-          start_page: mode === "range" ? startPage : null,
-          end_page: mode === "range" ? endPage : null,
-          output_dir: outputDir,
-        },
-      });
-
-      status = "Başarıyla tamamlandı!";
-      showSuccess = true;
-    } catch (error) {
-      status = `Hata: ${error}`;
-      showSuccess = false;
-    } finally {
-      isProcessing = false;
-    }
-  }
-
-  // Drag & Drop
-  let unlistenDrop: () => void;
-
-  onMount(async () => {
-    unlistenDrop = await getCurrentWindow().listen(
-      "tauri://drag-drop",
-      (event) => {
-        const payload = event.payload as { paths: string[] };
-        if (payload.paths && payload.paths.length > 0) {
-          const pdf = payload.paths.find((p) =>
-            p.toLowerCase().endsWith(".pdf"),
-          );
-          if (pdf) {
-            selectedFile = pdf;
-            if (!outputDir) {
-              outputDir = pdf.substring(0, pdf.lastIndexOf("/"));
-            }
-          } else {
-            status = "Lütfen bir PDF dosyası sürükleyin.";
-          }
-        }
-      },
-    );
-  });
-
-  onDestroy(() => {
-    if (unlistenDrop) {
-      unlistenDrop();
-    }
-  });
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault();
-    isDragging = true;
-  }
-
-  function handleDragLeave() {
-    isDragging = false;
-  }
-
-  function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    isDragging = false;
-  }
-
-  async function openOutputDir() {
-    if (outputDir) {
-      await invoke("open_folder", { path: outputDir });
-    }
+      const msg = await invoke("pdf_split", { request: { 
+        file_path: filePath, 
+        mode, 
+        start_page: start, 
+        end_page: end, 
+        output_dir: dir 
+      }});
+      alert(msg);
+    } catch(e) { alert(e); }
+    finally { isProcessing = false; }
   }
 </script>
 
-<div class="layout">
-  <!-- Left Panel -->
-  <div class="panel left-panel">
+<main class="container">
+  <div class="content">
     <div class="header">
-      <h2>PDF Splitter</h2>
-      <p>PDF dosyasını sayfalara ayırın veya belirli aralığı alın</p>
+      <div class="icon-wrapper"><i class="nf-md-content_cut"></i></div>
+      <h1>PDF Splitter</h1>
+      <p class="subtitle">Extract pages or split into individual files</p>
     </div>
 
-    <div
-      class="file-container"
-      class:dragging={isDragging}
-      on:dragover={handleDragOver}
-      on:dragleave={handleDragLeave}
-      on:drop={handleDrop}
-    >
-      {#if selectedFile}
-        <div class="selected-file-display">
-          <i class="nf-md-file_pdf_box file-icon"></i>
-          <div class="file-info">
-            <span class="file-path">{selectedFile}</span>
-          </div>
-          <button class="remove-btn" on:click={() => (selectedFile = "")}>
-            <i class="nf-md-close"></i>
-          </button>
-        </div>
-      {:else}
-        <div class="empty-state" on:click={selectFile}>
-          <i class="nf-md-file_upload"></i>
-          <p>PDF dosyasını buraya sürükleyin veya seçin</p>
-        </div>
-      {/if}
-    </div>
-
-    <div class="controls-block">
-      <label>Ayarlar</label>
-
-      <div class="radio-group">
-        <label class="radio-label">
-          <input type="radio" bind:group={mode} value="individual" />
-          <span>Her sayfayı ayrı dosya yap</span>
-        </label>
-        <label class="radio-label">
-          <input type="radio" bind:group={mode} value="range" />
-          <span>Sayfa Aralığını Çıkar</span>
-        </label>
-      </div>
-
-      {#if mode === "range"}
-        <div class="range-inputs">
-          <div class="input-group">
-            <label for="start">Başlangıç:</label>
-            <input id="start" type="number" min="1" bind:value={startPage} />
-          </div>
-          <div class="input-group">
-            <label for="end">Bitiş:</label>
-            <input id="end" type="number" min="1" bind:value={endPage} />
-          </div>
-        </div>
-      {/if}
-
-      <div class="input-group">
-        <label for="output-path">Çıktı Klasörü:</label>
-        <div class="path-select">
-          <input
-            id="output-path"
-            type="text"
-            bind:value={outputDir}
-            placeholder="/path/to/folder"
-          />
-          <button class="icon-btn" on:click={selectOutputDir}>
-            <i class="nf-md-folder_open"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-block">
-      <button
-        class="merge-btn"
-        on:click={splitPdf}
-        disabled={!selectedFile || !outputDir || isProcessing}
-      >
-        {#if isProcessing}
-          <i class="nf-md-loading nf-spin"></i> İşleniyor...
-        {:else}
-          <i class="nf-md-call_split"></i> AYRIŞTIR
-        {/if}
+    <div class="input-section">
+      <button on:click={selectFile} class="btn-secondary" style="width:100%; margin-bottom:1.5rem">
+        {filePath ? filePath : 'Select PDF File'}
       </button>
 
-      {#if showSuccess}
-        <div class="success-message">
-          <i class="nf-md-check_circle"></i>
-          <span>İşlem Başarılı!</span>
-        </div>
-        <button class="success-btn" on:click={openOutputDir}>Klasörü Aç</button>
-      {/if}
+      {#if filePath}
+        <div class="controls">
+          <div class="tabs">
+            <button class:active={mode==='range'} on:click={()=>mode='range'}>Extract Range</button>
+            <button class:active={mode==='individual'} on:click={()=>mode='individual'}>Split All Pages</button>
+          </div>
 
-      {#if status && !status.includes("Başarılı") && !status.includes("Hazır") && !status.includes("İşleniyor") && !status.includes("Ayrıştırılıyor")}
-        <div class="error-message">
-          {status}
+          {#if mode === 'range'}
+            <div class="range-inputs">
+              <div class="field">
+                <label>Start Page</label>
+                <input type="number" min="1" bind:value={start} />
+              </div>
+              <div class="field">
+                <label>End Page</label>
+                <input type="number" min="1" bind:value={end} />
+              </div>
+            </div>
+          {/if}
+
+          <button on:click={split} disabled={isProcessing} class="btn-primary" style="width:100%; margin-top:2rem">
+            {isProcessing ? 'Splitting...' : 'Split PDF'}
+          </button>
         </div>
       {/if}
     </div>
   </div>
-
-  <!-- Right Panel: Info -->
-  <div class="panel right-panel">
-    <div class="preview-placeholder">
-      <i class="nf-md-call_split"></i>
-      <h3>PDF Splitter</h3>
-      <p>Büyük PDF dosyalarını bölün veya istediğiniz sayfaları ayıklayın.</p>
-    </div>
-  </div>
-</div>
+</main>
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .layout {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-app, #1e1e2e);
-    color: var(--text-main, #cdd6f4);
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    height: 100%;
-  }
-
-  .left-panel {
-    width: 50%;
-    border-right: 1px solid var(--border-color, #45475a);
-    gap: 1.5rem;
-  }
-
-  .right-panel {
-    width: 50%;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  .header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--accent, #89b4fa);
-  }
-
-  .header p {
-    margin: 0.25rem 0 0;
-    color: var(--text-muted, #a6adc8);
-    font-size: 0.9rem;
-  }
-
-  .file-container {
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-input, #313244);
-    border-radius: 8px;
-    border: 2px dashed var(--border-color, #45475a);
-    overflow: hidden;
-    transition: all 0.2s;
-    justify-content: center;
-  }
-
-  .file-container.dragging {
-    border-color: var(--accent, #89b4fa);
-    background: rgba(137, 180, 250, 0.1);
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    gap: 0.5rem;
-    cursor: pointer;
-    height: 100%;
-  }
-
-  .empty-state:hover {
-    color: var(--accent);
-  }
-
-  .empty-state i {
-    font-size: 2.5rem;
-  }
-
-  .selected-file-display {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    gap: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    height: 100%;
-  }
-
-  .file-icon {
-    font-size: 2.5rem;
-    color: #f38ba8;
-  }
-
-  .file-info {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .file-path {
-    font-family: monospace;
-    font-size: 0.9rem;
-    word-break: break-all;
-  }
-
-  .remove-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-  .remove-btn:hover {
-    color: #f38ba8;
-  }
-
-  .controls-block {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 0.5rem;
-  }
-
-  .radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .radio-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
-
-  .range-inputs {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    flex: 1;
-  }
-
-  .input-group label {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-  }
-
-  input[type="text"],
-  input[type="number"] {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    padding: 0.6rem;
-    border-radius: 6px;
-    color: var(--text-main);
-  }
-
-  select:focus,
-  input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .path-select {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .path-select input {
-    flex: 1;
-    font-family: monospace;
-  }
-
-  .icon-btn {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    width: 40px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .icon-btn:hover {
-    border-color: var(--accent);
-  }
-
-  .action-block {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .merge-btn {
-    width: 100%;
-    padding: 1rem;
-    background: var(--accent);
-    color: var(--bg-app);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .merge-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-
-  .merge-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--bg-input);
-    color: var(--text-muted);
-  }
-
-  .success-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: #a6e3a1;
-    font-weight: bold;
-  }
-
-  .success-btn {
-    padding: 0.5rem;
-    background: transparent;
-    border: 1px solid #a6e3a1;
-    color: #a6e3a1;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .success-btn:hover {
-    background: rgba(166, 227, 161, 0.1);
-  }
-
-  .error-message {
-    color: #f38ba8;
-    text-align: center;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    background: rgba(243, 139, 168, 0.1);
-    border-radius: 4px;
-  }
-
-  .preview-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .preview-placeholder i {
-    font-size: 4rem;
-    opacity: 0.3;
-  }
+  /* Reuse standard styles */
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { max-width:700px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(243,139,168,0.4); animation:float 3s ease-in-out infinite; font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; font-weight:bold; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  
+  .input-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2rem; border-radius:20px; border:1px solid rgba(243,139,168,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); animation:slideUp 0.5s ease-out; }
+  
+  .btn-primary { padding:1.5rem; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); color:#1e1e2e; border:none; border-radius:12px; cursor:pointer; font-weight:bold; font-size:1.2rem; transition:0.3s; }
+  .btn-secondary { padding:1rem; background:#313244; color:#cdd6f4; border:none; border-radius:12px; cursor:pointer; font-weight:600; width:100%; word-break:break-all; }
+  
+  .tabs { display:flex; gap:1rem; margin-bottom:1.5rem; }
+  .tabs button { flex:1; padding:0.75rem; background:#11111b; border:2px solid #313244; color:#cdd6f4; border-radius:10px; cursor:pointer; transition:0.3s; }
+  .tabs button.active { border-color:#f38ba8; background:rgba(243,139,168,0.1); color:#f38ba8; }
+  
+  .range-inputs { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .field input { width:100%; padding:1rem; background:#11111b; border:2px solid #313244; border-radius:10px; color:#cdd6f4; text-align:center; font-size:1.2rem; }
+  label { display:block; text-align:center; color:#a6adc8; margin-bottom:0.5rem; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 </style>

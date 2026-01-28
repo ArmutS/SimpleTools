@@ -2,10 +2,10 @@
 
 This file contains the detailed planning for the 12 modules and 12 functions within each module in the SimpleTools project.
 
-## Module 1: Text Tools ✅ (COMPLETED)
+## Module 1: Text Tools ⚠️ (REDESIGNED - UNTESTED)
 
 **Shortcut**: T
-**Status**: Ready
+**Status**: Untested
 **Backend**: `src-tauri/src/textfunc.rs`
 
 ### Functions (12/12)
@@ -63,10 +63,10 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
 
 ---
 
-## Module 2: PDF Tools ✅ (COMPLETED)
+## Module 2: PDF Tools ⚠️ (REDESIGNED - UNTESTED)
 
 **Shortcut**: P
-**Status**: Ready
+**Status**: Untested
 **Backend**: `src-tauri/src/pdffunc.rs`
 **Note**: Hybrid architecture using `lopdf` (Native Rust) for structure/encryption and `pdfium-render` for rendering.
 
@@ -236,61 +236,73 @@ This file contains the detailed planning for the 12 modules and 12 functions wit
 
 ---
 
-## Module 4: File & System 🚧
+## Module 4: File & System ✅
 
 **Shortcut**: F
-**Status**: Planned
-**Backend**: `src-tauri/src/filefunc.rs` (to be created)
+**Status**: Complete
+**Backend**: `src-tauri/src/file_system_func.rs`
 
-### Functions (0/12)
+### Functions (12/12 Backend | 12/12 Frontend)
 
-1. **Hash Generator** (H)
-   - MD5, SHA1, SHA256, SHA512
+1. **Hash Generator** (H) ✅
+   - MD5, SHA256, SHA512
    - File hashing
+   - **UI**: ✅ Complete
 
-2. **File Renamer** (R)
+2. **File Renamer** (R) ✅
    - Batch file renaming
    - Regex pattern support
+   - **UI**: ✅ Complete
 
-3. **Duplicate Finder** (D)
+3. **Duplicate Finder** (D) ✅
    - Find duplicate files
    - Hash-based comparison
+   - **UI**: ✅ Complete
 
-4. **Disk Usage Analyzer** (U)
+4. **Disk Usage Analyzer** (U) ✅
    - Folder size analysis
    - Visual graph
+   - **UI**: ✅ Complete
 
-5. **File Splitter** (S)
+5. **File Splitter** (S) ✅
    - Split large files
    - Merge
+   - **UI**: ✅ Complete
 
-6. **Checksum Verifier** (C)
+6. **Checksum Verifier** (C) ✅
    - Verify checksum
    - Multiple algorithms
+   - **UI**: ✅ Complete
 
-7. **File Permissions** (P)
+7. **File Permissions** (P) ✅
    - View file permissions
    - Chmod calculator
+   - **UI**: ✅ Complete
 
-8. **Directory Tree** (T)
+8. **Directory Tree** (T) ✅
    - Visualize folder structure
    - Export to text
+   - **UI**: ✅ Complete
 
-9. **File Watcher** (W)
+9. **File Watcher** (W) ✅
    - Monitor file changes
    - Real-time monitoring
+   - **UI**: ✅ Complete
 
-10. **Temp File Cleaner** (L)
+10. **Temp File Cleaner** (L) ✅
     - Clean temporary files
     - Safe delete
+    - **UI**: ✅ Complete
 
-11. **File Metadata Viewer** (M)
+11. **File Metadata Viewer** (M) ✅
     - EXIF, ID3 tags
     - Edit metadata
+    - **UI**: ✅ Complete
 
-12. **Symbolic Link Manager** (Y)
+12. **Symbolic Link Manager** (Y) ✅
     - Create symlink
     - Manage links
+    - **UI**: ✅ Complete
 
 ---
 
@@ -550,7 +562,7 @@ Ideas for future modules:
 | Text Tools     | ✅     | 6/12       | 6         |
 | PDF Tools      | ✅     | 12/12      | 0         |
 | Converters     | ⚠️     | 11/12 ⚠️   | 1         |
-| File & System  | 🚧     | 0/12       | 12        |
+| File & System  | ✅     | 12/12      | 0         |
 | Image Tools    | 🚧     | 0/12       | 12        |
 | Network        | 🚧     | 0/12       | 12        |
 | Quick Commands | 🚧     | 0/12       | 12        |
@@ -559,9 +571,9 @@ Ideas for future modules:
 | TBD 10         | 🚧     | 0/12       | 12        |
 | TBD 11         | 🚧     | 0/12       | 12        |
 | TBD 12         | 🚧     | 0/12       | 12        |
-| **TOTAL**      |        | **29/144** | **115**   |
+| **TOTAL**      |        | **41/144** | **103**   |
 
 > [!WARNING]
 > **Converters Module**: All 11 converters implemented but **NONE tested**. Testing required before production use.
 
-**Progress**: 20.1%
+**Progress**: 28.5%

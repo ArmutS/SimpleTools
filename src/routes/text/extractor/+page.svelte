@@ -1,343 +1,87 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/core";
+  import { invoke } from "@tauri-apps/api/core";
+  let input = "";
+  let results: string[] = [];
+  let options = {
+    email: true,
+    url: true,
+    ip: false,
+    hashtag: false,
+    log_error: false
+  };
 
-    interface Options {
-        email: boolean;
-        url: boolean;
-        ip: boolean;
-        hashtag: boolean;
-        log_error: boolean;
-    }
-
-    let current_text: string;
-    let result: [] = [];
-
-    let options: Options = {
-        email: false,
-        url: false,
-        ip: false,
-        hashtag: false,
-        log_error: false,
-    };
-
-    async function runExtractor() {
-        if (!current_text) {
-            return (result = []);
-        }
-
-        try {
-            result = await invoke("process_extractor", {
-                current_text: current_text,
-                options: options,
-            });
-        } catch (error) {
-            console.error("Extractor Hatasi:", error);
-        }
-    }
-
-    $: if (options) {
-        runExtractor();
-    }
+  async function extract() {
+    if (!input) return;
+    try {
+      results = await invoke("process_extractor", { currentText: input, options });
+    } catch (e) { alert(e); }
+  }
 </script>
 
-<main class="extractor-container">
-    <div class="pane input-pane">
-        <div class="pane-header">SOURCE TEXT</div>
-        <textarea
-            class="editor"
-            placeholder="Karmaşık metni buraya yapıştır..."
-            spellcheck="false"
-            bind:value={current_text}
-        ></textarea>
+<main class="container">
+  <div class="content">
+    <div class="header">
+      <div class="icon-wrapper"><i class="nf-fa-filter"></i></div>
+      <h1>Text Extractor</h1>
+      <p class="subtitle">Extract specific data types from unstructured text</p>
     </div>
 
-    <div class="divider"></div>
+    <div class="input-section">
+      <div style="margin-bottom:1.5rem">
+        <label><i class="nf-md-text"></i> Source Text</label>
+        <textarea bind:value={input} on:input={extract} placeholder="Paste text here containing emails, urls, etc..." style="height:200px"></textarea>
+      </div>
 
-    <div class="pane output-pane">
-        <div class="controls">
-            <div class="filter-label">EXTRACT:</div>
-
-            <label class="toggle-chip" class:active={options.email}>
-                <input type="checkbox" bind:checked={options.email} />
-                Emails
-            </label>
-
-            <label class="toggle-chip" class:active={options.url}>
-                <input type="checkbox" bind:checked={options.url} />
-                URLs
-            </label>
-
-            <label class="toggle-chip" class:active={options.ip}>
-                <input type="checkbox" bind:checked={options.ip} />
-                IPs
-            </label>
-
-            <label class="toggle-chip" class:active={options.hashtag}>
-                <input type="checkbox" bind:checked={options.hashtag} />
-                #Tags
-            </label>
-            <label class="toggle-chip" class:active={options.log_error}>
-                <input type="checkbox" bind:checked={options.log_error} />
-                Errors (Log)
-            </label>
-        </div>
-
-        <div class="pane-header result-header">
-            <span>RESULTS</span>
-
-            <button class="action-btn"> Copy All </button>
-        </div>
-
-        <div class="results-list">
-            {#each result as item, index}
-                <div class="result-card">
-                    <div class="card-header">
-                        <span class="index-badge">#{index + 1}</span>
-
-                        <button
-                            class="copy-icon-btn"
-                            title="Copy"
-                            on:click={() => navigator.clipboard.writeText(item)}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            >
-                                <rect
-                                    x="9"
-                                    y="9"
-                                    width="13"
-                                    height="13"
-                                    rx="2"
-                                    ry="2"
-                                ></rect>
-                                <path
-                                    d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
-                                ></path>
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="card-content">{item}</div>
-                </div>
-            {/each}
-            {#if result.length === 0 && current_text}
-                <div class="empty-state">No matches found.</div>
-            {/if}
-        </div>
+      <div style="display:flex; gap:1.5rem; flex-wrap:wrap">
+        <label class="checkbox"><input type="checkbox" bind:checked={options.email} on:change={extract}> Emails</label>
+        <label class="checkbox"><input type="checkbox" bind:checked={options.url} on:change={extract}> URLs</label>
+        <label class="checkbox"><input type="checkbox" bind:checked={options.ip} on:change={extract}> IP Addresses</label>
+        <label class="checkbox"><input type="checkbox" bind:checked={options.hashtag} on:change={extract}> Hashtags</label>
+        <label class="checkbox"><input type="checkbox" bind:checked={options.log_error} on:change={extract}> Log Errors</label>
+      </div>
     </div>
+
+    {#if results.length > 0}
+      <div class="result-section">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+          <label><i class="nf-md-check_all"></i> Extracted Items ({results.length})</label>
+          <button class="btn-copy" on:click={() => navigator.clipboard.writeText(results.join('\n'))}>Copy All</button>
+        </div>
+        <div class="list">
+          {#each results as items, i}
+             <div class="item" style="animation-delay:{i*0.03}s">{items}</div>
+          {/each}
+        </div>
+      </div>
+    {/if}
+  </div>
 </main>
 
 <style>
-    /* --- GENEL DÜZEN --- */
-    .extractor-container {
-        height: 100vh;
-        display: flex;
-        background-color: var(--bg-app);
-        color: var(--text-main);
-        font-family: "Consolas", monospace;
-        overflow: hidden;
-    }
-
-    .pane {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-
-    .divider {
-        width: 1px;
-        background: var(--border-color);
-        opacity: 0.5;
-    }
-
-    /* --- BAŞLIKLAR --- */
-    .pane-header {
-        padding: 8px 12px;
-        background: var(--bg-header);
-        border-bottom: 1px solid var(--border-color);
-        font-size: 0.75rem;
-        font-weight: bold;
-        color: var(--text-muted);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        user-select: none;
-        flex-shrink: 0; /* Başlık asla küçülmesin */
-    }
-
-    /* --- INPUT ALANI --- */
-    .editor {
-        flex: 1;
-        background: transparent;
-        border: none;
-        color: var(--text-main);
-        padding: 15px;
-        resize: none;
-        outline: none;
-        font-family: inherit;
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-
-    /* --- KONTROLLER (CHIPS) - ESKİ HALİNE DÖNDÜ --- */
-    .controls {
-        padding: 12px;
-        background-color: var(--bg-input);
-        border-bottom: 1px solid var(--border-color);
-        
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        
-        /* 1. Scroll yerine aşağı kayma (Wrap) geri geldi */
-        flex-wrap: wrap; 
-        
-        /* Scroll kapalı */
-        overflow: visible; 
-        
-        /* Alan daralırsa butonlar sığmazsa aşağı insin */
-        flex-shrink: 0; 
-    }
-
-    .filter-label {
-        font-size: 0.7rem;
-        color: var(--text-muted);
-        font-weight: bold;
-        margin-right: 5px;
-    }
-
-    .toggle-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 4px 10px;
-        
-        border-radius: 12px;
-        border: 1px solid var(--border-color);
-        background: var(--bg-app);
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        user-select: none;
-    }
-
-    .toggle-chip:hover {
-        border-color: var(--text-muted);
-        color: var(--text-main);
-    }
-
-    .toggle-chip input {
-        display: none;
-    }
-
-    .toggle-chip.active {
-        background-color: var(--accent);
-        border-color: var(--accent);
-        color: var(--bg-app);
-        font-weight: 600;
-    }
-
-    /* --- SONUÇ LİSTESİ --- */
-    .results-list {
-        flex: 1; /* Kalan boşluğu doldur */
-        
-        /* Sadece dikey scroll olsun */
-        overflow-y: auto; 
-        padding: 15px;
-        background-color: var(--bg-app);
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* --- RESULT CARD (EN ÖNEMLİ KISIM) --- */
-    .result-card {
-        background-color: var(--bg-input);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        display: flex;
-        flex-direction: column;
-        
-        /* BU SATIR SORUNU ÇÖZER: */
-        /* Flex container içinde sıkışmayı (squish) engeller */
-        flex-shrink: 0; 
-        
-        /* İçerik taşarsa kartın içinde kalsın */
-        overflow: hidden; 
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 10px;
-        background-color: rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    .index-badge {
-        font-size: 0.7rem;
-        font-weight: bold;
-        color: var(--text-muted);
-    }
-
-    .card-content {
-        padding: 10px;
-        font-size: 0.9rem;
-        color: var(--text-main);
-        word-break: break-all;
-        font-family: "Consolas", monospace;
-    }
-
-    /* --- BUTONLAR --- */
-    .copy-icon-btn {
-        background: transparent;
-        border: none;
-        color: var(--text-muted);
-        cursor: pointer;
-        padding: 4px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 4px;
-        transition: all 0.2s;
-    }
-
-    .copy-icon-btn:hover {
-        color: var(--accent);
-        background-color: var(--bg-app);
-    }
-
-    .action-btn {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-main);
-        padding: 3px 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.7rem;
-        transition: background 0.2s;
-    }
-
-    .action-btn:hover {
-        background: var(--bg-input);
-        border-color: var(--text-muted);
-    }
-
-    .empty-state {
-        text-align: center;
-        color: var(--text-muted);
-        font-style: italic;
-        margin-top: 20px;
-    }
+  /* Reuse styles */
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { max-width:900px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(203,166,247,0.4); animation:float 3s ease-in-out infinite; font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; font-weight:bold; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  .input-section, .result-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2.5rem; border-radius:20px; border:1px solid rgba(203,166,247,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); margin-bottom:2rem; animation:slideUp 0.5s ease-out; }
+  
+  textarea { width:100%; padding:1rem; background:#11111b; border:2px solid #313244; border-radius:12px; color:#cdd6f4; font-family:'Consolas',monospace; transition:all 0.3s; }
+  textarea:focus { border-color:#cba6f7; outline:none; }
+  
+  label { color:#cba6f7; font-weight:600; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+  .checkbox { background:#11111b; padding:0.75rem 1.25rem; border-radius:10px; border:2px solid #313244; cursor:pointer; color:#cdd6f4; display:flex; align-items:center; gap:0.5rem; transition:all 0.2s; }
+  .checkbox:hover { border-color:#cba6f7; }
+  .checkbox input { width:auto; margin:0; }
+  
+  .list { display:flex; flex-direction:column; gap:0.5rem; max-height:400px; overflow-y:auto; }
+  .item { background:#11111b; padding:1rem; border-radius:8px; border-left:3px solid #cba6f7; font-family:'Consolas',monospace; animation:fadeIn 0.3s ease-out backwards; color:#cdd6f4; }
+  
+  .btn-copy { background:#313244; color:#cdd6f4; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; font-weight:600; }
+  .btn-copy:hover { background:#45475a; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
 </style>

@@ -1,265 +1,85 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/core";
+  import { invoke } from "@tauri-apps/api/core";
+  let regexPattern = "";
+  let testString = "";
+  let flags = "gm";
+  let matches: any[] = [];
+  let error = "";
 
-    interface MatchResult {
-        text: string;
-        start: number;
-        end: number;
+  async function testRegex() {
+    if (!regexPattern) return;
+    error = "";
+    try {
+      matches = await invoke("process_text_reg", { currentRegex: regexPattern, currentText: testString, currentFlags: flags });
+    } catch (e) {
+      matches = [];
+      error = e as string;
     }
-
-    let regexText = "";
-    let regexFlags = "";
-    let regexInput = "";
-    let results: MatchResult[] = [];
-
-    async function runRegex() {
-        if (!regexInput) {
-            results = [];
-            return;
-        }
-
-        try {
-            results = await invoke("process_text_reg", {
-                current_text: regexText,
-                current_regex: regexInput,
-                current_flags: regexFlags,
-            });
-        } catch (error) {
-            results = [];
-            console.error("Regex Hatası:", error);
-        }
-    }
-    $: if (regexFlags || regexInput || regexText) {
-        runRegex();
-    }
+  }
 </script>
 
-<main class="regex-container">
-    <div class="control-panel">
-        <div class="input-label">Regular Expression</div>
-        <div class="regex-bar">
-            <span class="slash">/</span>
-            <input
-                type="text"
-                class="pattern-input"
-                placeholder="expression..."
-                bind:value={regexInput}
-                spellcheck="false"
-            />
-            <span class="slash">/</span>
-            <input
-                type="text"
-                class="flags-input"
-                placeholder="sim"
-                bind:value={regexFlags}
-                spellcheck="false"
-            />
-        </div>
+<main class="container">
+  <div class="content">
+    <div class="header">
+      <div class="icon-wrapper"><i class="nf-fa-code"></i></div>
+      <h1>Regex Tester</h1>
+      <p class="subtitle">Test regular expressions in real-time</p>
     </div>
 
-    <div class="editor-section">
-        <div class="input-label">Test String</div>
-        <textarea
-            class="test-area"
-            placeholder="Metnini buraya yapıştır..."
-            bind:value={regexText}
-            spellcheck="false"
-        ></textarea>
+    <div class="input-section">
+      <div style="margin-bottom:1.5rem">
+        <label><i class="nf-md-regex"></i> Regular Expression</label>
+        <div style="display:flex; gap:1rem">
+          <input type="text" bind:value={regexPattern} on:input={testRegex} placeholder="e.g. /^[a-z]+$/" style="flex:1" />
+          <input type="text" bind:value={flags} on:input={testRegex} placeholder="flags (gmi)" style="width:100px" />
+        </div>
+        {#if error}<p style="color:#f38ba8; margin-top:0.5rem; font-size:0.9rem"><i class="nf-md-alert_circle"></i> {error}</p>{/if}
+      </div>
+
+      <div>
+        <label><i class="nf-md-text"></i> Test String</label>
+        <textarea bind:value={testString} on:input={testRegex} placeholder="Paste text here to test against regex..." style="height:150px"></textarea>
+      </div>
     </div>
 
-    <div class="results-section">
-        <div class="section-header">
-            <span>MATCHES</span>
-            <span class="match-count">{results.length} matches</span>
+    {#if matches.length > 0}
+      <div class="result-section">
+        <label><i class="nf-md-check_circle"></i> Found {matches.length} matches</label>
+        <div class="matches-list">
+          {#each matches as match, i}
+            <div class="match-item" style="animation-delay:{i*0.05}s">
+              <span class="match-index">#{i+1}</span>
+              <span class="match-text">{match.text}</span>
+              <span class="match-range">[{match.start}-{match.end}]</span>
+            </div>
+          {/each}
         </div>
-
-        <div class="matches-container">
-            {#each results as match, index}
-                <div class="match-card">
-                    <div class="match-header">
-                        <span class="match-index">#{index + 1}</span>
-                        <span class="match-range"
-                            >Indices: [{match.start}-{match.end}]</span
-                        >
-                    </div>
-                    <div class="match-content">
-                        <span class="highlight">{match.text}</span>
-                    </div>
-                </div>
-            {/each}
-
-            {#if results.length === 0 && regexInput}
-                <div
-                    style="padding:10px; color:var(--text-muted); font-style:italic;"
-                >
-                    Eşleşme bulunamadı...
-                </div>
-            {/if}
-        </div>
-    </div>
+      </div>
+    {/if}
+  </div>
 </main>
 
 <style>
-    /* --- LAYOUT --- */
-    .regex-container {
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        gap: 20px;
-        background-color: var(--bg-app);
-        color: var(--text-main);
-        font-family: "Consolas", monospace;
-    }
-
-    .input-label {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-bottom: 8px;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-
-    /* --- REGEX BAR --- */
-    .regex-bar {
-        display: flex;
-        align-items: center;
-        background-color: var(--bg-input);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 0 10px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
-
-    .slash {
-        color: var(--text-muted);
-        font-weight: bold;
-        user-select: none;
-    }
-
-    .pattern-input {
-        flex: 1; /* Kalan alanı kapla */
-        background: transparent;
-        border: none;
-        color: var(--accent); /* Regex deseni renkli olsun */
-        padding: 0 10px;
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-    }
-
-    .flags-input {
-        width: 60px;
-        background: transparent;
-        border: none;
-        color: var(--diff-add-text); /* Flagler yeşilimsi olsun */
-        padding: 0 5px;
-        font-family: inherit;
-        font-size: inherit;
-        outline: none;
-        font-style: italic;
-    }
-
-    /* --- TEST AREA --- */
-    .editor-section {
-        flex: 1; /* Esnek alan */
-        display: flex;
-        flex-direction: column;
-        min-height: 150px;
-    }
-
-    .test-area {
-        flex: 1;
-        background-color: var(--bg-input);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 15px;
-        color: var(--text-main);
-        font-family: inherit;
-        font-size: 0.9rem;
-        resize: none;
-        outline: none;
-        line-height: 1.6;
-    }
-
-    .test-area:focus {
-        border-color: var(--accent);
-    }
-
-    /* --- RESULTS SECTION --- */
-    .results-section {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background-color: var(--bg-header); /* Biraz daha koyu zemin */
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .section-header {
-        padding: 10px 15px;
-        background-color: var(--bg-input);
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.8rem;
-        font-weight: bold;
-        color: var(--text-muted);
-    }
-
-    .match-count {
-        color: var(--accent);
-    }
-
-    .matches-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    /* --- MATCH CARDS --- */
-    .match-card {
-        background-color: var(--bg-app);
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .match-header {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        border-bottom: 1px solid var(--border-color);
-        padding-bottom: 5px;
-        margin-bottom: 2px;
-    }
-
-    .match-index {
-        color: var(--diff-add-text); /* Yeşilimsi */
-        font-weight: bold;
-    }
-
-    .match-content {
-        font-size: 0.95rem;
-        color: var(--text-main);
-        white-space: pre-wrap;
-        word-break: break-all;
-    }
-
-    .highlight {
-        background-color: var(--diff-add-bg);
-        color: var(--diff-add-text);
-        padding: 2px 4px;
-        border-radius: 4px;
-        font-weight: bold;
-    }
+  /* Reuse common styles */
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { max-width:900px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(203,166,247,0.4); animation:float 3s ease-in-out infinite; font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; font-weight:bold; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  .input-section, .result-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2.5rem; border-radius:20px; border:1px solid rgba(203,166,247,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); margin-bottom:2rem; animation:slideUp 0.5s ease-out; }
+  
+  input, textarea { width:100%; padding:1rem; background:#11111b; border:2px solid #313244; border-radius:12px; color:#cdd6f4; font-family:'Consolas',monospace; transition:all 0.3s; }
+  input:focus, textarea:focus { border-color:#cba6f7; outline:none; }
+  label { color:#cba6f7; font-weight:600; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem; }
+  
+  .matches-list { display:flex; flex-direction:column; gap:0.75rem; max-height:400px; overflow-y:auto; }
+  .match-item { background:#11111b; padding:1rem; border-radius:10px; display:flex; align-items:center; gap:1rem; border-left:4px solid #cba6f7; animation:fadeIn 0.3s ease-out backwards; }
+  .match-index { color:#6c7086; font-size:0.9rem; font-weight:bold; }
+  .match-text { color:#cdd6f4; font-family:'Consolas',monospace; flex:1; word-break:break-all; }
+  .match-range { color:#6c7086; font-size:0.8rem; font-family:'Consolas',monospace; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes fadeIn { from { opacity:0; transform:translateX(-10px); } to { opacity:1; transform:translateX(0); } }
 </style>

@@ -43,6 +43,13 @@ quick-xml = { version = "0.36", features = ["serialize"] }
 zip = "2.2"
 tar = "0.4"
 flate2 = "1.0"
+# File & System Module (Pure Rust approach)
+md-5 = "0.10"
+sha2 = "0.10"
+notify = "6.1"
+kamadak-exif = "0.5"
+id3 = "1.14"
+chrono = "0.4"
 
 [target.'cfg(not(target_os = "linux"))'.dependencies]
 tauri-plugin-global-shortcut = "2"

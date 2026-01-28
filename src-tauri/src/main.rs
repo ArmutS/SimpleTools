@@ -15,6 +15,7 @@ mod vectorfunc;
 mod audiofunc;
 mod videofunc;
 mod cadfunc;
+mod file_system_func;
 mod utils;
 
 #[cfg(target_os = "linux")]
@@ -174,7 +175,22 @@ fn main() {
             vectorfunc::convert_vector,
             audiofunc::convert_audio,
             videofunc::convert_video,
-            cadfunc::convert_3d
+            cadfunc::convert_3d,
+            // File & System Functions
+            file_system_func::hash_generate,
+            file_system_func::file_rename_batch,
+            file_system_func::find_duplicates,
+            file_system_func::analyze_disk_usage,
+            file_system_func::file_split,
+            file_system_func::file_merge,
+            file_system_func::checksum_verify,
+            file_system_func::get_file_permissions,
+            file_system_func::generate_directory_tree,
+            file_system_func::watch_directory,
+            file_system_func::clean_temp_files,
+            file_system_func::get_file_metadata,
+            file_system_func::create_symlink,
+            file_system_func::list_symlinks
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {

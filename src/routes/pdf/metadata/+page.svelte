@@ -1,655 +1,83 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
-  import { getCurrentWindow } from "@tauri-apps/api/window";
-  import { onMount, onDestroy } from "svelte";
+  let filePath = "";
+  let info: any = null;
+  let loading = false;
 
-  // Types
-  interface PdfMetadata {
-    title: string | null;
-    author: string | null;
-    subject: string | null;
-    keywords: string | null;
-    creator: string | null;
-    producer: string | null;
-    creation_date: string | null;
-    modification_date: string | null;
-  }
-
-  // State
-  let selectedFile: string = "";
-  let outputPath: string = "";
-  let isProcessing: boolean = false;
-  let status: string = "Hazır";
-  let isDragging: boolean = false;
-  let showSuccess: boolean = false;
-
-  // Metadata Form
-  let metadata: PdfMetadata = {
-    title: "",
-    author: "",
-    subject: "",
-    keywords: "",
-    creator: "",
-    producer: "",
-    creation_date: "",
-    modification_date: "",
-  };
-
-  // Dosya seçme
   async function selectFile() {
+    const selected = await open({ filters: [{ name: 'PDF', extensions: ['pdf'] }] });
+    if (selected) { filePath = selected as string; getInfo(); }
+  }
+
+  async function getInfo() {
+    loading = true;
     try {
-      await getCurrentWindow().hide();
-      const selected = await open({
-        multiple: false,
-        filters: [
-          {
-            name: "PDF",
-            extensions: ["pdf"],
-          },
-        ],
-      });
-      await getCurrentWindow().show();
-      await getCurrentWindow().setFocus();
-
-      if (selected && !Array.isArray(selected)) {
-        selectedFile = selected;
-        // Construct default output path
-        const directory = selectedFile.substring(
-          0,
-          selectedFile.lastIndexOf("/"),
-        );
-        const filename = selectedFile.split("/").pop();
-        if (filename && !outputPath) {
-          outputPath = `${directory}/metadata_updated_${filename}`;
-        }
-
-        // Read existing metadata
-        await readMetadata();
-      }
-    } catch (error) {
-      status = `Hata: ${error}`;
-    }
-  }
-
-  // Read Metadata
-  async function readMetadata() {
-    if (!selectedFile) return;
-    status = "Metadata okunuyor...";
-    try {
-      const meta = await invoke<PdfMetadata>("pdf_read_metadata", {
-        path: selectedFile,
-      });
-      metadata = {
-        title: meta.title || "",
-        author: meta.author || "",
-        subject: meta.subject || "",
-        keywords: meta.keywords || "",
-        creator: meta.creator || "",
-        producer: meta.producer || "",
-        creation_date: meta.creation_date || "",
-        modification_date: meta.modification_date || "",
-      };
-      status = "Metadata yüklendi.";
-    } catch (e) {
-      status = `Metadata okuma hatası: ${e}`;
-    }
-  }
-
-  // Çıktı kaydetme yeri seçme
-  async function selectOutput() {
-    try {
-      await getCurrentWindow().hide();
-      const selected = await open({
-        directory: true,
-      });
-      await getCurrentWindow().show();
-      await getCurrentWindow().setFocus();
-
-      if (selected && !Array.isArray(selected)) {
-        const filename = selectedFile
-          ? selectedFile.split("/").pop()
-          : "updated.pdf";
-        outputPath = `${selected}/${filename}`;
-      }
-    } catch (error) {
-      status = `Hata: ${error}`;
-    }
-  }
-
-  // Update Metadata
-  async function updateMetadata() {
-    if (!selectedFile) {
-      status = "Bir PDF dosyası seçmelisiniz!";
-      return;
-    }
-
-    if (!outputPath) {
-      status = "Çıktı yolu belirlemelisiniz!";
-      return;
-    }
-
-    isProcessing = true;
-    status = "Güncelleniyor...";
-    showSuccess = false;
-
-    try {
-      // Prepare metadata object (convert empty strings to null if desired, or keep as string)
-      // Backend handles Option<String>, so we pass string.
-
-      await invoke("pdf_metadata", {
-        request: {
-          file_path: selectedFile,
-          output_path: outputPath,
-          metadata: {
-            title: metadata.title || null,
-            author: metadata.author || null,
-            subject: metadata.subject || null,
-            keywords: metadata.keywords || null,
-            creator: metadata.creator || null,
-            producer: metadata.producer || null,
-            // Dates are complex, mostly read-only in this simple editor unless validated format
-            creation_date: metadata.creation_date || null,
-            modification_date: metadata.modification_date || null,
-          },
-        },
-      });
-
-      status = "Başarıyla tamamlandı!";
-      showSuccess = true;
-    } catch (error) {
-      status = `Hata: ${error}`;
-      showSuccess = false;
-    } finally {
-      isProcessing = false;
-    }
-  }
-
-  // Drag & Drop
-  let unlistenDrop: () => void;
-
-  onMount(async () => {
-    unlistenDrop = await getCurrentWindow().listen(
-      "tauri://drag-drop",
-      (event) => {
-        const payload = event.payload as { paths: string[] };
-        if (payload.paths && payload.paths.length > 0) {
-          const pdf = payload.paths.find((p) =>
-            p.toLowerCase().endsWith(".pdf"),
-          );
-          if (pdf) {
-            selectedFile = pdf;
-            if (!outputPath) {
-              const directory = pdf.substring(0, pdf.lastIndexOf("/"));
-              const filename = pdf.split("/").pop();
-              outputPath = `${directory}/metadata_updated_${filename}`;
-            }
-            readMetadata();
-          } else {
-            status = "Lütfen bir PDF dosyası sürükleyin.";
-          }
-        }
-      },
-    );
-  });
-
-  onDestroy(() => {
-    if (unlistenDrop) {
-      unlistenDrop();
-    }
-  });
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault();
-    isDragging = true;
-  }
-
-  function handleDragLeave() {
-    isDragging = false;
-  }
-
-  function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    isDragging = false;
-  }
-
-  async function openOutputFile() {
-    if (outputPath) {
-      await invoke("open_file", { path: outputPath });
-    }
+      info = await invoke("get_pdf_info", { filePath });
+    } catch (e) { alert(e); }
+    finally { loading = false; }
   }
 </script>
 
-<div class="layout">
-  <!-- Left Panel -->
-  <div class="panel left-panel">
+<main class="container">
+  <div class="content">
     <div class="header">
-      <h2>Metadata Editor</h2>
-      <p>PDF künye bilgilerini düzenleyin</p>
+      <div class="icon-wrapper"><i class="nf-md-information"></i></div>
+      <h1>PDF Info</h1>
+      <p class="subtitle">View detailed metadata of PDF files</p>
     </div>
 
-    <div
-      class="file-container"
-      class:dragging={isDragging}
-      on:dragover={handleDragOver}
-      on:dragleave={handleDragLeave}
-      on:drop={handleDrop}
-    >
-      {#if selectedFile}
-        <div class="selected-file-display">
-          <i class="nf-md-file_pdf_box file-icon"></i>
-          <div class="file-info">
-            <span class="file-path">{selectedFile}</span>
-          </div>
-          <button class="remove-btn" on:click={() => (selectedFile = "")}>
-            <i class="nf-md-close"></i>
-          </button>
-        </div>
-      {:else}
-        <div class="empty-state" on:click={selectFile}>
-          <i class="nf-md-file_upload"></i>
-          <p>PDF dosyasını buraya sürükleyin veya seçin</p>
-        </div>
-      {/if}
+    <div class="input-section">
+      <button on:click={selectFile} class="btn-primary" style="width:100%"><i class="nf-md-file_pdf_box"></i> Select PDF File</button>
+      {#if filePath}<p class="path">{filePath}</p>{/if}
     </div>
 
-    <div class="controls-block scrollable">
-      <label>Metadata</label>
-
-      <div class="form-grid">
-        <div class="input-group">
-          <label for="title">Başlık (Title):</label>
-          <input id="title" type="text" bind:value={metadata.title} />
-        </div>
-
-        <div class="input-group">
-          <label for="author">Yazar (Author):</label>
-          <input id="author" type="text" bind:value={metadata.author} />
-        </div>
-
-        <div class="input-group">
-          <label for="subject">Konu (Subject):</label>
-          <input id="subject" type="text" bind:value={metadata.subject} />
-        </div>
-
-        <div class="input-group">
-          <label for="keywords">Anahtar Kelimeler:</label>
-          <input id="keywords" type="text" bind:value={metadata.keywords} />
-        </div>
-
-        <div class="input-group">
-          <label for="creator">Oluşturan (Creator):</label>
-          <input id="creator" type="text" bind:value={metadata.creator} />
-        </div>
-
-        <div class="input-group">
-          <label for="producer">Üretici (Producer):</label>
-          <input id="producer" type="text" bind:value={metadata.producer} />
-        </div>
-      </div>
-
-      <div class="input-group output-group">
-        <label for="output-path">Çıktı Yolu:</label>
-        <div class="path-select">
-          <input
-            id="output-path"
-            type="text"
-            bind:value={outputPath}
-            placeholder="/path/to/updated.pdf"
-          />
-          <button class="icon-btn" on:click={selectOutput}>
-            <i class="nf-md-folder_open"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="action-block">
-      <button
-        class="merge-btn"
-        on:click={updateMetadata}
-        disabled={!selectedFile || !outputPath || isProcessing}
-      >
-        {#if isProcessing}
-          <i class="nf-md-loading nf-spin"></i> İşleniyor...
+    {#if loading}
+       <div style="text-align:center;color:#eba0ac">Loading info...</div>
+    {:else if info}
+      <div class="result-section">
+        {#if info.error}
+           <p style="color:#f38ba8"><i class="nf-md-alert"></i> {info.error}</p>
         {:else}
-          <i class="nf-md-content_save_edit"></i> GÜNCELLE
+           <div class="grid">
+             <div class="card">
+               <label>Page Count</label>
+               <div class="val">{info.page_count}</div>
+             </div>
+             <div class="card">
+               <label>File Size</label>
+               <div class="val">{info.file_size_formatted}</div>
+             </div>
+             <div class="card">
+               <label>Encrypted</label>
+               <div class="val">{info.is_encrypted ? 'Yes' : 'No'}</div>
+             </div>
+           </div>
         {/if}
-      </button>
-
-      {#if showSuccess}
-        <div class="success-message">
-          <i class="nf-md-check_circle"></i>
-          <span>İşlem Başarılı!</span>
-        </div>
-        <button class="success-btn" on:click={openOutputFile}>Dosyayı Aç</button
-        >
-      {/if}
-
-      {#if status && !status.includes("Başarılı") && !status.includes("Hazır") && !status.includes("İşleniyor") && !status.includes("yüklendi")}
-        <div class="error-message">
-          {status}
-        </div>
-      {/if}
-    </div>
-  </div>
-
-  <!-- Right Panel: Info -->
-  <div class="panel right-panel">
-    <div class="preview-placeholder">
-      <i class="nf-md-file_document_edit"></i>
-      <h3>Metadata Editor</h3>
-      <p>PDF dosyanızın başlık, yazar ve diğer bilgilerini düzenleyin.</p>
-    </div>
-
-    {#if metadata.title || metadata.author}
-      <div class="meta-preview">
-        <h4>Önizleme</h4>
-        <p><strong>Başlık:</strong> {metadata.title || "-"}</p>
-        <p><strong>Yazar:</strong> {metadata.author || "-"}</p>
-        <p><strong>Konu:</strong> {metadata.subject || "-"}</p>
       </div>
     {/if}
   </div>
-</div>
+</main>
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  .layout {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-app, #1e1e2e);
-    color: var(--text-main, #cdd6f4);
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    height: 100%;
-  }
-
-  .left-panel {
-    width: 55%;
-    border-right: 1px solid var(--border-color, #45475a);
-    gap: 1.5rem;
-  }
-
-  .right-panel {
-    width: 45%;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--accent, #89b4fa);
-  }
-
-  .header p {
-    margin: 0.25rem 0 0;
-    color: var(--text-muted, #a6adc8);
-    font-size: 0.9rem;
-  }
-
-  .file-container {
-    height: 100px;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-input, #313244);
-    border-radius: 8px;
-    border: 2px dashed var(--border-color, #45475a);
-    overflow: hidden;
-    transition: all 0.2s;
-    justify-content: center;
-  }
-
-  .file-container.dragging {
-    border-color: var(--accent, #89b4fa);
-    background: rgba(137, 180, 250, 0.1);
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    gap: 0.5rem;
-    cursor: pointer;
-    height: 100%;
-  }
-
-  .empty-state:hover {
-    color: var(--accent);
-  }
-
-  .empty-state i {
-    font-size: 2rem;
-  }
-
-  .selected-file-display {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    gap: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    height: 100%;
-  }
-
-  .file-icon {
-    font-size: 2rem;
-    color: #f38ba8;
-  }
-
-  .file-info {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .file-path {
-    font-family: monospace;
-    font-size: 0.8rem;
-    word-break: break-all;
-  }
-
-  .remove-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-  .remove-btn:hover {
-    color: #f38ba8;
-  }
-
-  .controls-block {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 0.5rem;
-    flex: 1;
-    overflow-y: auto;
-  }
-
-  .scrollable {
-    padding-right: 0.5rem;
-  }
-
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.8rem;
-  }
-
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-  }
-
-  .output-group {
-    margin-top: 1rem;
-  }
-
-  .input-group label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-  }
-
-  input[type="text"] {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    padding: 0.5rem;
-    border-radius: 6px;
-    color: var(--text-main);
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 0.9rem;
-  }
-
-  input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-
-  .path-select {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .path-select input {
-    flex: 1;
-    font-family: monospace;
-  }
-
-  .icon-btn {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    width: 40px;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .icon-btn:hover {
-    border-color: var(--accent);
-  }
-
-  .action-block {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 1rem;
-  }
-
-  .merge-btn {
-    width: 100%;
-    padding: 1rem;
-    background: var(--accent);
-    color: var(--bg-app);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .merge-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-
-  .merge-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--bg-input);
-    color: var(--text-muted);
-  }
-
-  .success-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: #a6e3a1;
-    font-weight: bold;
-  }
-
-  .success-btn {
-    padding: 0.5rem;
-    background: transparent;
-    border: 1px solid #a6e3a1;
-    color: #a6e3a1;
-    border-radius: 4px;
-    cursor: pointer;
-    align-self: center;
-  }
-  .success-btn:hover {
-    background: rgba(166, 227, 161, 0.1);
-  }
-
-  .error-message {
-    color: #f38ba8;
-    text-align: center;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    background: rgba(243, 139, 168, 0.1);
-    border-radius: 4px;
-  }
-
-  .preview-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    color: var(--text-muted);
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .preview-placeholder i {
-    font-size: 4rem;
-    opacity: 0.3;
-  }
-
-  .meta-preview {
-    margin-top: 2rem;
-    padding: 1rem;
-    background: var(--bg-input);
-    border-radius: 8px;
-    width: 80%;
-    text-align: left;
-  }
-
-  .meta-preview h4 {
-    margin: 0 0 1rem 0;
-    color: var(--accent);
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 0.5rem;
-  }
-
-  .meta-preview p {
-    margin: 0.5rem 0;
-    font-size: 0.9rem;
-  }
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { max-width:800px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(243,139,168,0.4); animation:float 3s ease-in-out infinite; font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; font-weight:bold; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  
+  .input-section, .result-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2rem; border-radius:20px; border:1px solid rgba(243,139,168,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); margin-bottom:2rem; animation:slideUp 0.5s ease-out; }
+  
+  .btn-primary { padding:1.5rem; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); color:#1e1e2e; border:none; border-radius:12px; cursor:pointer; font-weight:bold; font-size:1.2rem; display:flex; align-items:center; justify-content:center; gap:0.75rem; transition:0.3s; }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 10px 25px rgba(243,139,168,0.4); }
+  .path { color:#cdd6f4; background:#11111b; padding:1rem; border-radius:10px; margin-top:1rem; text-align:center; font-family:'Consolas',monospace; font-size:0.9rem; word-break:break-all; }
+  
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; }
+  .card { background:#11111b; padding:1.5rem; border-radius:12px; text-align:center; border:2px solid #313244; }
+  .val { font-size:1.8rem; font-weight:bold; color:#f38ba8; margin-top:0.5rem; }
+  label { color:#a6adc8; font-size:0.9rem; font-weight:600; text-transform:uppercase; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 </style>

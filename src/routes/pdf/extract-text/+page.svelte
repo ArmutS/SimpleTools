@@ -1,479 +1,65 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
   import { open } from "@tauri-apps/plugin-dialog";
-  import { getCurrentWindow } from "@tauri-apps/api/window";
-  import { onMount, onDestroy } from "svelte";
+  let filePath = "";
+  let text = "";
+  let isProcessing = false;
 
-  // State
-  let selectedFile: string = "";
-  let isProcessing: boolean = false;
-  let status: string = "Hazır";
-  let isDragging: boolean = false;
-  let showSuccess: boolean = false;
-
-  // Results
-  let extractedText: string = "";
-  let pageCount: number = 0;
-  let isCopied: boolean = false;
-
-  // Dosya seçme
-  async function selectFile() {
-    try {
-      await getCurrentWindow().hide();
-      const selected = await open({
-        multiple: false,
-        filters: [
-          {
-            name: "PDF",
-            extensions: ["pdf"],
-          },
-        ],
-      });
-      await getCurrentWindow().show();
-      await getCurrentWindow().setFocus();
-
-      if (selected && !Array.isArray(selected)) {
-        selectedFile = selected;
-        // Reset results on new file
-        extractedText = "";
-        showSuccess = false;
-      }
-    } catch (error) {
-      status = `Hata: ${error}`;
-    }
-  }
-
-  // Extract
-  async function extractText() {
-    if (!selectedFile) {
-      status = "Bir PDF dosyası seçmelisiniz!";
-      return;
-    }
-
+  async function extract() {
+    if (!filePath) return;
     isProcessing = true;
-    status = "Metin çıkarılıyor...";
-    showSuccess = false;
-    extractedText = "";
-
     try {
-      const result = await invoke<{ text: string; page_count: number }>(
-        "pdf_extract_text",
-        {
-          request: {
-            file_path: selectedFile,
-            pages: null, // All pages
-          },
-        },
-      );
-
-      extractedText = result.text;
-      pageCount = result.page_count;
-
-      status = "Başarıyla tamamlandı!";
-      showSuccess = true;
-    } catch (error) {
-      status = `Hata: ${error}`;
-      showSuccess = false;
-    } finally {
-      isProcessing = false;
-    }
-  }
-
-  async function copyToClipboard() {
-    if (extractedText) {
-      try {
-        await navigator.clipboard.writeText(extractedText);
-        isCopied = true;
-        status = "Metin panoya kopyalandı!";
-        setTimeout(() => {
-          isCopied = false;
-          if (showSuccess) status = "Başarıyla tamamlandı!";
-        }, 2000);
-      } catch (e) {
-        status = "Kopyalama başarısız!";
-      }
-    }
-  }
-
-  // Drag & Drop
-  let unlistenDrop: () => void;
-
-  onMount(async () => {
-    unlistenDrop = await getCurrentWindow().listen(
-      "tauri://drag-drop",
-      (event) => {
-        const payload = event.payload as { paths: string[] };
-        if (payload.paths && payload.paths.length > 0) {
-          const pdf = payload.paths.find((p) =>
-            p.toLowerCase().endsWith(".pdf"),
-          );
-          if (pdf) {
-            selectedFile = pdf;
-            extractedText = "";
-            showSuccess = false;
-          } else {
-            status = "Lütfen bir PDF dosyası sürükleyin.";
-          }
-        }
-      },
-    );
-  });
-
-  onDestroy(() => {
-    if (unlistenDrop) {
-      unlistenDrop();
-    }
-  });
-
-  function handleDragOver(e: DragEvent) {
-    e.preventDefault();
-    isDragging = true;
-  }
-
-  function handleDragLeave() {
-    isDragging = false;
-  }
-
-  function handleDrop(e: DragEvent) {
-    e.preventDefault();
-    isDragging = false;
+      const result: any = await invoke("pdf_extract_text", { request: { file_path: filePath, pages: null } });
+      text = result.text;
+    } catch(e) { alert(e); }
+    finally { isProcessing = false; }
   }
 </script>
 
-<div class="layout">
-  <!-- Left Panel -->
-  <div class="panel left-panel">
+<main class="container">
+  <div class="content">
     <div class="header">
-      <h2>Extract Text</h2>
-      <p>PDF içeriğindeki metinleri çıkarın</p>
+      <div class="icon-wrapper"><i class="nf-md-text_box"></i></div>
+      <h1>Extract Text</h1>
+      <p class="subtitle">Extract plain text content from PDF</p>
     </div>
 
-    <div
-      class="file-container"
-      class:dragging={isDragging}
-      on:dragover={handleDragOver}
-      on:dragleave={handleDragLeave}
-      on:drop={handleDrop}
-    >
-      {#if selectedFile}
-        <div class="selected-file-display">
-          <i class="nf-md-file_pdf_box file-icon"></i>
-          <div class="file-info">
-            <span class="file-path">{selectedFile}</span>
-          </div>
-          <button class="remove-btn" on:click={() => (selectedFile = "")}>
-            <i class="nf-md-close"></i>
-          </button>
-        </div>
-      {:else}
-        <div class="empty-state" on:click={selectFile}>
-          <i class="nf-md-file_upload"></i>
-          <p>PDF dosyasını buraya sürükleyin veya seçin</p>
-        </div>
-      {/if}
-    </div>
-
-    <div class="action-block">
-      <button
-        class="merge-btn"
-        on:click={extractText}
-        disabled={!selectedFile || isProcessing}
-      >
-        {#if isProcessing}
-          <i class="nf-md-loading nf-spin"></i> İşleniyor...
-        {:else}
-          <i class="nf-md-text_box"></i> METNİ ÇIKAR
-        {/if}
-      </button>
-
-      {#if status && !status.includes("Başarılı") && !status.includes("Hazır") && !status.includes("İşleniyor") && !status.includes("Kopyalandı")}
-        <div class="error-message">
-          {status}
-        </div>
-      {/if}
-
-      {#if showSuccess || status.includes("Kopyalandı")}
-        <div class="success-message">
-          <i class="nf-md-check_circle"></i>
-          <span
-            >{status.includes("Kopyalandı")
-              ? "Kopyalandı"
-              : "İşlem Başarılı!"}</span
-          >
+    <div class="split-view">
+      <div class="input-pane">
+        <button on:click={async () => { const s = await open({filters:[{name:'PDF',extensions:['pdf']}]}); if(s) { filePath=s as string; extract(); } }} class="btn-secondary" style="width:100%">
+          {filePath ? 'Change File' : 'Select PDF File'}
+        </button>
+        {#if filePath}<p class="path">{filePath}</p>{/if}
+      </div>
+      
+      {#if text}
+        <div class="result-pane">
+           <textarea readonly value={text}></textarea>
+           <button class="btn-copy" on:click={()=>navigator.clipboard.writeText(text)}>Copy Text</button>
         </div>
       {/if}
     </div>
   </div>
-
-  <!-- Right Panel: Result -->
-  <div class="panel right-panel">
-    {#if extractedText}
-      <div class="result-container">
-        <div class="result-header">
-          <span>{pageCount} sayfa tarandı</span>
-          <button
-            class="copy-btn"
-            class:copied={isCopied}
-            on:click={copyToClipboard}
-          >
-            {#if isCopied}
-              <i class="nf-md-check"></i> Kopyalandı!
-            {:else}
-              <i class="nf-md-content_copy"></i> Kopyala
-            {/if}
-          </button>
-        </div>
-        <textarea
-          readonly
-          bind:value={extractedText}
-          placeholder="Metin burada görünecektir..."
-        ></textarea>
-      </div>
-    {:else}
-      <div class="preview-placeholder">
-        <i class="nf-md-text_subject"></i>
-        <h3>Extract Text</h3>
-        <p>Çıkarılan metin burada görünecektir.</p>
-      </div>
-    {/if}
-  </div>
-</div>
+</main>
 
 <style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
+  .container { min-height:100vh; padding:2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); display:flex; flex-direction:column; }
+  .content { flex:1; display:flex; flex-direction:column; width:100%; max-width:1000px; margin:0 auto; }
+  .header { text-align:center; margin-bottom:2rem; }
+  .icon-wrapper { display:inline-flex; width:60px; height:60px; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); border-radius:14px; align-items:center; justify-content:center; margin-bottom:1rem; box-shadow:0 8px 24px rgba(243,139,168,0.4); animation:float 3s ease-in-out infinite; font-size:2.5rem; color:#1e1e2e; }
+  h1 { font-size:2rem; font-weight:bold; color:#cdd6f4; margin:0; }
+  .subtitle { color:#a6adc8; margin:0; }
+  
+  .split-view { flex:1; display:flex; flex-direction:column; gap:1.5rem; min-height:0; }
+  .input-pane { text-align:center; }
+  .path { margin-top:0.5rem; color:#6c7086; font-size:0.9rem; font-family:'Consolas',monospace; }
+  
+  .result-pane { flex:1; display:flex; flex-direction:column; gap:1rem; min-height:300px; }
+  textarea { flex:1; padding:1.5rem; background:#11111b; border:2px solid #313244; border-radius:16px; color:#cdd6f4; font-family:'Consolas',monospace; font-size:0.95rem; resize:none; outline:none; }
+  textarea:focus { border-color:#f38ba8; }
+  
+  .btn-secondary { padding:1rem; background:#313244; color:#cdd6f4; border:none; border-radius:12px; cursor:pointer; font-weight:600; }
+  .btn-copy { padding:1rem; background:linear-gradient(135deg, #f38ba8 0%, #eba0ac 100%); color:#1e1e2e; border:none; border-radius:12px; cursor:pointer; font-weight:600; }
 
-  .layout {
-    display: flex;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--bg-app, #1e1e2e);
-    color: var(--text-main, #cdd6f4);
-  }
-
-  .panel {
-    display: flex;
-    flex-direction: column;
-    padding: 1.5rem;
-    height: 100%;
-  }
-
-  .left-panel {
-    width: 40%;
-    border-right: 1px solid var(--border-color, #45475a);
-    gap: 1.5rem;
-  }
-
-  .right-panel {
-    width: 60%;
-    background-color: rgba(0, 0, 0, 0.2);
-    overflow: hidden; /* For textarea scroll */
-  }
-
-  .header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: var(--accent, #89b4fa);
-  }
-
-  .header p {
-    margin: 0.25rem 0 0;
-    color: var(--text-muted, #a6adc8);
-    font-size: 0.9rem;
-  }
-
-  .file-container {
-    height: 150px;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-input, #313244);
-    border-radius: 8px;
-    border: 2px dashed var(--border-color, #45475a);
-    overflow: hidden;
-    transition: all 0.2s;
-    justify-content: center;
-  }
-
-  .file-container.dragging {
-    border-color: var(--accent, #89b4fa);
-    background: rgba(137, 180, 250, 0.1);
-  }
-
-  .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    gap: 0.5rem;
-    cursor: pointer;
-    height: 100%;
-  }
-
-  .empty-state:hover {
-    color: var(--accent);
-  }
-
-  .empty-state i {
-    font-size: 2.5rem;
-  }
-
-  .selected-file-display {
-    display: flex;
-    align-items: center;
-    padding: 1rem;
-    gap: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    height: 100%;
-  }
-
-  .file-icon {
-    font-size: 2.5rem;
-    color: #f38ba8;
-  }
-
-  .file-info {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .file-path {
-    font-family: monospace;
-    font-size: 0.9rem;
-    word-break: break-all;
-  }
-
-  .remove-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-  .remove-btn:hover {
-    color: #f38ba8;
-  }
-
-  .action-block {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .merge-btn {
-    width: 100%;
-    padding: 1rem;
-    background: var(--accent);
-    color: var(--bg-app);
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-
-  .merge-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-
-  .merge-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: var(--bg-input);
-    color: var(--text-muted);
-  }
-
-  .success-message {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    color: #a6e3a1;
-    font-weight: bold;
-  }
-
-  .error-message {
-    color: #f38ba8;
-    text-align: center;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    background: rgba(243, 139, 168, 0.1);
-    border-radius: 4px;
-  }
-
-  .preview-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    color: var(--text-muted);
-    text-align: center;
-    height: 100%;
-  }
-
-  .preview-placeholder i {
-    font-size: 4rem;
-    opacity: 0.3;
-  }
-
-  .result-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    gap: 0.5rem;
-  }
-
-  .result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-  }
-
-  .copy-btn {
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    color: var(--text-main);
-    padding: 0.3rem 0.8rem;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .copy-btn:hover {
-    border-color: var(--accent);
-  }
-  .copy-btn.copied {
-    background: rgba(166, 227, 161, 0.1);
-    color: #a6e3a1;
-    border-color: #a6e3a1;
-  }
-
-  textarea {
-    flex: 1;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    padding: 1rem;
-    border-radius: 8px;
-    color: var(--text-main);
-    resize: none;
-    font-family: monospace;
-    line-height: 1.5;
-  }
-  textarea:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
 </style>

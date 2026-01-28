@@ -1,280 +1,85 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/core";
+  let left = "";
+  let right = "";
+  let diffs: any[] = [];
+  let mode = 1; // 0=char, 1=word, 2=line
 
-  interface DiffItem {
-    text: string;
-    tag: "left" | "right" | "not";
-  }
-
-  // SADECE SATIR MODU
-  const select = 2;
-
-  let leftRender: DiffItem[] = [];
-  let rightRender: DiffItem[] = [];
-  let firstText = "";
-  let secondText = "";
-  let statusMessage = "Hazır";
-
-  let leftBackdrop: HTMLDivElement;
-  let rightBackdrop: HTMLDivElement;
-
-  $: if (firstText || secondText) {
-    runDiff();
-  }
-
-  function handleScroll(e: Event, side: "left" | "right") {
-    const target = e.target as HTMLTextAreaElement;
-    if (side === "left" && leftBackdrop) {
-      leftBackdrop.scrollTop = target.scrollTop;
-      leftBackdrop.scrollLeft = target.scrollLeft;
-    } else if (side === "right" && rightBackdrop) {
-      rightBackdrop.scrollTop = target.scrollTop;
-      rightBackdrop.scrollLeft = target.scrollLeft;
-    }
-  }
-
-  async function runDiff() {
-    if (!firstText && !secondText) {
-      leftRender = [];
-      rightRender = [];
-      statusMessage = "Veri bekleniyor...";
-      return;
-    }
-
+  async function compare() {
+    if (!left && !right) return;
     try {
-      statusMessage = "Hesaplanıyor...";
-      const result: DiffItem[] = await invoke("process_text_diff", {
-        select: select,
-        left_in: firstText,
-        right_in: secondText,
-      });
-
-      const l_temp: DiffItem[] = [];
-      const r_temp: DiffItem[] = [];
-
-      result.forEach((item) => {
-        if (item.tag === "not") {
-          l_temp.push(item);
-          r_temp.push(item);
-        } else if (item.tag === "left") {
-          l_temp.push(item);
-        } else if (item.tag === "right") {
-          r_temp.push(item);
-        }
-      });
-
-      leftRender = l_temp;
-      rightRender = r_temp;
-      statusMessage = "Senkronize";
-    } catch (error) {
-      console.error(error);
-      statusMessage = "Hata oluştu";
-    }
+      diffs = await invoke("process_text_diff", { leftIn: left, rightIn: right, select: mode });
+    } catch (e) { alert(e); }
   }
 </script>
 
-<main class="main">
-  <div class="diff-container">
-    <div class="pane">
-      <div class="pane-header">
-        <span class="dot red"></span>
-        <span>ESKİ METİN</span>
+<main class="container">
+  <div class="content" style="max-width:1200px">
+    <div class="header">
+      <div class="icon-wrapper">
+        <i class="nf-oct-diff"></i>
       </div>
-      <div class="stack-wrapper">
-        <div class="backdrop" bind:this={leftBackdrop}>
-          {#each leftRender as block}
-            <span class={block.tag}>{block.text}</span>
-          {/each}
-          <span class="spacer">&nbsp;</span>
+      <h1>Text Diff Viewer</h1>
+      <p class="subtitle">Compare two texts and find differences</p>
+    </div>
+
+    <div class="input-section" style="padding:1.5rem">
+      <div class="controls">
+        <button class:active={mode===0} on:click={()=>{mode=0;compare()}}>Chars</button>
+        <button class:active={mode===1} on:click={()=>{mode=1;compare()}}>Words</button>
+        <button class:active={mode===2} on:click={()=>{mode=2;compare()}}>Lines</button>
+      </div>
+      
+      <div class="grid">
+        <div class="pane">
+          <label><i class="nf-md-text_box_outline"></i> Original Text</label>
+          <textarea bind:value={left} on:input={compare} placeholder="Paste original text here..."></textarea>
         </div>
-        <textarea
-          class="editor-front"
-          bind:value={firstText}
-          on:scroll={(e) => handleScroll(e, "left")}
-          placeholder="Eski metni yapıştır..."
-          spellcheck="false"
-        ></textarea>
+        <div class="pane">
+          <label><i class="nf-md-text_box_check_outline"></i> Modified Text</label>
+          <textarea bind:value={right} on:input={compare} placeholder="Paste modified text here..."></textarea>
+        </div>
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <div class="pane">
-      <div class="pane-header">
-        <span class="dot green"></span>
-        <span>YENİ METİN</span>
-      </div>
-      <div class="stack-wrapper">
-        <div class="backdrop" bind:this={rightBackdrop}>
-          {#each rightRender as block}
-            <span class={block.tag}>{block.text}</span>
+    {#if diffs.length > 0}
+      <div class="result-section">
+        <label><i class="nf-md-compare"></i> Comparison Result</label>
+        <div class="diff-output">
+          {#each diffs as part}
+            <span class={part.tag}>{part.text}</span>
           {/each}
-          <span class="spacer">&nbsp;</span>
         </div>
-        <textarea
-          class="editor-front"
-          bind:value={secondText}
-          on:scroll={(e) => handleScroll(e, "right")}
-          placeholder="Yeni metni yapıştır..."
-          spellcheck="false"
-        ></textarea>
       </div>
-    </div>
-  </div>
-
-  <div class="status-bar">
-    <span class="msg">{statusMessage}</span>
-    <span class="info">MOD: SATIR</span>
+    {/if}
   </div>
 </main>
 
 <style>
-  /* CSS Değişkenlerini (Variables) burada tanımlamıyoruz.
-     Senin 'catppuccin.css' dosyanın yüklü olduğunu varsayarak
-     doğrudan var(--degisken-adi) kullanıyoruz.
-  */
-
-  .main {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-
-    /* Global Temadan Gelen Renkler */
-    background-color: var(--bg-app);
-    color: var(--text-main);
-
-    /* Hizalama Fontu */
-    font-family: "Consolas", monospace;
-  }
-
-  /* --- LAYOUT --- */
-  .diff-container {
-    flex: 1;
-    display: flex;
-    gap: 1px;
-    background-color: var(--border-color);
-    min-height: 0;
-  }
-
-  .pane {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--bg-app);
-    min-width: 0;
-  }
-
-  /* --- HEADER --- */
-  .pane-header {
-    height: 32px;
-    padding: 0 12px;
-
-    /* Tema Renkleri */
-    background: var(--bg-header);
-    color: var(--text-muted);
-    border-bottom: 1px solid var(--border-color);
-
-    font-size: 0.75rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  /* Noktalar için de temadaki text renklerini kullanıyoruz */
-  .dot.red {
-    background-color: var(--diff-del-text);
-  }
-  .dot.green {
-    background-color: var(--diff-add-text);
-  }
-
-  /* --- STACK (Katmanlama) --- */
-  .stack-wrapper {
-    position: relative;
-    flex: 1;
-    overflow: hidden;
-  }
-
-  .backdrop,
-  .editor-front {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 10px;
-    border: none;
-    box-sizing: border-box;
-    font-family: "HurmitNerd", monospace;
-    font-size: 14px;
-    line-height: 20px;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  /* --- BACKDROP (HIGHLIGHT ALANI) --- */
-  .backdrop {
-    z-index: 1;
-    background: transparent;
-    color: transparent; /* Metin görünmez */
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  /* HIGHLIGHT RENKLERİ:
-     Burada sadece senin tanımladığın değişkenleri çağırdım.
-     !important ekledim ki başka stiller ezmesin.
-  */
-  .backdrop span.left {
-    background-color: var(--diff-del-bg) !important;
-  }
-
-  .backdrop span.right {
-    background-color: var(--diff-add-bg) !important;
-  }
-
-  .spacer {
-    display: block;
-    height: 50px;
-  }
-
-  /* --- EDITOR (YAZI ALANI) --- */
-  .editor-front {
-    z-index: 2;
-    background: transparent;
-    color: var(--text-main);
-    caret-color: var(--text-main);
-    resize: none;
-    outline: none;
-    overflow: auto;
-  }
-  .editor-front::-webkit-scrollbar {
-    width: 0px;
-  }
-
-  /* --- STATUS BAR --- */
-  .status-bar {
-    height: 28px;
-    background-color: var(--bg-header);
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 12px;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    user-select: none;
-  }
-
-  .status-bar .msg {
-    color: var(--accent);
-    font-weight: 600;
-  }
+  .container { min-height:100vh; padding:3rem 2rem; background:linear-gradient(135deg, #1e1e2e 0%, #181825 100%); }
+  .content { margin:0 auto; }
+  .header { text-align:center; margin-bottom:3rem; }
+  .icon-wrapper { display:inline-flex; width:80px; height:80px; background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); border-radius:18px; align-items:center; justify-content:center; margin-bottom:1.5rem; box-shadow:0 8px 24px rgba(203,166,247,0.4); animation:float 3s ease-in-out infinite; }
+  .icon-wrapper i { font-size:3rem; color:#1e1e2e; }
+  h1 { background:linear-gradient(135deg, #cba6f7 0%, #b4befe 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-size:2.5rem; margin-bottom:0.5rem; }
+  .subtitle { color:#a6adc8; font-size:1.1rem; }
+  .input-section, .result-section { background:rgba(24,24,37,0.7); backdrop-filter:blur(10px); padding:2rem; border-radius:20px; border:1px solid rgba(203,166,247,0.15); box-shadow:0 8px 32px rgba(0,0,0,0.3); margin-bottom:2rem; animation:slideUp 0.5s ease-out; }
+  
+  .controls { display:flex; gap:1rem; margin-bottom:1.5rem; justify-content:center; }
+  .controls button { padding:0.75rem 1.5rem; background:#11111b; border:2px solid #313244; color:#cdd6f4; border-radius:10px; cursor:pointer; font-weight:600; transition:all 0.3s; }
+  .controls button.active { border-color:#cba6f7; background:rgba(203,166,247,0.1); color:#cba6f7; }
+  
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .pane { display:flex; flex-direction:column; gap:0.5rem; }
+  textarea { width:100%; height:300px; background:#11111b; border:2px solid #313244; color:#cdd6f4; border-radius:12px; padding:1rem; font-family:'Consolas',monospace; resize:none; transition:all 0.3s; }
+  textarea:focus { border-color:#cba6f7; outline:none; }
+  
+  .diff-output { background:#11111b; padding:1.5rem; border-radius:12px; font-family:'Consolas',monospace; line-height:1.6; white-space:pre-wrap; border:2px solid #313244; min-height:100px; }
+  .diff-output span.left { background:rgba(243,139,168,0.2); color:#f38ba8; text-decoration:line-through; }
+  .diff-output span.right { background:rgba(166,227,161,0.2); color:#a6e3a1; }
+  .diff-output span.not { color:#cdd6f4; }
+  
+  @keyframes float { 0%, 100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+  @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  label { color:#cba6f7; font-weight:600; display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; }
 </style>
