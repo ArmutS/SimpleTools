@@ -117,18 +117,39 @@
     if (!outputPath) return (status = "Please select output folder!");
 
     isProcessing = true;
-    status = "Converting...";
     showSuccess = false;
+    let successCount = 0;
+    let errorCount = 0;
 
     try {
-      const result = await invoke("convert_office", {
-        files: selectedFiles.map((f) => f.path),
-        targets: selectedTargets,
-        output_dir: outputPath,
-      });
-      status = result as string;
-      showSuccess = true;
-      successOutput = outputPath;
+      for (const file of selectedFiles) {
+        for (const target of selectedTargets) {
+          // Skip if source and target are the same
+          if (file.extension === target) continue;
+
+          status = `Converting ${file.name} to ${target.toUpperCase()}...`;
+
+          try {
+            await invoke("convert_data", {
+              filePath: file.path,
+              outputDir: outputPath,
+              targetFormat: target,
+            });
+            successCount++;
+          } catch (e) {
+            console.error(`Failed to convert ${file.name} to ${target}:`, e);
+            errorCount++;
+          }
+        }
+      }
+
+      if (errorCount === 0) {
+        status = `Successfully converted ${successCount} file(s)`;
+        showSuccess = true;
+        successOutput = outputPath;
+      } else {
+        status = `Completed with ${successCount} success, ${errorCount} error(s)`;
+      }
     } catch (e) {
       status = `Error: ${e}`;
     } finally {

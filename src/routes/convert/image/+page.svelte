@@ -159,26 +159,37 @@
     if (!outputPath) return (status = "Please select an output folder!");
 
     isProcessing = true;
-    status = "Converting...";
     showSuccess = false;
+    let successCount = 0;
+    let errorCount = 0;
 
     try {
-      // NOTE: Backend command 'convert_image' does not exist yet.
-      // Using 'convert_office' stub temporarily if needed, or just failing gracefully.
-      // Ideally we would register a placeholder 'convert_generic' or specific 'convert_image'.
-      // For now, mirroring the 'convert_office' call structure but pointing to 'convert_office'
-      // is safer IF the user wants to test the UI flow immediately, assuming convert_office is generic enough.
-      // However, to be correct, I should call 'convert_image' and expect failure until backend is ready.
-      // BUT user said "pause backend". So I will simulate success or call the existing stub.
-      // I'll call 'convert_office' since it's just a stub anyway and allows UI verification.
-      const result = await invoke("convert_office", {
-        files: selectedFiles.map((f) => f.path),
-        targets: selectedTargets,
-        output_dir: outputPath,
-      });
-      status = result as string;
-      showSuccess = true;
-      successOutput = outputPath;
+      for (const file of selectedFiles) {
+        for (const target of selectedTargets) {
+          status = `Converting ${file.name} to ${target.toUpperCase()}...`;
+
+          try {
+            await invoke("convert_image", {
+              filePath: file.path,
+              outputDir: outputPath,
+              targetFormat: target,
+              quality: target === "jpg" ? 90 : target === "webp" ? 80 : null,
+            });
+            successCount++;
+          } catch (e) {
+            console.error(`Failed to convert ${file.name} to ${target}:`, e);
+            errorCount++;
+          }
+        }
+      }
+
+      if (errorCount === 0) {
+        status = `Successfully converted ${successCount} file(s)`;
+        showSuccess = true;
+        successOutput = outputPath;
+      } else {
+        status = `Completed with ${successCount} success, ${errorCount} error(s)`;
+      }
     } catch (e) {
       status = `Error: ${e}`;
     } finally {

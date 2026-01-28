@@ -41,20 +41,20 @@ SimpleTools/
 
 ### Current Modules (12 Total)
 
-| #   | Module ID | Name          | Shortcut | Status     | Function Count |
-| --- | --------- | ------------- | -------- | ---------- | -------------- |
-| 1   | text      | Text Tools    | T        | ✅ Ready   | 12             |
-| 2   | pdf       | PDF Tools     | P        | ✅ Ready   | 12             |
-| 3   | convert   | Converters    | C        | ✅ Ready   | 12             |
-| 4   | file      | File & System | F        | 🚧 Planned | 12             |
-| 5   | image     | Image Tools   | I        | 🚧 Planned | 12             |
-| 6   | network   | Network       | N        | 🚧 Planned | 12             |
-| 7   | quickcmd  | Quick Cmds    | Q        | 🚧 Planned | 12             |
-| 8   | dev       | Dev Tools     | D        | 🚧 Planned | 12             |
-| 9   | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
-| 10  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
-| 11  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
-| 12  | TBD       | Coming Soon   | -        | 🚧 Planned | 12             |
+| #   | Module ID | Name          | Shortcut | Status      | Function Count |
+| --- | --------- | ------------- | -------- | ----------- | -------------- |
+| 1   | text      | Text Tools    | T        | ✅ Ready    | 12             |
+| 2   | pdf       | PDF Tools     | P        | ✅ Ready    | 12             |
+| 3   | convert   | Converters    | C        | ⚠️ Untested | 12             |
+| 4   | file      | File & System | F        | 🚧 Planned  | 12             |
+| 5   | image     | Image Tools   | I        | 🚧 Planned  | 12             |
+| 6   | network   | Network       | N        | 🚧 Planned  | 12             |
+| 7   | quickcmd  | Quick Cmds    | Q        | 🚧 Planned  | 12             |
+| 8   | dev       | Dev Tools     | D        | 🚧 Planned  | 12             |
+| 9   | TBD       | Coming Soon   | -        | 🚧 Planned  | 12             |
+| 10  | TBD       | Coming Soon   | -        | 🚧 Planned  | 12             |
+| 11  | TBD       | Coming Soon   | -        | 🚧 Planned  | 12             |
+| 12  | TBD       | Coming Soon   | -        | 🚧 Planned  | 12             |
 
 **Total**: 144 functions (12 modules × 12 functions)
 

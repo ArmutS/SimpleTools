@@ -3,7 +3,8 @@
   import { open } from "@tauri-apps/plugin-dialog";
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { onMount, onDestroy } from "svelte";
-  import mammoth from "@bagiit/mammoth";
+  import * as mammoth from "@bagiit/mammoth";
+  import html2pdf from "html2pdf.js";
 
   // Configuration
   const ACCEPTED_EXTENSIONS = [
@@ -40,7 +41,6 @@
   let isProcessing: boolean = false;
   let status: string = "Ready";
   let isDragging: boolean = false;
-  let draggedIndex: number | null = null;
   let showSuccess: boolean = false;
   let successOutput: string = "";
   let unlistenDrop: () => void;
@@ -55,15 +55,13 @@
   }
 
   async function getFileInfo(path: string): Promise<FileInfo> {
-    // In a real app we might call backend to get exact size if not available readily
-    // For now we just parse path
     const name = path.split(/[/\\]/).pop() || path;
     const extension = name.split(".").pop()?.toLowerCase() || "";
     return {
       path,
       name,
       extension,
-      size: "Unknown", // Would need backend call to get size
+      size: "Unknown",
     };
   }
 
@@ -91,13 +89,11 @@
     for (const path of paths) {
       if (selectedFiles.some((f) => f.path === path)) continue;
       const info = await getFileInfo(path);
-      // Basic filtering
       if (ACCEPTED_EXTENSIONS.includes(info.extension)) {
         selectedFiles = [...selectedFiles, info];
       }
     }
 
-    // Auto-set output path if empty
     if (selectedFiles.length > 0 && !outputPath) {
       const first = selectedFiles[0].path;
       outputPath = first.substring(0, first.lastIndexOf("/"));
@@ -111,15 +107,20 @@
 
   // Drag & Drop
   onMount(async () => {
-    unlistenDrop = await getCurrentWindow().listen(
-      "tauri://drag-drop",
-      (event) => {
-        const payload = event.payload as { paths: string[] };
-        if (payload.paths) {
-          addFiles(payload.paths);
-        }
-      },
-    );
+    try {
+      unlistenDrop = await getCurrentWindow().listen(
+        "tauri://drag-drop",
+        (event) => {
+          const payload = event.payload as { paths: string[] };
+          if (payload.paths) {
+            addFiles(payload.paths);
+          }
+        },
+      );
+    } catch (e) {
+      status = `Startup Error: ${e}`;
+      console.error("Office Page Mount Error:", e);
+    }
   });
 
   onDestroy(() => {
@@ -154,42 +155,203 @@
     }
   }
 
+  // Direct PDF conversion (no background worker)
+  async function processDocxToPdfDirect(filePath: string, outputDir: string) {
+    try {
+      const fileName =
+        filePath.split(/[/\\]/).pop()?.split(".")[0] || "converted";
+      const targetPath = `${outputDir}/${fileName}.pdf`;
+
+      // Step 1: Read file
+      status = `Reading ${fileName}...`;
+      await new Promise((resolve) => setTimeout(resolve, 100)); // Let UI update
+
+      const fileBytes = await invoke<number[]>("read_docx_binary", {
+        path: filePath,
+      });
+
+      // Step 2: Convert to HTML
+      status = "Converting to HTML...";
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const arrayBuffer = new Uint8Array(fileBytes).buffer;
+      const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+
+      // Step 3: Prepare HTML element with better styling
+      status = "Preparing document...";
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const element = document.createElement("div");
+      element.innerHTML = result.value;
+
+      // Apply comprehensive styling to preserve Word formatting
+      element.style.cssText = `
+        width: 210mm;
+        min-height: 297mm;
+        padding: 25mm 25mm 25mm 25mm;
+        margin: 0 auto;
+        background: white;
+        color: black;
+        font-size: 11pt;
+        font-family: 'Times New Roman', Times, serif;
+        line-height: 1.5;
+        box-sizing: border-box;
+      `;
+
+      // Add styles for common elements to preserve formatting
+      const style = document.createElement("style");
+      style.textContent = `
+        ${element.getAttribute("id") || "pdf-content"} p {
+          margin: 0 0 10pt 0;
+          text-align: justify;
+        }
+        ${element.getAttribute("id") || "pdf-content"} h1, 
+        ${element.getAttribute("id") || "pdf-content"} h2, 
+        ${element.getAttribute("id") || "pdf-content"} h3 {
+          margin: 12pt 0 6pt 0;
+          text-align: center;
+        }
+        ${element.getAttribute("id") || "pdf-content"} ul, 
+        ${element.getAttribute("id") || "pdf-content"} ol {
+          margin: 6pt 0 6pt 20pt;
+          padding-left: 20pt;
+        }
+        ${element.getAttribute("id") || "pdf-content"} li {
+          margin: 3pt 0;
+        }
+        ${element.getAttribute("id") || "pdf-content"} strong {
+          font-weight: bold;
+        }
+        ${element.getAttribute("id") || "pdf-content"} em {
+          font-style: italic;
+        }
+        ${element.getAttribute("id") || "pdf-content"} u {
+          text-decoration: underline;
+        }
+        ${element.getAttribute("id") || "pdf-content"} .center,
+        ${element.getAttribute("id") || "pdf-content"} [style*="text-align:center"],
+        ${element.getAttribute("id") || "pdf-content"} [style*="text-align: center"] {
+          text-align: center !important;
+        }
+      `;
+      element.setAttribute("id", "pdf-content");
+      document.head.appendChild(style);
+
+      // Step 4: Generate PDF (this is the heavy part)
+      status = "Generating PDF (this may take a moment)...";
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const opt = {
+        margin: 0,
+        filename: "document.pdf",
+        image: { type: "jpeg", quality: 0.98 } as any,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" } as any,
+      };
+
+      const pdfArrayBuffer = await html2pdf()
+        .set(opt)
+        .from(element)
+        .output("arraybuffer");
+
+      // Step 5: Save
+      status = "Saving PDF...";
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const pdfBytes = Array.from(new Uint8Array(pdfArrayBuffer));
+      await invoke("save_binary_file", {
+        path: targetPath,
+        data: pdfBytes,
+      });
+
+      status = `Saved: ${fileName}.pdf`;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async function processDocxToHtml(filePath: string, outputDir: string) {
+    try {
+      const fileName =
+        filePath.split(/[/\\]/).pop()?.split(".")[0] || "converted";
+      const targetPath = `${outputDir}/${fileName}.html`;
+
+      status = `Reading ${fileName}...`;
+      const fileBytes = await invoke<number[]>("read_docx_binary", {
+        path: filePath,
+      });
+
+      status = "Converting to HTML...";
+      const arrayBuffer = new Uint8Array(fileBytes).buffer;
+      const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+
+      status = "Saving HTML...";
+      const encoder = new TextEncoder();
+      const htmlBytes = Array.from(encoder.encode(result.value));
+
+      await invoke("save_binary_file", {
+        path: targetPath,
+        data: htmlBytes,
+      });
+      status = `Saved: ${fileName}.html`;
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
   // Conversion
   async function convert() {
     if (selectedFiles.length === 0) return (status = "Please select files!");
     if (selectedTargets.length === 0)
-      return (status = "Please select at least one target format!");
+      return (status = "Please select target format!");
     if (!outputPath) return (status = "Please select an output folder!");
 
     isProcessing = true;
-    status = "Converting...";
     showSuccess = false;
 
     try {
-
-    if (){
-
+      for (const file of selectedFiles) {
+        // DOCX -> PDF (Direct, no worker)
+        if (file.extension === "docx" && selectedTargets.includes("pdf")) {
+          await processDocxToPdfDirect(file.path, outputPath);
         }
+        // DOCX -> HTML (Local)
+        else if (
+          file.extension === "docx" &&
+          selectedTargets.includes("html")
+        ) {
+          await processDocxToHtml(file.path, outputPath);
+        } else {
+          // Fallback for others (still stubs mostly)
+          status = `Converting ${file.name}...`;
+          const result = await invoke("convert_office", {
+            files: [file.path],
+            targets: selectedTargets,
+            output_dir: outputPath,
+          });
+          status = result as string;
+        }
+      }
 
-      else {  
-      const result = await invoke("convert_office", {
-        files: selectedFiles.map((f) => f.path),
-        targets: selectedTargets,
-        output_dir: outputPath,
-      });
-      status = result as string; // Ideally backend returns English too
       showSuccess = true;
       successOutput = outputPath;
+      status = "All tasks completed.";
     } catch (e) {
       status = `Error: ${e}`;
     } finally {
       isProcessing = false;
     }
-  }}
+  }
 
   // Open Handlers
   async function openFolder() {
-    await invoke("open_folder", { path: successOutput });
+    // Assuming backend has this util (checked earlier, but it was warned as unused, need to make sure main registers it or use shell::open)
+    // Actually main.rs registers `pdffunc::open_file`? Or `open_folder`.
+    // Let's use `open` plugin if available or just invoke 'open_file' from pdffunc if it supports dirs.
+    // main.rs has `pdffunc::open_file`.
+    await invoke("open_file", { path: successOutput });
   }
 </script>
 

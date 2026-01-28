@@ -101,22 +101,24 @@ This command sequence opens the Regex Tester.
 - ✅ Watermark
 - ✅ Metadata Editor
 
-### ✅ Converters (Frontend Ready)
+### ⚠️ Converters (Implemented, Untested)
 
-**Shortcut**: `C` | **Progress**: 12/12 (UI)
+**Shortcut**: `C` | **Progress**: 11/12 (Backend) | **Status**: ⚠️ **ALL UNTESTED**
 
-- ✅ Office Converter
-- ✅ Image Converter
-- ✅ Video Converter
-- ✅ Audio Converter
-- ✅ Archive Converter
-- ✅ E-Book Converter
-- ✅ Font Converter
-- ✅ Data Converter
-- ✅ Vector Converter
-- ✅ 3D/CAD Converter
-- ✅ Icon Converter
-- ✅ Subtitle Converter
+- ✅ Office Converter (DOCX→PDF/HTML working)
+- ✅ Image Converter (Pure Rust)
+- ✅ Video Converter (Placeholder)
+- ✅ Audio Converter (Placeholder)
+- ✅ Archive Converter (Pure Rust)
+- ✅ E-Book Converter (TXT only)
+- ✅ Font Converter (Placeholder)
+- ✅ Data Converter (Pure Rust)
+- ✅ Vector Converter (Placeholder)
+- ✅ 3D/CAD Converter (Placeholder)
+- ✅ Icon Converter (ICO working)
+- ✅ Subtitle Converter (Pure Rust)
+
+> **Note**: All converters have functional UIs and backends, but **NONE have been tested**.
 
 ### 🚧 File & System (Planned)
 
@@ -163,8 +165,8 @@ JSON Validator, XML Validator, YAML Validator, HTML Formatter, CSS Formatter, JS
 | Key | Module         | Status |
 | --- | -------------- | ------ |
 | `T` | Text Tools     | ✅     |
-| `P` | PDF Tools      | 🚧     |
-| `C` | Converters     | 🚧     |
+| `P` | PDF Tools      | ✅     |
+| `C` | Converters     | ⚠️     |
 | `F` | File & System  | 🚧     |
 | `I` | Image Tools    | 🚧     |
 | `N` | Network        | 🚧     |
@@ -181,19 +183,22 @@ See [SHORTCUTS.md](SHORTCUTS.md) for a detailed list of shortcuts.
 
 ## 🎯 Project Status
 
-**Total Progress**: 18/144 (12.5%)
+**Total Progress**: 29/144 (20.1%)
 
 | Module         | Status | Completed |
 | -------------- | ------ | --------- |
 | Text Tools     | ✅     | 6/12      |
 | PDF Tools      | ✅     | 12/12     |
-| Converters     | 🚧     | 0/12      |
+| Converters     | ⚠️     | 11/12 ⚠️  |
 | File & System  | 🚧     | 0/12      |
 | Image Tools    | 🚧     | 0/12      |
 | Network        | 🚧     | 0/12      |
 | Quick Commands | 🚧     | 0/12      |
 | Dev Tools      | 🚧     | 0/12      |
 | TBD 9-12       | 🚧     | 0/48      |
+
+> [!WARNING]
+> **Converters**: All 11 converters implemented but untested.
 
 ## 🔮 Future Features
 

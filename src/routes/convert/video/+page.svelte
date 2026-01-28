@@ -148,8 +148,8 @@
     showSuccess = false;
 
     try {
-      // Using convert_office stub for now as requested by user workflow
-      const result = await invoke("convert_office", {
+      // Using convert_video stub for now as requested by user workflow
+      const result = await invoke("convert_video", {
         files: selectedFiles.map((f) => f.path),
         targets: selectedTargets,
         output_dir: outputPath,

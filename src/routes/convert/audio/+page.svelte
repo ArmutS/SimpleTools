@@ -148,7 +148,7 @@
     showSuccess = false;
 
     try {
-      const result = await invoke("convert_office", {
+      const result = await invoke("convert_audio", {
         files: selectedFiles.map((f) => f.path),
         targets: selectedTargets,
         output_dir: outputPath,

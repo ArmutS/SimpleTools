@@ -4,6 +4,17 @@
 mod textfunc;
 mod pdffunc;
 mod convertfunc;
+mod datafunc;
+mod archivefunc;
+mod subtitlefunc;
+mod imagefunc;
+mod iconfunc;
+mod fontfunc;
+mod ebookfunc;
+mod vectorfunc;
+mod audiofunc;
+mod videofunc;
+mod cadfunc;
 mod utils;
 
 #[cfg(target_os = "linux")]
@@ -151,7 +162,19 @@ fn main() {
             pdffunc::pdf_metadata,
             convertfunc::convert_office,
             convertfunc::read_docx_binary,
-            convertfunc::save_binary_file
+            convertfunc::save_binary_file,
+            datafunc::convert_data,
+            archivefunc::convert_archive,
+            subtitlefunc::convert_subtitle,
+            imagefunc::convert_image,
+            imagefunc::resize_image,
+            iconfunc::convert_icon,
+            fontfunc::convert_font,
+            ebookfunc::convert_ebook,
+            vectorfunc::convert_vector,
+            audiofunc::convert_audio,
+            videofunc::convert_video,
+            cadfunc::convert_3d
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {
