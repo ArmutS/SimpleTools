@@ -149,7 +149,9 @@ fn main() {
             pdffunc::pdf_watermark,
             pdffunc::pdf_read_metadata,
             pdffunc::pdf_metadata,
-            convertfunc::convert_office
+            convertfunc::convert_office,
+            convertfunc::read_docx_binary,
+            convertfunc::save_binary_file
         ])
         .on_window_event(|window, event| match event {
             tauri::WindowEvent::CloseRequested { api, .. } => {

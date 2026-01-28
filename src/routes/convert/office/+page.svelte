@@ -166,6 +166,12 @@
     showSuccess = false;
 
     try {
+
+    if (){
+
+        }
+
+      else {  
       const result = await invoke("convert_office", {
         files: selectedFiles.map((f) => f.path),
         targets: selectedTargets,
@@ -179,7 +185,7 @@
     } finally {
       isProcessing = false;
     }
-  }
+  }}
 
   // Open Handlers
   async function openFolder() {
